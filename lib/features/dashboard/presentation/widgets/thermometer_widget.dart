@@ -103,7 +103,7 @@ class _ThermometerPainter extends CustomPainter {
     // Draw bulb fill (always red)
     canvas.drawCircle(
       Offset(size.width / 2, size.height - bulbRadius),
-      bulbRadius * 0.85,
+      bulbRadius * AppColors.thermometerBulbFillRatio,
       fillPaint,
     );
 

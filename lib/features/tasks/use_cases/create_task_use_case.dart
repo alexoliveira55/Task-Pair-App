@@ -2,6 +2,7 @@ import '../../../domain/entities/task_entity.dart';
 import '../../../domain/repositories/task_repository.dart';
 import '../../../domain/repositories/task_recurrence_repository.dart';
 import '../../../domain/entities/task_recurrence_entity.dart';
+import '../../../core/constants/app_constants.dart';
 
 class CreateTaskUseCase {
   final TaskRepository _taskRepository;
@@ -33,7 +34,7 @@ class CreateTaskUseCase {
       createdBy: createdBy,
     ));
 
-    if (recurrenceType != 'once') {
+    if (recurrenceType != AppConstants.onceRecurrence) {
       final recurrence = await _recurrenceRepository.createRecurrence(
         TaskRecurrenceEntity(
           id: '',

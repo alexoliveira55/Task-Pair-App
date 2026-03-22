@@ -73,9 +73,24 @@ class _InvitePageState extends ConsumerState<InvitePage> {
                     isLoading: pairState.isLoading,
                     onPressed: () async {
                       if (!_formKey.currentState!.validate()) return;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Invite sent!')),
-                      );
+                      await ref
+                          .read(pairNotifierProvider.notifier)
+                          .sendInvite(
+                            pairId: pair.id,
+                            inviteEmail: _emailController.text.trim(),
+                          );
+                      if (!mounted) return;
+                      final error = ref.read(pairNotifierProvider).error;
+                      if (error != null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Error: $error')),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Invite sent!')),
+                        );
+                        _emailController.clear();
+                      }
                     },
                   ),
                 ],

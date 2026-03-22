@@ -16,6 +16,9 @@ class AppColors {
   static const Color thermometerBackground = Color(0xFFEF9A9A);
   static const Color thermometerBorder = Color(0xFFB71C1C);
 
+  /// Ratio used for the thermometer bulb inner fill relative to the bulb radius.
+  static const double thermometerBulbFillRatio = 0.85;
+
   static const Color scoreGold = Color(0xFFFFD700);
   static const Color scoreSilver = Color(0xFFC0C0C0);
 
@@ -28,4 +31,7 @@ class AppColors {
   static const Color textPrimary = Color(0xFF1C1B1F);
   static const Color textSecondary = Color(0xFF49454F);
   static const Color textDisabled = Color(0xFF938F99);
+
+  /// Opacity value (80%) used for the dark app bar background.
+  static const int appBarBackgroundAlpha = 204;
 }

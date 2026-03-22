@@ -41,7 +41,7 @@ class ValidateTaskUseCase {
     );
 
     final newStatus =
-        isApproved ? AppConstants.validatedStatus : AppConstants.pendingStatus;
+        isApproved ? AppConstants.validatedStatus : AppConstants.rejectedStatus;
     await _occurrenceRepository.updateOccurrenceStatus(occurrenceId, newStatus);
 
     if (isApproved) {

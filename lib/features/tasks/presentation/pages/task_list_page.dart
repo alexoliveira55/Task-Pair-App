@@ -72,7 +72,7 @@ class TaskListPage extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  onTap: () => context.push('/tasks/${task.id}'),
+                  onTap: () => context.push('/tasks/${task.id}/edit'),
                 ),
               );
             },

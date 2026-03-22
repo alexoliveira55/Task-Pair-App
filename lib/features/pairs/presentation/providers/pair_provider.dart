@@ -110,6 +110,30 @@ class PairNotifier extends StateNotifier<AsyncValue<void>> {
       state = AsyncValue.error(e, st);
     }
   }
+
+  Future<void> sendInvite({
+    required String pairId,
+    required String inviteEmail,
+  }) async {
+    state = const AsyncValue.loading();
+    try {
+      final currentUser = _ref.read(currentUserEntityProvider).value;
+      if (currentUser == null) throw Exception('Not authenticated');
+
+      await _pairRepository.createInvite(PairInviteEntity(
+        id: '',
+        fromUserId: currentUser.id,
+        toEmail: inviteEmail,
+        pairId: pairId,
+        status: AppConstants.inviteStatusPending,
+        createdAt: DateTime.now(),
+      ));
+
+      state = const AsyncValue.data(null);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
+  }
 }
 
 final pairNotifierProvider =

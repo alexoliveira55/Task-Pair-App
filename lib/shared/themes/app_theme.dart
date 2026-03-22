@@ -59,7 +59,7 @@ class AppTheme {
       appBarTheme: AppBarTheme(
         centerTitle: true,
         elevation: 0,
-        backgroundColor: AppColors.primary.withAlpha(204),
+        backgroundColor: AppColors.primary.withAlpha(AppColors.appBarBackgroundAlpha),
         foregroundColor: Colors.white,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
