@@ -57,7 +57,7 @@ class _ThermometerPainter extends CustomPainter {
     final bulbRadius = size.width / 2;
     final tubeWidth = size.width * 0.4;
     final tubeLeft = (size.width - tubeWidth) / 2;
-    final tubeTop = 0.0;
+    const tubeTop = 0.0;
     final tubeBottom = size.height - bulbRadius;
     final tubeHeight = tubeBottom - tubeTop;
 
