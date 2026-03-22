@@ -58,13 +58,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/tasks/new',
         builder: (context, state) => const TaskFormPage(),
       ),
-      GoRoute(
-        path: '/tasks/:id',
-        builder: (context, state) {
-          final taskId = state.pathParameters['id']!;
-          return TaskFormPage(taskId: taskId);
-        },
-      ),
+      // /tasks/:id for viewing/editing a task — both paths serve the same form
       GoRoute(
         path: '/tasks/:id/edit',
         builder: (context, state) {

@@ -62,3 +62,10 @@ final executedOccurrencesProvider = Provider((ref) {
       .where((o) => o.status == AppConstants.executedStatus)
       .toList();
 });
+
+/// Fetches a single execution by its ID from Firestore.
+final executionByIdProvider =
+    FutureProvider.family<TaskExecutionEntity?, String>((ref, executionId) {
+  final repo = ref.watch(taskExecutionRepositoryProvider);
+  return repo.getExecutionById(executionId);
+});

@@ -58,16 +58,14 @@ class AppButton extends StatelessWidget {
 
     return ElevatedButton(
       onPressed: isLoading ? null : onPressed,
-      style: color != null
-          ? ElevatedButton.styleFrom(
-              backgroundColor: color,
-              foregroundColor: Colors.white,
-              minimumSize: const Size(double.infinity, 50),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            )
-          : null,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color,
+        foregroundColor: color != null ? Colors.white : null,
+        minimumSize: const Size(double.infinity, 50),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
       child: child,
     );
   }
