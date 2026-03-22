@@ -1,0 +1,9 @@
+{
+  "github.copilot.enable": {
+    "*": true
+  },
+  "chat.agent.enabled": true,
+  "github.copilot.chat.agent.enabled": true,
+  "github.copilot.chat.edits.enabled": true,
+  "github.copilot.nextEditSuggestions.enabled": true
+}
