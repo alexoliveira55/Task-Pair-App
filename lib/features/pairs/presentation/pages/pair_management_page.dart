@@ -67,7 +67,8 @@ class _PairDetailsView extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text('Score Target: ${pair.scoreTarget} points'),
-                  Text('Created: ${pair.createdAt.toString().split(' ').first}'),
+                  Text(
+                      'Created: ${pair.createdAt.toString().split(' ').first}'),
                 ],
               ),
             ),
@@ -93,19 +94,21 @@ class _InvitesView extends ConsumerWidget {
         return Card(
           child: ListTile(
             title: Text('Invite from ${invite.fromUserId}'),
-            subtitle: Text('Pair invite pending'),
+            subtitle: const Text('Pair invite pending'),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
                   icon: const Icon(Icons.check, color: Colors.green),
-                  onPressed: () =>
-                      ref.read(pairNotifierProvider.notifier).acceptInvite(invite),
+                  onPressed: () => ref
+                      .read(pairNotifierProvider.notifier)
+                      .acceptInvite(invite),
                 ),
                 IconButton(
                   icon: const Icon(Icons.close, color: Colors.red),
-                  onPressed: () =>
-                      ref.read(pairNotifierProvider.notifier).declineInvite(invite.id),
+                  onPressed: () => ref
+                      .read(pairNotifierProvider.notifier)
+                      .declineInvite(invite.id),
                 ),
               ],
             ),
@@ -188,7 +191,9 @@ class _CreatePairViewState extends ConsumerState<_CreatePairView> {
               isLoading: pairState.isLoading,
               onPressed: () async {
                 if (!_formKey.currentState!.validate()) return;
-                await ref.read(pairNotifierProvider.notifier).createPairAndInvite(
+                await ref
+                    .read(pairNotifierProvider.notifier)
+                    .createPairAndInvite(
                       pairName: _pairNameController.text.trim(),
                       scoreTarget: int.parse(_scoreTargetController.text),
                       inviteEmail: _inviteEmailController.text.trim(),

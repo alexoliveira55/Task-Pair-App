@@ -1,21 +1,21 @@
+import 'package:task_pair_app/data/repositories/score_repository_impl.dart';
+
 import '../../../domain/entities/task_validation_entity.dart';
 import '../../../domain/repositories/task_validation_repository.dart';
 import '../../../domain/repositories/task_occurrence_repository.dart';
 import '../../../domain/repositories/score_repository.dart';
-import '../../../domain/repositories/task_execution_repository.dart';
 import '../../../core/constants/app_constants.dart';
 
 class ValidateTaskUseCase {
   final TaskValidationRepository _validationRepository;
   final TaskOccurrenceRepository _occurrenceRepository;
-  final TaskExecutionRepository _executionRepository;
   final ScoreRepository _scoreRepository;
 
   ValidateTaskUseCase(
     this._validationRepository,
     this._occurrenceRepository,
-    this._executionRepository,
     this._scoreRepository,
+    ScoreRepositoryImpl watch,
   );
 
   Future<TaskValidationEntity> execute({
