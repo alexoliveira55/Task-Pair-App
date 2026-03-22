@@ -1,10 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../features/pairs/presentation/providers/pair_provider.dart';
-import '../../../features/score/presentation/providers/score_provider.dart';
-import '../../../features/auth/presentation/providers/auth_provider.dart';
-import '../../../data/repositories/reward_repository_impl.dart';
-import '../../../domain/entities/reward_entity.dart';
-import '../use_cases/check_rewards_use_case.dart';
+import 'package:task_pair_app/data/repositories/reward_repository_impl.dart';
+import 'package:task_pair_app/domain/entities/reward_entity.dart';
+import 'package:task_pair_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:task_pair_app/features/pairs/presentation/providers/pair_provider.dart';
+import 'package:task_pair_app/features/rewards/use_cases/check_rewards_use_case.dart';
+import 'package:task_pair_app/features/score/presentation/providers/score_provider.dart';
 
 final rewardRepositoryProvider = Provider((ref) {
   return RewardRepositoryImpl(ref.watch(firestoreProvider));
@@ -34,8 +34,7 @@ class RewardsNotifier extends StateNotifier<AsyncValue<void>> {
   final CheckRewardsUseCase _checkRewardsUseCase;
   final Ref _ref;
 
-  RewardsNotifier(
-      this._rewardRepository, this._checkRewardsUseCase, this._ref)
+  RewardsNotifier(this._rewardRepository, this._checkRewardsUseCase, this._ref)
       : super(const AsyncValue.data(null));
 
   Future<void> createReward({

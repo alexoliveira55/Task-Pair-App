@@ -1,10 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../../features/auth/presentation/providers/auth_provider.dart';
-import '../../../data/repositories/pair_repository_impl.dart';
-import '../../../domain/entities/pair_entity.dart';
-import '../../../domain/entities/pair_invite_entity.dart';
-import '../../../core/constants/app_constants.dart';
+import 'package:task_pair_app/core/constants/app_constants.dart';
+import 'package:task_pair_app/data/repositories/pair_repository_impl.dart';
+import 'package:task_pair_app/domain/entities/pair_entity.dart';
+import 'package:task_pair_app/domain/entities/pair_invite_entity.dart';
+import 'package:task_pair_app/features/auth/presentation/providers/auth_provider.dart';
 
 final pairRepositoryProvider = Provider((ref) {
   return PairRepositoryImpl(ref.watch(firestoreProvider));
@@ -27,9 +26,7 @@ final pendingInvitesProvider = StreamProvider<List<PairInviteEntity>>((ref) {
   return userAsync.when(
     data: (user) {
       if (user == null) return Stream.value([]);
-      return ref
-          .watch(pairRepositoryProvider)
-          .watchInvitesForEmail(user.email);
+      return ref.watch(pairRepositoryProvider).watchInvitesForEmail(user.email);
     },
     loading: () => Stream.value([]),
     error: (_, __) => Stream.value([]),
@@ -62,7 +59,9 @@ class PairNotifier extends StateNotifier<AsyncValue<void>> {
         scoreTarget: scoreTarget,
       ));
 
-      await _ref.read(userRepositoryProvider).updatePairId(currentUser.id, pair.id);
+      await _ref
+          .read(userRepositoryProvider)
+          .updatePairId(currentUser.id, pair.id);
 
       await _pairRepository.createInvite(PairInviteEntity(
         id: '',
@@ -92,7 +91,9 @@ class PairNotifier extends StateNotifier<AsyncValue<void>> {
       if (pair == null) throw Exception('Pair not found');
 
       await _pairRepository.updatePair(pair.copyWith(user2Id: currentUser.id));
-      await _ref.read(userRepositoryProvider).updatePairId(currentUser.id, pair.id);
+      await _ref
+          .read(userRepositoryProvider)
+          .updatePairId(currentUser.id, pair.id);
 
       state = const AsyncValue.data(null);
     } catch (e, st) {

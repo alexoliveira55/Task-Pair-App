@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../features/pairs/presentation/providers/pair_provider.dart';
-import '../../../features/score/presentation/providers/score_provider.dart';
-import '../../../features/recurrence/presentation/providers/recurrence_provider.dart';
-import '../../../features/tasks/presentation/providers/task_provider.dart';
+import 'package:task_pair_app/features/pairs/presentation/providers/pair_provider.dart';
+import 'package:task_pair_app/features/recurrence/presentation/providers/recurrence_provider.dart';
+import 'package:task_pair_app/features/score/presentation/providers/score_provider.dart';
+import 'package:task_pair_app/features/tasks/presentation/providers/task_provider.dart';
 
 final dashboardDataProvider = Provider((ref) {
   final pair = ref.watch(currentPairProvider).value;
@@ -15,7 +15,8 @@ final dashboardDataProvider = Provider((ref) {
   final pendingOccurrences =
       occurrences.where((o) => o.status == 'pending').toList();
   final todayOccurrences = occurrences
-      .where((o) => o.dueDate.day == DateTime.now().day &&
+      .where((o) =>
+          o.dueDate.day == DateTime.now().day &&
           o.dueDate.month == DateTime.now().month &&
           o.dueDate.year == DateTime.now().year)
       .toList();

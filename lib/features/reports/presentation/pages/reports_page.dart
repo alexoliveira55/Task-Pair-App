@@ -82,7 +82,7 @@ class ReportsPage extends ConsumerWidget {
                     leading: const CircleAvatar(
                       child: Icon(Icons.person),
                     ),
-                    title: Text('User: ${score.userId.substring(0, 6)}...'),
+                    title: Text('User: ${score?.userId.substring(0, 6)}...'),
                     subtitle: Text(
                         'Total: ${score.totalPoints} pts | Period: ${score.periodPoints} pts'),
                     trailing: Text(

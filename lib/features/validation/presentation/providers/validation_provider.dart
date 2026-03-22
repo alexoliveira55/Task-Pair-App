@@ -1,10 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../features/auth/presentation/providers/auth_provider.dart';
-import '../../../data/repositories/task_validation_repository_impl.dart';
-import '../../../features/recurrence/presentation/providers/recurrence_provider.dart';
-import '../../../features/execution/presentation/providers/execution_provider.dart';
-import '../../../features/score/presentation/providers/score_provider.dart';
-import '../use_cases/validate_task_use_case.dart';
+import 'package:task_pair_app/data/repositories/task_validation_repository_impl.dart';
+import 'package:task_pair_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:task_pair_app/features/execution/presentation/providers/execution_provider.dart';
+import 'package:task_pair_app/features/recurrence/presentation/providers/recurrence_provider.dart';
+import 'package:task_pair_app/features/score/presentation/providers/score_provider.dart';
+import 'package:task_pair_app/features/validation/use_cases/validate_task_use_case.dart';
 
 final taskValidationRepositoryProvider = Provider((ref) {
   return TaskValidationRepositoryImpl(ref.watch(firestoreProvider));

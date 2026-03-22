@@ -1,13 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../../../services/firebase_auth_service.dart';
-import '../../../data/repositories/user_repository_impl.dart';
-import '../../../domain/entities/user_entity.dart';
+import 'package:task_pair_app/data/repositories/user_repository_impl.dart';
+import 'package:task_pair_app/domain/entities/user_entity.dart';
+import 'package:task_pair_app/services/firebase_auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-final firebaseAuthProvider = Provider<FirebaseAuth>((ref) => FirebaseAuth.instance);
+final firebaseAuthProvider =
+    Provider<FirebaseAuth>((ref) => FirebaseAuth.instance);
 
-final firestoreProvider = Provider<FirebaseFirestore>((ref) => FirebaseFirestore.instance);
+final firestoreProvider =
+    Provider<FirebaseFirestore>((ref) => FirebaseFirestore.instance);
 
 final firebaseAuthServiceProvider = Provider<FirebaseAuthService>((ref) {
   return FirebaseAuthService(ref.watch(firebaseAuthProvider));

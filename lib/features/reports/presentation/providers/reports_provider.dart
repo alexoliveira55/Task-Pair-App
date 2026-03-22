@@ -1,10 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../features/pairs/presentation/providers/pair_provider.dart';
-import '../../../features/recurrence/presentation/providers/recurrence_provider.dart';
-import '../../../features/tasks/presentation/providers/task_provider.dart';
-import '../../../features/score/presentation/providers/score_provider.dart';
-import '../../../domain/entities/task_occurrence_entity.dart';
-import '../../../domain/entities/score_entity.dart';
+import 'package:task_pair_app/domain/entities/score_entity.dart';
+import 'package:task_pair_app/domain/entities/task_occurrence_entity.dart';
+import 'package:task_pair_app/features/recurrence/presentation/providers/recurrence_provider.dart';
+import 'package:task_pair_app/features/score/presentation/providers/score_provider.dart';
+import 'package:task_pair_app/features/tasks/presentation/providers/task_provider.dart';
 
 final reportsProvider = Provider((ref) {
   final occurrences = ref.watch(occurrencesProvider).value ?? [];
@@ -22,9 +21,8 @@ final reportsProvider = Provider((ref) {
     pendingOccurrences: pending,
     scores: scores,
     totalTasks: tasks.length,
-    completionRate: occurrences.isEmpty
-        ? 0.0
-        : completed.length / occurrences.length,
+    completionRate:
+        occurrences.isEmpty ? 0.0 : completed.length / occurrences.length,
   );
 });
 

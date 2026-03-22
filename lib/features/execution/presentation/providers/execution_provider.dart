@@ -1,10 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../features/auth/presentation/providers/auth_provider.dart';
-import '../../../data/repositories/task_execution_repository_impl.dart';
-import '../../../domain/entities/task_execution_entity.dart';
-import '../../../features/recurrence/presentation/providers/recurrence_provider.dart';
-import '../use_cases/execute_task_use_case.dart';
-import '../../../core/constants/app_constants.dart';
+import 'package:task_pair_app/core/constants/app_constants.dart';
+import 'package:task_pair_app/data/repositories/task_execution_repository_impl.dart';
+import 'package:task_pair_app/domain/entities/task_execution_entity.dart';
+import 'package:task_pair_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:task_pair_app/features/execution/use_cases/execute_task_use_case.dart';
+import 'package:task_pair_app/features/recurrence/presentation/providers/recurrence_provider.dart';
 
 final taskExecutionRepositoryProvider = Provider((ref) {
   return TaskExecutionRepositoryImpl(ref.watch(firestoreProvider));

@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../features/auth/presentation/providers/auth_provider.dart';
-import '../../../features/pairs/presentation/providers/pair_provider.dart';
-import '../../../data/repositories/task_repository_impl.dart';
-import '../../../data/repositories/task_recurrence_repository_impl.dart';
-import '../../../domain/entities/task_entity.dart';
-import '../../../domain/entities/task_recurrence_entity.dart';
-import '../../../core/constants/app_constants.dart';
+import 'package:task_pair_app/core/constants/app_constants.dart';
+import 'package:task_pair_app/data/repositories/task_recurrence_repository_impl.dart';
+import 'package:task_pair_app/data/repositories/task_repository_impl.dart';
+import 'package:task_pair_app/domain/entities/task_entity.dart';
+import 'package:task_pair_app/domain/entities/task_recurrence_entity.dart';
+import 'package:task_pair_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:task_pair_app/features/pairs/presentation/providers/pair_provider.dart';
 
 final taskRepositoryProvider = Provider((ref) {
   return TaskRepositoryImpl(ref.watch(firestoreProvider));
@@ -77,7 +77,8 @@ class TaskNotifier extends StateNotifier<AsyncValue<void>> {
             isActive: true,
           ),
         );
-        await _taskRepository.updateTask(task.copyWith(recurrenceId: recurrence.id));
+        await _taskRepository
+            .updateTask(task.copyWith(recurrenceId: recurrence.id));
       }
 
       state = const AsyncValue.data(null);
