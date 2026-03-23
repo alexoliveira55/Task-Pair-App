@@ -5,5 +5,20 @@
   "chat.agent.enabled": true,
   "github.copilot.chat.agent.enabled": true,
   "github.copilot.chat.edits.enabled": true,
-  "github.copilot.nextEditSuggestions.enabled": true
+  "github.copilot.nextEditSuggestions.enabled": true,
+
+  // Flutter/Dart — configurações específicas deste projeto
+  "dart.flutterSdkPath": "C:\\src\\flutter",
+  "dart.debugExternalPackageLibraries": false,
+  "dart.debugSdkLibraries": false,
+  "[dart]": {
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "editor.rulers": [80],
+    "editor.selectionHighlight": false,
+    "editor.suggest.snippetsPreventQuickSuggestions": false,
+    "editor.suggestSelection": "first",
+    "editor.tabCompletion": "onlySnippets",
+    "editor.wordBasedSuggestions": "off"
+  }
 }

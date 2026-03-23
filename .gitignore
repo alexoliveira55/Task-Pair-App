@@ -7,6 +7,12 @@
 .buildlog/
 .history
 
+# FlutterFire CLI global tool cache (não faz parte do app)
+/bin/
+/hosted/
+/global_packages/
+/hosted-hashes/
+
 
 
 # Flutter repo-specific
