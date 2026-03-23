@@ -8,6 +8,30 @@ import '../../../../shared/widgets/app_error_widget.dart';
 class TaskListPage extends ConsumerWidget {
   const TaskListPage({super.key});
 
+  Future<void> _confirmDelete(
+      BuildContext context, WidgetRef ref, String taskId, String title) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Task'),
+        content: Text('Are you sure you want to delete "$title"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) {
+      await ref.read(taskNotifierProvider.notifier).deleteTask(taskId);
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tasksAsync = ref.watch(tasksProvider);
@@ -64,11 +88,16 @@ class TaskListPage extends ConsumerWidget {
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      if (!task.isActive)
-                        const Chip(label: Text('Inactive')),
+                      if (!task.isActive) const Chip(label: Text('Inactive')),
                       IconButton(
                         icon: const Icon(Icons.edit_outlined),
                         onPressed: () => context.push('/tasks/${task.id}/edit'),
+                      ),
+                      IconButton(
+                        icon:
+                            const Icon(Icons.delete_outline, color: Colors.red),
+                        onPressed: () =>
+                            _confirmDelete(context, ref, task.id, task.title),
                       ),
                     ],
                   ),

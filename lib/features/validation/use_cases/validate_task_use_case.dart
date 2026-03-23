@@ -1,5 +1,3 @@
-import 'package:task_pair_app/data/repositories/score_repository_impl.dart';
-
 import '../../../domain/entities/task_validation_entity.dart';
 import '../../../domain/repositories/task_validation_repository.dart';
 import '../../../domain/repositories/task_occurrence_repository.dart';
@@ -15,7 +13,6 @@ class ValidateTaskUseCase {
     this._validationRepository,
     this._occurrenceRepository,
     this._scoreRepository,
-    ScoreRepositoryImpl watch,
   );
 
   Future<TaskValidationEntity> execute({

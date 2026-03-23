@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Pair App - Rewards</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .reward-card {
+      display: flex;
+      gap: 16px;
+      padding: 16px;
+      border-bottom: 1px solid var(--divider);
+      transition: var(--transition);
+    }
+    .reward-card:last-child { border-bottom: none; }
+    .reward-card:hover { background: rgba(0,151,167,0.04); }
+    .reward-icon-wrap {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      flex-shrink: 0;
+    }
+    .reward-icon-wrap.unlocked { background: #E8F5E9; }
+    .reward-icon-wrap.locked { background: #F5F5F5; filter: grayscale(0.6); }
+    .reward-info { flex: 1; }
+    .reward-name { font-size: 16px; font-weight: 700; }
+    .reward-desc { font-size: 13px; color: var(--text-secondary); margin: 4px 0 8px; }
+    .reward-progress {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .reward-progress .progress-bar { flex: 1; height: 10px; }
+    .reward-progress-text {
+      font-size: 12px;
+      font-weight: 700;
+      min-width: 70px;
+      text-align: right;
+    }
+    .reward-thermo-section {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      padding: 24px 16px;
+    }
+    .reward-thermo-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .reward-thermo-label {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .mini-thermo {
+      position: relative;
+      width: 32px;
+      height: 120px;
+      background: var(--thermo-bg);
+      border-radius: 16px 16px 0 0;
+      overflow: hidden;
+    }
+    .mini-thermo-fill {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      border-radius: 16px 16px 0 0;
+      transition: height 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .mini-thermo-bulb {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: white;
+      margin-top: -6px;
+    }
+    .summary-card {
+      text-align: center;
+      padding: 20px;
+    }
+    .summary-card .big-number {
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .summary-card .big-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <div id="content"></div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      renderTopBar('Rewards', { backPage: 'dashboard.html' });
+      renderBottomNav('rewards.html');
+
+      const rewards = MockData.rewards;
+      const unlocked = rewards.filter(r => r.unlocked);
+      const locked = rewards.filter(r => !r.unlocked);
+      const totalPoints = MockData.scores.user1.current;
+
+      const content = document.getElementById('content');
+      content.innerHTML = `
+        <!-- Points Summary -->
+        <div class="card summary-card">
+          <div class="big-number">${totalPoints}</div>
+          <div class="big-label">Your Total Points</div>
+          <div style="margin-top:16px">
+            <div style="display:flex; justify-content:center; gap:24px">
+              <div>
+                <div style="font-size:24px; font-weight:700; color:var(--success)">${unlocked.length}</div>
+                <div style="font-size:12px; color:var(--text-secondary)">Unlocked</div>
+              </div>
+              <div>
+                <div style="font-size:24px; font-weight:700; color:var(--text-secondary)">${locked.length}</div>
+                <div style="font-size:12px; color:var(--text-secondary)">Locked</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reward Thermometers -->
+        <div class="card">
+          <div class="card-header">
+            <h2>🌡️ Reward Progress</h2>
+          </div>
+          <div class="reward-thermo-section">
+            ${rewards.slice(0, 4).map(r => {
+              const pct = Math.min((r.currentPoints / r.pointsRequired) * 100, 100);
+              const color = r.unlocked ? 'var(--success)' : 'var(--accent)';
+              return `
+                <div class="reward-thermo-item">
+                  <div class="reward-thermo-label">${r.icon}</div>
+                  <div class="mini-thermo">
+                    <div class="mini-thermo-fill" style="height:${pct}%; background:${color}"></div>
+                  </div>
+                  <div class="mini-thermo-bulb" style="background:${color}">${Math.round(pct)}%</div>
+                  <div style="font-size:11px; color:var(--text-secondary); margin-top:4px; text-align:center; max-width:60px">${r.name}</div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+
+        <!-- Unlocked Rewards -->
+        ${unlocked.length > 0 ? `
+          <div class="section-header">
+            <h2>🎉 Unlocked</h2>
+          </div>
+          <div class="card" style="padding:0; overflow:hidden">
+            ${unlocked.map(r => `
+              <div class="reward-card">
+                <div class="reward-icon-wrap unlocked">${r.icon}</div>
+                <div class="reward-info">
+                  <div class="reward-name">${r.name} ${statusBadge('unlocked')}</div>
+                  <div class="reward-desc">${r.description}</div>
+                  <div class="reward-progress">
+                    <div class="progress-bar">
+                      <div class="progress-fill green" style="width:100%"></div>
+                    </div>
+                    <div class="reward-progress-text" style="color:var(--success)">${r.pointsRequired}/${r.pointsRequired}</div>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+
+        <!-- Locked Rewards -->
+        ${locked.length > 0 ? `
+          <div class="section-header">
+            <h2>🔒 Locked</h2>
+          </div>
+          <div class="card" style="padding:0; overflow:hidden">
+            ${locked.map(r => {
+              const pct = Math.min((r.currentPoints / r.pointsRequired) * 100, 100);
+              return `
+                <div class="reward-card">
+                  <div class="reward-icon-wrap locked">${r.icon}</div>
+                  <div class="reward-info">
+                    <div class="reward-name">${r.name} ${statusBadge('locked')}</div>
+                    <div class="reward-desc">${r.description}</div>
+                    <div class="reward-progress">
+                      <div class="progress-bar">
+                        <div class="progress-fill" style="width:${pct}%"></div>
+                      </div>
+                      <div class="reward-progress-text">${r.currentPoints}/${r.pointsRequired}</div>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        ` : ''}
+      `;
+    });
+  </script>
+</body>
+</html>

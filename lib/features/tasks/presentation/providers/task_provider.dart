@@ -116,3 +116,13 @@ final taskNotifierProvider =
     ref,
   );
 });
+
+/// Provides a single task by ID, derived from the tasks stream.
+final taskByIdProvider = Provider.family<TaskEntity?, String>((ref, taskId) {
+  final tasks = ref.watch(tasksProvider).value ?? [];
+  try {
+    return tasks.firstWhere((t) => t.id == taskId);
+  } catch (_) {
+    return null;
+  }
+});

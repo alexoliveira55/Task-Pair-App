@@ -22,6 +22,7 @@ class _TaskFormPageState extends ConsumerState<TaskFormPage> {
   final _pointsController = TextEditingController(text: '10');
   String _recurrenceType = AppConstants.dailyRecurrence;
   final List<int> _selectedDays = [];
+  bool _didLoadTask = false;
 
   bool get isEditing => widget.taskId != null;
 
@@ -33,9 +34,23 @@ class _TaskFormPageState extends ConsumerState<TaskFormPage> {
     super.dispose();
   }
 
+  void _loadTaskData(WidgetRef ref) {
+    if (_didLoadTask || widget.taskId == null) return;
+    final task = ref.read(taskByIdProvider(widget.taskId!));
+    if (task != null) {
+      _titleController.text = task.title;
+      _descriptionController.text = task.description ?? '';
+      _pointsController.text = task.points.toString();
+      _didLoadTask = true;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final taskState = ref.watch(taskNotifierProvider);
+
+    // Load existing task data when editing
+    _loadTaskData(ref);
 
     ref.listen(taskNotifierProvider, (_, next) {
       if (next.hasValue && !next.isLoading) {
@@ -115,15 +130,10 @@ class _TaskFormPageState extends ConsumerState<TaskFormPage> {
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 8,
-                  children: [
-                    'Mon',
-                    'Tue',
-                    'Wed',
-                    'Thu',
-                    'Fri',
-                    'Sat',
-                    'Sun'
-                  ].asMap().entries.map((e) {
+                  children: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                      .asMap()
+                      .entries
+                      .map((e) {
                     final dayNum = e.key + 1;
                     final isSelected = _selectedDays.contains(dayNum);
                     return FilterChip(
@@ -148,15 +158,34 @@ class _TaskFormPageState extends ConsumerState<TaskFormPage> {
                 isLoading: taskState.isLoading,
                 onPressed: () async {
                   if (!_formKey.currentState!.validate()) return;
-                  await ref.read(taskNotifierProvider.notifier).createTask(
-                        title: _titleController.text.trim(),
-                        description: _descriptionController.text.trim().isEmpty
-                            ? null
-                            : _descriptionController.text.trim(),
-                        points: int.parse(_pointsController.text),
-                        recurrenceType: _recurrenceType,
-                        daysOfWeek: _selectedDays.isEmpty ? null : _selectedDays,
-                      );
+                  if (isEditing) {
+                    final existingTask =
+                        ref.read(taskByIdProvider(widget.taskId!));
+                    if (existingTask != null) {
+                      await ref
+                          .read(taskNotifierProvider.notifier)
+                          .updateTask(existingTask.copyWith(
+                            title: _titleController.text.trim(),
+                            description:
+                                _descriptionController.text.trim().isEmpty
+                                    ? null
+                                    : _descriptionController.text.trim(),
+                            points: int.parse(_pointsController.text),
+                          ));
+                    }
+                  } else {
+                    await ref.read(taskNotifierProvider.notifier).createTask(
+                          title: _titleController.text.trim(),
+                          description:
+                              _descriptionController.text.trim().isEmpty
+                                  ? null
+                                  : _descriptionController.text.trim(),
+                          points: int.parse(_pointsController.text),
+                          recurrenceType: _recurrenceType,
+                          daysOfWeek:
+                              _selectedDays.isEmpty ? null : _selectedDays,
+                        );
+                  }
                 },
               ),
             ],

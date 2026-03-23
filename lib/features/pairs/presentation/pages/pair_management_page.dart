@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../providers/pair_provider.dart';
 import '../../../../shared/widgets/app_button.dart';
 import '../../../../shared/widgets/app_text_field.dart';
@@ -43,13 +44,40 @@ class PairManagementPage extends ConsumerWidget {
   }
 }
 
-class _PairDetailsView extends StatelessWidget {
+class _PairDetailsView extends ConsumerWidget {
   final dynamic pair;
 
   const _PairDetailsView({required this.pair});
 
+  Future<void> _confirmLeavePair(BuildContext context, WidgetRef ref) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Leave Pair'),
+        content: const Text(
+            'Are you sure you want to leave this pair? This action cannot be undone.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Leave', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) {
+      await ref.read(pairNotifierProvider.notifier).leavePair();
+      if (context.mounted) {
+        context.go('/dashboard');
+      }
+    }
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -72,6 +100,34 @@ class _PairDetailsView extends StatelessWidget {
                 ],
               ),
             ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () => context.push('/invite'),
+                  icon: const Icon(Icons.person_add),
+                  label: const Text('Invite Partner'),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () => _confirmLeavePair(context, ref),
+                  icon: const Icon(Icons.exit_to_app, color: Colors.red),
+                  label: const Text('Leave Pair',
+                      style: TextStyle(color: Colors.red)),
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: Colors.red),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

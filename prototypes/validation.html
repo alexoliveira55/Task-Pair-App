@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Pair App - Validation</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .validation-item {
+      padding: 16px;
+      border-bottom: 1px solid var(--divider);
+    }
+    .validation-item:last-child { border-bottom: none; }
+    .val-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .val-header .val-info { flex: 1; }
+    .val-header .val-info .val-task { font-size: 16px; font-weight: 700; }
+    .val-header .val-info .val-meta { font-size: 12px; color: var(--text-secondary); }
+    .val-form {
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      margin-top: 12px;
+    }
+    .percentage-display {
+      text-align: center;
+      margin: 8px 0;
+    }
+    .percentage-value {
+      font-size: 48px;
+      font-weight: 700;
+    }
+    .percentage-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    .approved-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--divider);
+    }
+    .approved-item:last-child { border-bottom: none; }
+    .approved-info { flex: 1; }
+    .approved-info .approved-name { font-size: 14px; font-weight: 600; }
+    .approved-info .approved-meta { font-size: 12px; color: var(--text-secondary); }
+    .approved-score {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--success);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <div id="content"></div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      renderTopBar('Validation', { backPage: 'dashboard.html' });
+      renderBottomNav('validation.html');
+
+      const pending = MockData.validations.filter(v => v.status === 'pending');
+      const approved = MockData.validations.filter(v => v.status === 'approved');
+
+      const content = document.getElementById('content');
+      content.innerHTML = `
+        <!-- Pending Validations -->
+        <div class="section-header">
+          <h2>Pending Validations</h2>
+          <span class="badge badge-pending">${pending.length}</span>
+        </div>
+
+        ${pending.length > 0 ? `
+          <div class="card" style="padding:0; overflow:hidden">
+            ${pending.map((v, i) => `
+              <div class="validation-item">
+                <div class="val-header">
+                  <div class="avatar avatar-primary">${getInitials(v.executorName)}</div>
+                  <div class="val-info">
+                    <div class="val-task">${v.taskName}</div>
+                    <div class="val-meta">Executed by ${v.executorName} · ${v.executedAt}</div>
+                  </div>
+                </div>
+
+                <div class="val-form" id="valForm-${i}">
+                  <div class="percentage-display">
+                    <div class="percentage-value" id="pctValue-${i}" style="color: var(--primary)">80%</div>
+                    <div class="percentage-label">Completion Score</div>
+                  </div>
+
+                  <div class="slider-container">
+                    <input type="range" min="0" max="100" value="80" id="pctSlider-${i}"
+                           oninput="updateSlider(${i}, this.value)">
+                  </div>
+
+                  <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-secondary); margin-bottom:16px">
+                    <span>0% - Not done</span>
+                    <span>100% - Perfect</span>
+                  </div>
+
+                  <!-- Score thermometer preview -->
+                  <div style="margin-bottom:16px">
+                    <div style="font-size:12px; color:var(--text-secondary); margin-bottom:6px">Score impact</div>
+                    <div class="progress-bar" style="height:10px">
+                      <div class="progress-fill green" id="scoreFill-${i}" style="width:80%"></div>
+                    </div>
+                    <div style="font-size:12px; color:var(--text-secondary); margin-top:4px">
+                      Points awarded: <strong id="ptsAwarded-${i}">12</strong> of 15
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Observation / Notes</label>
+                    <textarea class="form-control" id="valNotes-${i}" placeholder="Add observation about the task execution..."></textarea>
+                  </div>
+
+                  <div style="display:flex; gap:8px">
+                    <button class="btn btn-success btn-block" onclick="approveValidation(${i}, '${v.id}')">
+                      ✅ Approve
+                    </button>
+                    <button class="btn btn-error btn-sm" onclick="rejectValidation(${i}, '${v.id}')">
+                      ❌
+                    </button>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        ` : `
+          <div class="card">
+            <div class="empty-state">
+              <div class="empty-icon">✅</div>
+              <p>No pending validations!</p>
+            </div>
+          </div>
+        `}
+
+        <!-- Validation History -->
+        <div class="section-header">
+          <h2>Validation History</h2>
+        </div>
+        <div class="card" style="padding:0; overflow:hidden">
+          ${approved.length > 0 ? approved.map(v => `
+            <div class="approved-item">
+              <div style="font-size:24px">✅</div>
+              <div class="approved-info">
+                <div class="approved-name">${v.taskName}</div>
+                <div class="approved-meta">${v.executorName} · ${v.percentage}% · ${v.notes || 'No notes'}</div>
+              </div>
+              <div class="approved-score">${v.percentage}%</div>
+            </div>
+          `).join('') : `
+            <div class="empty-state">
+              <div class="empty-icon">📜</div>
+              <p>No validation history yet</p>
+            </div>
+          `}
+        </div>
+      `;
+    });
+
+    function updateSlider(index, value) {
+      const pctEl = document.getElementById('pctValue-' + index);
+      const fillEl = document.getElementById('scoreFill-' + index);
+      const ptsEl = document.getElementById('ptsAwarded-' + index);
+
+      // Color based on value
+      let color = 'var(--error)';
+      if (value >= 80) color = 'var(--success)';
+      else if (value >= 50) color = 'var(--warning)';
+      else if (value >= 30) color = 'var(--accent)';
+
+      if (pctEl) {
+        pctEl.textContent = value + '%';
+        pctEl.style.color = color;
+      }
+      if (fillEl) fillEl.style.width = value + '%';
+      if (ptsEl) ptsEl.textContent = Math.round(15 * value / 100);
+    }
+
+    function approveValidation(index, id) {
+      const slider = document.getElementById('pctSlider-' + index);
+      const notes = document.getElementById('valNotes-' + index);
+      const pct = slider ? slider.value : 80;
+      showToast(`Task approved at ${pct}%! +${Math.round(15 * pct / 100)} pts`);
+    }
+
+    function rejectValidation(index, id) {
+      showToast('Task rejected', 'error');
+    }
+  </script>
+</body>
+</html>

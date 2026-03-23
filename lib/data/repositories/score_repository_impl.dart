@@ -25,19 +25,36 @@ class ScoreRepositoryImpl implements ScoreRepository {
       final doc = snapshot.docs.first;
       return ScoreModel.fromMap(doc.data(), doc.id).toEntity();
     } on FirebaseException catch (e) {
-      throw FirestoreException(message: e.message ?? 'Failed to get score', code: e.code);
+      throw FirestoreException(
+          message: e.message ?? 'Failed to get score', code: e.code);
+    }
+  }
+
+  @override
+  Future<List<ScoreEntity>> getScoresByUserId(String userId) async {
+    try {
+      final snapshot =
+          await _collection.where('userId', isEqualTo: userId).get();
+      return snapshot.docs
+          .map((doc) => ScoreModel.fromMap(doc.data(), doc.id).toEntity())
+          .toList();
+    } on FirebaseException catch (e) {
+      throw FirestoreException(
+          message: e.message ?? 'Failed to get scores by user', code: e.code);
     }
   }
 
   @override
   Future<List<ScoreEntity>> getScoresByPairId(String pairId) async {
     try {
-      final snapshot = await _collection.where('pairId', isEqualTo: pairId).get();
+      final snapshot =
+          await _collection.where('pairId', isEqualTo: pairId).get();
       return snapshot.docs
           .map((doc) => ScoreModel.fromMap(doc.data(), doc.id).toEntity())
           .toList();
     } on FirebaseException catch (e) {
-      throw FirestoreException(message: e.message ?? 'Failed to get scores', code: e.code);
+      throw FirestoreException(
+          message: e.message ?? 'Failed to get scores', code: e.code);
     }
   }
 
@@ -46,12 +63,15 @@ class ScoreRepositoryImpl implements ScoreRepository {
     try {
       final existing = await getScoreByUserId(score.userId, score.pairId);
       if (existing != null) {
-        await _collection.doc(existing.id).update(ScoreModel.fromEntity(score).toMap());
+        await _collection
+            .doc(existing.id)
+            .update(ScoreModel.fromEntity(score).toMap());
       } else {
         await _collection.add(ScoreModel.fromEntity(score).toMap());
       }
     } on FirebaseException catch (e) {
-      throw FirestoreException(message: e.message ?? 'Failed to upsert score', code: e.code);
+      throw FirestoreException(
+          message: e.message ?? 'Failed to upsert score', code: e.code);
     }
   }
 
@@ -77,16 +97,15 @@ class ScoreRepositoryImpl implements ScoreRepository {
         await _collection.add(ScoreModel.fromEntity(newScore).toMap());
       }
     } on FirebaseException catch (e) {
-      throw FirestoreException(message: e.message ?? 'Failed to add points', code: e.code);
+      throw FirestoreException(
+          message: e.message ?? 'Failed to add points', code: e.code);
     }
   }
 
   @override
   Stream<List<ScoreEntity>> watchScoresByPairId(String pairId) {
-    return _collection
-        .where('pairId', isEqualTo: pairId)
-        .snapshots()
-        .map((snapshot) => snapshot.docs
+    return _collection.where('pairId', isEqualTo: pairId).snapshots().map(
+        (snapshot) => snapshot.docs
             .map((doc) => ScoreModel.fromMap(doc.data(), doc.id).toEntity())
             .toList());
   }

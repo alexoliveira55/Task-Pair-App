@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Pair App - Pairs</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .pair-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+    }
+    .pair-avatars {
+      display: flex;
+      align-items: center;
+    }
+    .pair-avatars .avatar:nth-child(2) {
+      margin-left: -12px;
+      border: 2px solid white;
+    }
+    .pair-info { flex: 1; }
+    .pair-info .pair-names { font-size: 16px; font-weight: 700; }
+    .pair-info .pair-since { font-size: 12px; color: var(--text-secondary); }
+    .invite-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+    }
+    .invite-card .invite-info { flex: 1; }
+    .invite-card .invite-info .invite-name { font-size: 14px; font-weight: 600; }
+    .invite-card .invite-info .invite-email { font-size: 12px; color: var(--text-secondary); }
+    .invite-actions { display: flex; gap: 8px; }
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--divider);
+      font-size: 14px;
+    }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-label { color: var(--text-secondary); }
+    .detail-value { font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <div id="content"></div>
+  </div>
+
+  <!-- Invite Modal -->
+  <div class="modal-overlay" id="inviteModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Invite Partner</h2>
+        <button class="modal-close" onclick="closeModal('inviteModal')">&times;</button>
+      </div>
+      <form onsubmit="sendInvite(event)">
+        <div class="form-group">
+          <label for="inviteEmail">Partner's Email</label>
+          <input type="email" id="inviteEmail" class="form-control" placeholder="partner@email.com" required>
+        </div>
+        <div class="form-group">
+          <label for="inviteMessage">Message (optional)</label>
+          <textarea id="inviteMessage" class="form-control" placeholder="Hey, let's track tasks together!"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Send Invite</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      renderTopBar('Pairs', { backPage: 'dashboard.html' });
+      renderBottomNav('');
+
+      const pair = MockData.pair;
+      const invites = MockData.invites;
+
+      const content = document.getElementById('content');
+      content.innerHTML = `
+        <!-- Current Pair -->
+        <div class="section-header">
+          <h2>Your Pair</h2>
+        </div>
+        <div class="card" style="padding:0; overflow:hidden">
+          <div class="pair-card">
+            <div class="pair-avatars">
+              <div class="avatar avatar-primary">${getInitials(pair.user1Name)}</div>
+              <div class="avatar avatar-accent">${getInitials(pair.user2Name)}</div>
+            </div>
+            <div class="pair-info">
+              <div class="pair-names">${pair.user1Name} &amp; ${pair.user2Name}</div>
+              <div class="pair-since">Paired since ${formatDate(pair.createdAt)}</div>
+            </div>
+            ${statusBadge(pair.status)}
+          </div>
+          <div style="padding:0 16px 16px">
+            <div class="detail-row">
+              <span class="detail-label">Pair ID</span>
+              <span class="detail-value" style="font-size:12px; color:var(--text-secondary)">${pair.id}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Tasks Together</span>
+              <span class="detail-value">${MockData.tasks.length}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Rewards Unlocked</span>
+              <span class="detail-value">${MockData.rewards.filter(r => r.unlocked).length}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Combined Score</span>
+              <span class="detail-value" style="color:var(--primary)">${MockData.scores.user1.current + MockData.scores.user2.current}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pending Invites -->
+        <div class="section-header">
+          <h2>Pending Invites</h2>
+        </div>
+        ${invites.length > 0 ? `
+          <div class="card" style="padding:0; overflow:hidden">
+            ${invites.map(inv => `
+              <div class="invite-card">
+                <div class="avatar avatar-primary">${getInitials(inv.fromName)}</div>
+                <div class="invite-info">
+                  <div class="invite-name">${inv.fromName}</div>
+                  <div class="invite-email">${inv.fromEmail}</div>
+                </div>
+                <div class="invite-actions">
+                  <button class="btn btn-success btn-sm" onclick="acceptInvite('${inv.id}')">Accept</button>
+                  <button class="btn btn-error btn-sm" onclick="rejectInvite('${inv.id}')">Reject</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        ` : `
+          <div class="card">
+            <div class="empty-state">
+              <div class="empty-icon">📭</div>
+              <p>No pending invites</p>
+            </div>
+          </div>
+        `}
+
+        <!-- Score Comparison -->
+        <div class="section-header">
+          <h2>Score Comparison</h2>
+        </div>
+        <div class="card">
+          <div style="margin-bottom:16px">
+            <div style="display:flex; justify-content:space-between; margin-bottom:6px">
+              <span style="font-size:13px; font-weight:600">Alice</span>
+              <span style="font-size:13px; font-weight:700; color:var(--primary)">${MockData.scores.user1.current}</span>
+            </div>
+            <div class="progress-bar" style="height:16px">
+              <div class="progress-fill blue" style="width:${(MockData.scores.user1.current / MockData.scores.user1.goal) * 100}%; height:100%"></div>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:6px">
+              <span style="font-size:13px; font-weight:600">Bob</span>
+              <span style="font-size:13px; font-weight:700; color:var(--accent)">${MockData.scores.user2.current}</span>
+            </div>
+            <div class="progress-bar" style="height:16px">
+              <div class="progress-fill" style="width:${(MockData.scores.user2.current / MockData.scores.user2.goal) * 100}%; height:100%"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="padding:16px">
+          <button class="btn btn-outline btn-block" onclick="openModal('inviteModal')">
+            ➕ Invite New Partner
+          </button>
+        </div>
+      `;
+    });
+
+    function acceptInvite(id) {
+      showToast('Invite accepted!');
+      setTimeout(() => location.reload(), 500);
+    }
+
+    function rejectInvite(id) {
+      showToast('Invite rejected', 'error');
+      setTimeout(() => location.reload(), 500);
+    }
+
+    function sendInvite(e) {
+      e.preventDefault();
+      closeModal('inviteModal');
+      showToast('Invite sent!');
+    }
+  </script>
+</body>
+</html>

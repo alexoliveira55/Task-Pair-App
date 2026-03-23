@@ -6,6 +6,7 @@ import '../widgets/thermometer_widget.dart';
 import '../../../../features/auth/presentation/providers/auth_provider.dart';
 import '../../../../features/pairs/presentation/providers/pair_provider.dart';
 import '../../../../shared/widgets/loading_widget.dart';
+import '../../../../shared/widgets/responsive_layout.dart';
 
 class DashboardPage extends ConsumerWidget {
   const DashboardPage({super.key});
@@ -21,9 +22,14 @@ class DashboardPage extends ConsumerWidget {
         title: const Text('Dashboard'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.person_outline),
+            tooltip: 'Profile',
+            onPressed: () => context.push('/profile'),
+          ),
+          IconButton(
             icon: const Icon(Icons.logout),
-            onPressed: () =>
-                ref.read(authNotifierProvider.notifier).signOut(),
+            tooltip: 'Sign Out',
+            onPressed: () => ref.read(authNotifierProvider.notifier).signOut(),
           ),
         ],
       ),
@@ -34,7 +40,8 @@ class DashboardPage extends ConsumerWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.people_outline, size: 64, color: Colors.grey),
+                  const Icon(Icons.people_outline,
+                      size: 64, color: Colors.grey),
                   const SizedBox(height: 16),
                   const Text('No pair yet'),
                   const SizedBox(height: 16),
@@ -46,102 +53,114 @@ class DashboardPage extends ConsumerWidget {
               ),
             );
           }
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                currentUserAsync.when(
-                  data: (user) => Text(
-                    'Welcome back, ${user?.displayName ?? 'User'}!',
-                    style: Theme.of(context).textTheme.titleLarge,
+          return ResponsiveLayout(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  currentUserAsync.when(
+                    data: (user) => Text(
+                      'Welcome back, ${user?.displayName ?? 'User'}!',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    loading: () => const SizedBox.shrink(),
+                    error: (_, __) => const SizedBox.shrink(),
                   ),
-                  loading: () => const SizedBox.shrink(),
-                  error: (_, __) => const SizedBox.shrink(),
-                ),
-                const SizedBox(height: 16),
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      children: [
-                        Text(
-                          pair.name,
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        ),
-                        const SizedBox(height: 16),
-                        ThermometerWidget(
-                          progress: dashboardData.thermometerProgress,
-                          currentPoints: dashboardData.totalPoints,
-                          targetPoints: pair.scoreTarget,
-                          height: 180,
-                        ),
-                      ],
+                  const SizedBox(height: 16),
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          Text(
+                            pair.name,
+                            style: Theme.of(context).textTheme.headlineSmall,
+                          ),
+                          const SizedBox(height: 16),
+                          ThermometerWidget(
+                            progress: dashboardData.thermometerProgress,
+                            currentPoints: dashboardData.totalPoints,
+                            targetPoints: pair.scoreTarget,
+                            height: 180,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _StatCard(
-                        label: 'Total Tasks',
-                        value: '${dashboardData.totalTasks}',
-                        icon: Icons.task_alt,
-                        color: Colors.blue,
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _StatCard(
+                          label: 'Total Tasks',
+                          value: '${dashboardData.totalTasks}',
+                          icon: Icons.task_alt,
+                          color: Colors.blue,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _StatCard(
-                        label: "Today's Tasks",
-                        value: '${dashboardData.todayCount}',
-                        icon: Icons.today,
-                        color: Colors.orange,
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: _StatCard(
+                          label: "Today's Tasks",
+                          value: '${dashboardData.todayCount}',
+                          icon: Icons.today,
+                          color: Colors.orange,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _StatCard(
-                        label: 'Pending',
-                        value: '${dashboardData.pendingCount}',
-                        icon: Icons.pending_outlined,
-                        color: Colors.red,
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: _StatCard(
+                          label: 'Pending',
+                          value: '${dashboardData.pendingCount}',
+                          icon: Icons.pending_outlined,
+                          color: Colors.red,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Text('Quick Actions',
-                    style: Theme.of(context).textTheme.titleMedium),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    ActionChip(
-                      avatar: const Icon(Icons.add_task),
-                      label: const Text('New Task'),
-                      onPressed: () => context.push('/tasks/new'),
-                    ),
-                    ActionChip(
-                      avatar: const Icon(Icons.list),
-                      label: const Text('All Tasks'),
-                      onPressed: () => context.push('/tasks'),
-                    ),
-                    ActionChip(
-                      avatar: const Icon(Icons.star),
-                      label: const Text('Rewards'),
-                      onPressed: () => context.push('/rewards'),
-                    ),
-                    ActionChip(
-                      avatar: const Icon(Icons.bar_chart),
-                      label: const Text('Reports'),
-                      onPressed: () => context.push('/reports'),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Text('Quick Actions',
+                      style: Theme.of(context).textTheme.titleMedium),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      ActionChip(
+                        avatar: const Icon(Icons.add_task),
+                        label: const Text('New Task'),
+                        onPressed: () => context.push('/tasks/new'),
+                      ),
+                      ActionChip(
+                        avatar: const Icon(Icons.list),
+                        label: const Text('All Tasks'),
+                        onPressed: () => context.push('/tasks'),
+                      ),
+                      ActionChip(
+                        avatar: const Icon(Icons.star),
+                        label: const Text('Rewards'),
+                        onPressed: () => context.push('/rewards'),
+                      ),
+                      ActionChip(
+                        avatar: const Icon(Icons.bar_chart),
+                        label: const Text('Reports'),
+                        onPressed: () => context.push('/reports'),
+                      ),
+                      ActionChip(
+                        avatar: const Icon(Icons.people),
+                        label: const Text('Pair'),
+                        onPressed: () => context.push('/pair-management'),
+                      ),
+                      ActionChip(
+                        avatar: const Icon(Icons.person),
+                        label: const Text('Profile'),
+                        onPressed: () => context.push('/profile'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           );
         },

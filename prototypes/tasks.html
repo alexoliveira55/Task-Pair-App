@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Pair App - Tasks</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .task-item {
+      padding: 16px;
+      border-bottom: 1px solid var(--divider);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .task-item:hover { background: rgba(0,151,167,0.04); }
+    .task-item:last-child { border-bottom: none; }
+    .task-item-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .task-item-name {
+      font-size: 15px;
+      font-weight: 600;
+      flex: 1;
+    }
+    .task-item-meta {
+      display: flex;
+      gap: 8px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+    .task-detail {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--divider);
+      display: none;
+    }
+    .task-detail.open { display: block; }
+    .task-detail p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+    .task-detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .task-detail-item {
+      font-size: 12px;
+    }
+    .task-detail-item .label {
+      color: var(--text-secondary);
+    }
+    .task-detail-item .value {
+      font-weight: 600;
+      color: var(--text);
+    }
+    .task-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      padding: 12px 16px;
+      overflow-x: auto;
+    }
+    .filter-chip {
+      padding: 6px 14px;
+      border-radius: 16px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 2px solid var(--divider);
+      background: var(--surface);
+      color: var(--text-secondary);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: var(--transition);
+    }
+    .filter-chip.active {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      color: var(--primary-dark);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <div id="content"></div>
+  </div>
+
+  <!-- Create Task Modal -->
+  <div class="modal-overlay" id="createTaskModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>New Task</h2>
+        <button class="modal-close" onclick="closeModal('createTaskModal')">&times;</button>
+      </div>
+      <form onsubmit="createTask(event)">
+        <div class="form-group">
+          <label for="taskName">Task Name</label>
+          <input type="text" id="taskName" class="form-control" placeholder="e.g., Clean the kitchen" required>
+        </div>
+        <div class="form-group">
+          <label for="taskDesc">Description</label>
+          <textarea id="taskDesc" class="form-control" placeholder="What needs to be done?"></textarea>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
+          <div class="form-group">
+            <label for="taskRecurrence">Recurrence</label>
+            <select id="taskRecurrence" class="form-control">
+              <option value="once">Once</option>
+              <option value="daily">Daily</option>
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+              <option value="every_x_days">Every X Days</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="taskPoints">Points</label>
+            <input type="number" id="taskPoints" class="form-control" value="10" min="1" max="100">
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
+          <div class="form-group">
+            <label for="taskStartDate">Start Date</label>
+            <input type="date" id="taskStartDate" class="form-control" value="2026-03-23">
+          </div>
+          <div class="form-group">
+            <label for="taskEndDate">End Date</label>
+            <input type="date" id="taskEndDate" class="form-control">
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
+          <div class="form-group">
+            <label for="taskTime">Scheduled Time</label>
+            <input type="time" id="taskTime" class="form-control" value="09:00">
+          </div>
+          <div class="form-group">
+            <label for="taskDuration">Expected Duration (min)</label>
+            <input type="number" id="taskDuration" class="form-control" value="30" min="5" step="5">
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
+          <div class="form-group">
+            <label for="taskExecutor">Executor</label>
+            <select id="taskExecutor" class="form-control">
+              <option value="user1">Alice (Me)</option>
+              <option value="user2">Bob (Partner)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="taskRequester">Requester</label>
+            <select id="taskRequester" class="form-control">
+              <option value="user2">Bob (Partner)</option>
+              <option value="user1">Alice (Me)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="taskReward">Reward (optional)</label>
+          <input type="text" id="taskReward" class="form-control" placeholder="e.g., Movie night">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" style="margin-top:8px">Create Task</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    let currentFilter = 'all';
+
+    document.addEventListener('DOMContentLoaded', function() {
+      renderTopBar('Tasks', { backPage: 'dashboard.html' });
+      renderBottomNav('tasks.html');
+      renderTasks();
+    });
+
+    function renderTasks() {
+      const tasks = currentFilter === 'all'
+        ? MockData.tasks
+        : MockData.tasks.filter(t => t.status === currentFilter);
+
+      const content = document.getElementById('content');
+      content.innerHTML = `
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+          <button class="filter-chip ${currentFilter === 'all' ? 'active' : ''}" onclick="setFilter('all')">All</button>
+          <button class="filter-chip ${currentFilter === 'pending' ? 'active' : ''}" onclick="setFilter('pending')">Pending</button>
+          <button class="filter-chip ${currentFilter === 'in_progress' ? 'active' : ''}" onclick="setFilter('in_progress')">In Progress</button>
+          <button class="filter-chip ${currentFilter === 'pending_validation' ? 'active' : ''}" onclick="setFilter('pending_validation')">Validating</button>
+          <button class="filter-chip ${currentFilter === 'done' ? 'active' : ''}" onclick="setFilter('done')">Done</button>
+        </div>
+
+        <!-- Task Count -->
+        <div style="padding:0 16px; font-size:13px; color:var(--text-secondary)">
+          ${tasks.length} task${tasks.length !== 1 ? 's' : ''}
+        </div>
+
+        <!-- Task List -->
+        <div class="card" style="padding:0; overflow:hidden; margin-top:8px">
+          ${tasks.length > 0 ? tasks.map((t, i) => `
+            <div class="task-item" onclick="toggleDetail(${i})">
+              <div class="task-item-header">
+                <div class="task-item-name">${t.name}</div>
+                ${statusBadge(t.status)}
+              </div>
+              <div class="task-item-meta">
+                <span class="chip">${recurrenceLabel(t.recurrence)}</span>
+                <span class="chip" style="background:#FFF3E0; color:#E65100">⭐ ${t.points} pts</span>
+                <span class="chip" style="background:#F3E5F5; color:#7B1FA2">👤 ${userName(t.executorId).split(' ')[0]}</span>
+              </div>
+              <div class="task-detail" id="detail-${i}">
+                <p>${t.description}</p>
+                <div class="task-detail-grid">
+                  <div class="task-detail-item">
+                    <div class="label">Due Date</div>
+                    <div class="value">${formatDate(t.dueDate)}</div>
+                  </div>
+                  <div class="task-detail-item">
+                    <div class="label">Scheduled Time</div>
+                    <div class="value">${t.scheduledTime}</div>
+                  </div>
+                  <div class="task-detail-item">
+                    <div class="label">Duration</div>
+                    <div class="value">${t.expectedDuration} min</div>
+                  </div>
+                  <div class="task-detail-item">
+                    <div class="label">Requester</div>
+                    <div class="value">${userName(t.requesterId).split(' ')[0]}</div>
+                  </div>
+                  ${t.reward ? `
+                    <div class="task-detail-item" style="grid-column: span 2">
+                      <div class="label">Reward</div>
+                      <div class="value">🎁 ${t.reward}</div>
+                    </div>
+                  ` : ''}
+                </div>
+                <div class="task-actions">
+                  ${t.status === 'pending' ? `
+                    <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); navigateTo('execution.html')">▶️ Execute</button>
+                  ` : ''}
+                  <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); editTask('${t.id}')">✏️ Edit</button>
+                  <button class="btn btn-error btn-sm" onclick="event.stopPropagation(); deleteTask('${t.id}')">🗑️ Delete</button>
+                </div>
+              </div>
+            </div>
+          `).join('') : `
+            <div class="empty-state">
+              <div class="empty-icon">📋</div>
+              <p>No tasks found</p>
+            </div>
+          `}
+        </div>
+      `;
+    }
+
+    function setFilter(filter) {
+      currentFilter = filter;
+      renderTasks();
+      renderTopBar('Tasks', { backPage: 'dashboard.html' });
+      renderBottomNav('tasks.html');
+    }
+
+    function toggleDetail(index) {
+      const el = document.getElementById('detail-' + index);
+      if (el) el.classList.toggle('open');
+    }
+
+    function createTask(e) {
+      e.preventDefault();
+      closeModal('createTaskModal');
+      showToast('Task created successfully!');
+    }
+
+    function editTask(id) {
+      showToast('Edit task: ' + id, 'info');
+      openModal('createTaskModal');
+    }
+
+    function deleteTask(id) {
+      if (confirm('Delete this task?')) {
+        showToast('Task deleted', 'error');
+      }
+    }
+  </script>
+
+  <button class="fab" onclick="openModal('createTaskModal')">+</button>
+</body>
+</html>

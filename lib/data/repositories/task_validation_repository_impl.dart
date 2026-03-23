@@ -20,38 +20,57 @@ class TaskValidationRepositoryImpl implements TaskValidationRepository {
       if (!doc.exists || doc.data() == null) return null;
       return TaskValidationModel.fromMap(doc.data()!, doc.id).toEntity();
     } on FirebaseException catch (e) {
-      throw FirestoreException(message: e.message ?? 'Failed to get validation', code: e.code);
+      throw FirestoreException(
+          message: e.message ?? 'Failed to get validation', code: e.code);
     }
   }
 
   @override
-  Future<TaskValidationEntity?> getValidationByExecutionId(String executionId) async {
+  Future<TaskValidationEntity?> getValidationByExecutionId(
+      String executionId) async {
     try {
-      final snapshot = await _collection.where('executionId', isEqualTo: executionId).limit(1).get();
+      final snapshot = await _collection
+          .where('executionId', isEqualTo: executionId)
+          .limit(1)
+          .get();
       if (snapshot.docs.isEmpty) return null;
       final doc = snapshot.docs.first;
       return TaskValidationModel.fromMap(doc.data(), doc.id).toEntity();
     } on FirebaseException catch (e) {
-      throw FirestoreException(message: e.message ?? 'Failed to get validation', code: e.code);
+      throw FirestoreException(
+          message: e.message ?? 'Failed to get validation', code: e.code);
     }
   }
 
   @override
-  Future<TaskValidationEntity> createValidation(TaskValidationEntity validation) async {
+  Future<TaskValidationEntity> createValidation(
+      TaskValidationEntity validation) async {
     try {
-      final docRef = await _collection.add(TaskValidationModel.fromEntity(validation).toMap());
+      // Denormalize pairId from the occurrence for efficient queries
+      String? pairId;
+      final occDoc = await _firestore
+          .collection(FirestoreConstants.taskOccurrencesCollection)
+          .doc(validation.occurrenceId)
+          .get();
+      if (occDoc.exists && occDoc.data() != null) {
+        pairId = occDoc.data()!['pairId'] as String?;
+      }
+
+      final model = TaskValidationModel.fromEntity(validation, pairId: pairId);
+      final docRef = await _collection.add(model.toMap());
       return validation.copyWith(id: docRef.id);
     } on FirebaseException catch (e) {
-      throw FirestoreException(message: e.message ?? 'Failed to create validation', code: e.code);
+      throw FirestoreException(
+          message: e.message ?? 'Failed to create validation', code: e.code);
     }
   }
 
   @override
   Stream<List<TaskValidationEntity>> watchValidationsByPairId(String pairId) {
-    // Validations are linked via occurrence/execution, not directly to pairId.
-    // We query by occurrenceId which should be pre-fetched or filtered client-side.
-    return _collection.snapshots().map((snapshot) => snapshot.docs
-        .map((doc) => TaskValidationModel.fromMap(doc.data(), doc.id).toEntity())
-        .toList());
+    return _collection.where('pairId', isEqualTo: pairId).snapshots().map(
+        (snapshot) => snapshot.docs
+            .map((doc) =>
+                TaskValidationModel.fromMap(doc.data(), doc.id).toEntity())
+            .toList());
   }
 }

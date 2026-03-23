@@ -32,12 +32,16 @@ dependencies:
   # Utilities
   uuid: ^4.2.2
   intl: ^0.18.1
+  image_picker: ^1.0.7
 
   cupertino_icons: ^1.0.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  # Testing
+  mocktail: ^1.0.3
 
   # Code generation
   riverpod_generator: ^2.3.9

@@ -135,6 +135,44 @@ class PairNotifier extends StateNotifier<AsyncValue<void>> {
       state = AsyncValue.error(e, st);
     }
   }
+
+  Future<void> leavePair() async {
+    state = const AsyncValue.loading();
+    try {
+      final currentUser = _ref.read(currentUserEntityProvider).value;
+      if (currentUser == null) throw Exception('Not authenticated');
+
+      final pair = _ref.read(currentPairProvider).value;
+      if (pair == null) throw Exception('No pair found');
+
+      // Remove pair reference from user
+      await _ref
+          .read(userRepositoryProvider)
+          .updatePairId(currentUser.id, null);
+
+      // If the user is user1, try to set user2 as user1 and clear user2,
+      // otherwise just clear user2. If both slots become empty, delete pair.
+      final isUser1 = pair.user1Id == currentUser.id;
+      final partnerId = isUser1 ? pair.user2Id : pair.user1Id;
+
+      if (partnerId.isEmpty) {
+        // No partner, just delete the pair
+        await _pairRepository.deletePair(pair.id);
+      } else {
+        // Clear the leaving user's slot
+        if (isUser1) {
+          await _pairRepository
+              .updatePair(pair.copyWith(user1Id: partnerId, user2Id: ''));
+        } else {
+          await _pairRepository.updatePair(pair.copyWith(user2Id: ''));
+        }
+      }
+
+      state = const AsyncValue.data(null);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
+  }
 }
 
 final pairNotifierProvider =

@@ -9,6 +9,7 @@ class TaskValidationModel {
   final DateTime validatedAt;
   final bool isApproved;
   final String? feedback;
+  final String? pairId; // Denormalized for efficient Firestore queries
 
   const TaskValidationModel({
     required this.id,
@@ -18,6 +19,7 @@ class TaskValidationModel {
     required this.validatedAt,
     required this.isApproved,
     this.feedback,
+    this.pairId,
   });
 
   factory TaskValidationModel.fromMap(Map<String, dynamic> map, String id) {
@@ -29,10 +31,12 @@ class TaskValidationModel {
       validatedAt: (map['validatedAt'] as Timestamp).toDate(),
       isApproved: map['isApproved'] as bool,
       feedback: map['feedback'] as String?,
+      pairId: map['pairId'] as String?,
     );
   }
 
-  factory TaskValidationModel.fromEntity(TaskValidationEntity entity) {
+  factory TaskValidationModel.fromEntity(TaskValidationEntity entity,
+      {String? pairId}) {
     return TaskValidationModel(
       id: entity.id,
       executionId: entity.executionId,
@@ -41,6 +45,7 @@ class TaskValidationModel {
       validatedAt: entity.validatedAt,
       isApproved: entity.isApproved,
       feedback: entity.feedback,
+      pairId: pairId,
     );
   }
 
@@ -52,6 +57,7 @@ class TaskValidationModel {
       'validatedAt': Timestamp.fromDate(validatedAt),
       'isApproved': isApproved,
       'feedback': feedback,
+      if (pairId != null) 'pairId': pairId,
     };
   }
 

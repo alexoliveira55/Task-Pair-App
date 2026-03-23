@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Pair App - Prototypes</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .index-container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+    .index-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .index-header .logo { font-size: 64px; }
+    .index-header h1 { color: var(--primary); font-size: 28px; margin-top: 12px; }
+    .index-header p { color: var(--text-secondary); margin-top: 8px; }
+    .page-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 16px;
+    }
+    .page-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      padding: 24px 16px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      text-decoration: none;
+      color: var(--text);
+      transition: var(--transition);
+    }
+    .page-link:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-4px);
+      text-decoration: none;
+    }
+    .page-link .page-icon { font-size: 36px; }
+    .page-link .page-name { font-size: 14px; font-weight: 600; }
+    .page-link .page-desc { font-size: 11px; color: var(--text-secondary); text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="index-container">
+    <div class="index-header">
+      <div class="logo">👫</div>
+      <h1>Task Pair App</h1>
+      <p>Interactive HTML Prototypes</p>
+    </div>
+
+    <div class="page-grid">
+      <a href="login.html" class="page-link">
+        <span class="page-icon">🔐</span>
+        <span class="page-name">Login</span>
+        <span class="page-desc">Authentication</span>
+      </a>
+      <a href="register.html" class="page-link">
+        <span class="page-icon">📝</span>
+        <span class="page-name">Register</span>
+        <span class="page-desc">Create account</span>
+      </a>
+      <a href="dashboard.html" class="page-link">
+        <span class="page-icon">🏠</span>
+        <span class="page-name">Dashboard</span>
+        <span class="page-desc">Thermometer &amp; overview</span>
+      </a>
+      <a href="pairs.html" class="page-link">
+        <span class="page-icon">👥</span>
+        <span class="page-name">Pairs</span>
+        <span class="page-desc">Manage partnerships</span>
+      </a>
+      <a href="tasks.html" class="page-link">
+        <span class="page-icon">📋</span>
+        <span class="page-name">Tasks</span>
+        <span class="page-desc">List &amp; create tasks</span>
+      </a>
+      <a href="execution.html" class="page-link">
+        <span class="page-icon">▶️</span>
+        <span class="page-name">Execution</span>
+        <span class="page-desc">Execute tasks</span>
+      </a>
+      <a href="validation.html" class="page-link">
+        <span class="page-icon">✅</span>
+        <span class="page-name">Validation</span>
+        <span class="page-desc">Validate tasks</span>
+      </a>
+      <a href="rewards.html" class="page-link">
+        <span class="page-icon">🏆</span>
+        <span class="page-name">Rewards</span>
+        <span class="page-desc">Unlock rewards</span>
+      </a>
+      <a href="reports.html" class="page-link">
+        <span class="page-icon">📊</span>
+        <span class="page-name">Reports</span>
+        <span class="page-desc">Scores &amp; stats</span>
+      </a>
+    </div>
+  </div>
+</body>
+</html>

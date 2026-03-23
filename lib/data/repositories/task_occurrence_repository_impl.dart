@@ -20,56 +20,91 @@ class TaskOccurrenceRepositoryImpl implements TaskOccurrenceRepository {
       if (!doc.exists || doc.data() == null) return null;
       return TaskOccurrenceModel.fromMap(doc.data()!, doc.id).toEntity();
     } on FirebaseException catch (e) {
-      throw FirestoreException(message: e.message ?? 'Failed to get occurrence', code: e.code);
+      throw FirestoreException(
+          message: e.message ?? 'Failed to get occurrence', code: e.code);
     }
   }
 
   @override
-  Future<List<TaskOccurrenceEntity>> getOccurrencesByPairId(String pairId) async {
+  Future<List<TaskOccurrenceEntity>> getOccurrencesByPairId(
+      String pairId) async {
     try {
-      final snapshot = await _collection.where('pairId', isEqualTo: pairId).get();
+      final snapshot =
+          await _collection.where('pairId', isEqualTo: pairId).get();
       return snapshot.docs
-          .map((doc) => TaskOccurrenceModel.fromMap(doc.data(), doc.id).toEntity())
+          .map((doc) =>
+              TaskOccurrenceModel.fromMap(doc.data(), doc.id).toEntity())
           .toList();
     } on FirebaseException catch (e) {
-      throw FirestoreException(message: e.message ?? 'Failed to get occurrences', code: e.code);
+      throw FirestoreException(
+          message: e.message ?? 'Failed to get occurrences', code: e.code);
     }
   }
 
   @override
-  Future<List<TaskOccurrenceEntity>> getOccurrencesByTaskId(String taskId) async {
+  Future<List<TaskOccurrenceEntity>> getOccurrencesByTaskId(
+      String taskId) async {
     try {
-      final snapshot = await _collection.where('taskId', isEqualTo: taskId).get();
+      final snapshot =
+          await _collection.where('taskId', isEqualTo: taskId).get();
       return snapshot.docs
-          .map((doc) => TaskOccurrenceModel.fromMap(doc.data(), doc.id).toEntity())
+          .map((doc) =>
+              TaskOccurrenceModel.fromMap(doc.data(), doc.id).toEntity())
           .toList();
     } on FirebaseException catch (e) {
-      throw FirestoreException(message: e.message ?? 'Failed to get occurrences', code: e.code);
+      throw FirestoreException(
+          message: e.message ?? 'Failed to get occurrences', code: e.code);
     }
   }
 
   @override
-  Future<List<TaskOccurrenceEntity>> getPendingOccurrences(String pairId) async {
+  Future<List<TaskOccurrenceEntity>> getPendingOccurrences(
+      String pairId) async {
     try {
       final snapshot = await _collection
           .where('pairId', isEqualTo: pairId)
           .where('status', isEqualTo: 'pending')
           .get();
       return snapshot.docs
-          .map((doc) => TaskOccurrenceModel.fromMap(doc.data(), doc.id).toEntity())
+          .map((doc) =>
+              TaskOccurrenceModel.fromMap(doc.data(), doc.id).toEntity())
           .toList();
     } on FirebaseException catch (e) {
-      throw FirestoreException(message: e.message ?? 'Failed to get pending occurrences', code: e.code);
+      throw FirestoreException(
+          message: e.message ?? 'Failed to get pending occurrences',
+          code: e.code);
     }
   }
 
   @override
-  Future<TaskOccurrenceEntity> createOccurrence(TaskOccurrenceEntity occurrence) async {
+  Future<List<TaskOccurrenceEntity>> getOccurrencesByStatus(
+      String pairId, String status) async {
     try {
-      final docRef = await _collection.add(TaskOccurrenceModel.fromEntity(occurrence).toMap());
+      final snapshot = await _collection
+          .where('pairId', isEqualTo: pairId)
+          .where('status', isEqualTo: status)
+          .get();
+      return snapshot.docs
+          .map((doc) =>
+              TaskOccurrenceModel.fromMap(doc.data(), doc.id).toEntity())
+          .toList();
+    } on FirebaseException catch (e) {
+      throw FirestoreException(
+          message: e.message ?? 'Failed to get occurrences by status',
+          code: e.code);
+    }
+  }
+
+  @override
+  Future<TaskOccurrenceEntity> createOccurrence(
+      TaskOccurrenceEntity occurrence) async {
+    try {
+      final docRef = await _collection
+          .add(TaskOccurrenceModel.fromEntity(occurrence).toMap());
       return occurrence.copyWith(id: docRef.id);
     } on FirebaseException catch (e) {
-      throw FirestoreException(message: e.message ?? 'Failed to create occurrence', code: e.code);
+      throw FirestoreException(
+          message: e.message ?? 'Failed to create occurrence', code: e.code);
     }
   }
 
@@ -78,17 +113,17 @@ class TaskOccurrenceRepositoryImpl implements TaskOccurrenceRepository {
     try {
       await _collection.doc(id).update({'status': status});
     } on FirebaseException catch (e) {
-      throw FirestoreException(message: e.message ?? 'Failed to update occurrence', code: e.code);
+      throw FirestoreException(
+          message: e.message ?? 'Failed to update occurrence', code: e.code);
     }
   }
 
   @override
   Stream<List<TaskOccurrenceEntity>> watchOccurrencesByPairId(String pairId) {
-    return _collection
-        .where('pairId', isEqualTo: pairId)
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => TaskOccurrenceModel.fromMap(doc.data(), doc.id).toEntity())
+    return _collection.where('pairId', isEqualTo: pairId).snapshots().map(
+        (snapshot) => snapshot.docs
+            .map((doc) =>
+                TaskOccurrenceModel.fromMap(doc.data(), doc.id).toEntity())
             .toList());
   }
 }

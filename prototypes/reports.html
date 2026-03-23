@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Pair App - Reports</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .chart-container {
+      padding: 16px;
+    }
+    .chart-legend {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .dual-bar-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      height: 180px;
+      padding: 0;
+    }
+    .dual-bar-group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      height: 100%;
+    }
+    .dual-bars {
+      display: flex;
+      gap: 3px;
+      align-items: flex-end;
+      height: 150px;
+    }
+    .dual-bar {
+      width: 16px;
+      border-radius: 4px 4px 0 0;
+      transition: height 0.6s ease;
+      min-height: 2px;
+    }
+    .dual-bar.user1 { background: var(--primary); }
+    .dual-bar.user2 { background: var(--accent); }
+    .dual-bar-label {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 6px;
+    }
+    .period-selector {
+      display: flex;
+      gap: 8px;
+      padding: 12px 16px;
+    }
+    .period-btn {
+      flex: 1;
+      padding: 8px;
+      border: 2px solid var(--divider);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      text-align: center;
+      transition: var(--transition);
+    }
+    .period-btn.active {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      color: var(--primary-dark);
+    }
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--divider);
+      font-size: 14px;
+    }
+    .stat-row:last-child { border-bottom: none; }
+    .stat-row .label { color: var(--text-secondary); }
+    .stat-row .value { font-weight: 700; }
+    .donut-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 24px;
+      padding: 16px;
+    }
+    .donut {
+      position: relative;
+      width: 120px;
+      height: 120px;
+    }
+    .donut svg {
+      width: 120px;
+      height: 120px;
+      transform: rotate(-90deg);
+    }
+    .donut circle {
+      fill: none;
+      stroke-width: 12;
+    }
+    .donut .bg { stroke: var(--thermo-bg); }
+    .donut .fill { stroke-linecap: round; transition: stroke-dashoffset 0.8s ease; }
+    .donut-label {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+    .donut-label .donut-value {
+      font-size: 24px;
+      font-weight: 700;
+    }
+    .donut-label .donut-text {
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+    .donut-legend {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .donut-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+    }
+    .donut-legend-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <div id="content"></div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    let currentPeriod = 'week';
+
+    document.addEventListener('DOMContentLoaded', function() {
+      renderTopBar('Reports', { backPage: 'dashboard.html' });
+      renderBottomNav('');
+      render();
+    });
+
+    function render() {
+      const scores = MockData.scores;
+      const weekly = MockData.weeklyScores;
+      const tasks = MockData.tasks;
+      const maxScore = Math.max(...weekly.flatMap(w => [w.user1, w.user2]));
+
+      // Task stats
+      const totalTasks = tasks.length;
+      const doneTasks = tasks.filter(t => t.status === 'done').length;
+      const pendingTasks = tasks.filter(t => t.status === 'pending').length;
+      const inProgressTasks = tasks.filter(t => t.status === 'in_progress').length;
+      const validationTasks = tasks.filter(t => t.status === 'pending_validation').length;
+      const completionRate = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
+
+      // Donut data
+      const circumference = 2 * Math.PI * 48;
+      const doneOffset = circumference - (circumference * doneTasks / totalTasks);
+      const pendingOffset = circumference - (circumference * pendingTasks / totalTasks);
+
+      const content = document.getElementById('content');
+      content.innerHTML = `
+        <!-- Period Selector -->
+        <div class="period-selector">
+          <button class="period-btn ${currentPeriod === 'week' ? 'active' : ''}" onclick="setPeriod('week')">This Week</button>
+          <button class="period-btn ${currentPeriod === 'month' ? 'active' : ''}" onclick="setPeriod('month')">This Month</button>
+          <button class="period-btn ${currentPeriod === 'all' ? 'active' : ''}" onclick="setPeriod('all')">All Time</button>
+        </div>
+
+        <!-- Score Overview -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value">${scores.user1.current}</div>
+            <div class="stat-label">Alice's Score</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" style="color:var(--accent)">${scores.user2.current}</div>
+            <div class="stat-label">Bob's Score</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" style="color:var(--success)">${completionRate}%</div>
+            <div class="stat-label">Completion Rate</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">${scores.user1.current + scores.user2.current}</div>
+            <div class="stat-label">Combined Score</div>
+          </div>
+        </div>
+
+        <!-- Score Chart -->
+        <div class="card">
+          <div class="card-header">
+            <h2>📊 Score by Week</h2>
+          </div>
+          <div class="chart-legend">
+            <div class="legend-item">
+              <div class="legend-dot" style="background:var(--primary)"></div>
+              Alice
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:var(--accent)"></div>
+              Bob
+            </div>
+          </div>
+          <div class="chart-container">
+            <div class="dual-bar-chart">
+              ${weekly.map(w => `
+                <div class="dual-bar-group">
+                  <div class="dual-bars">
+                    <div class="dual-bar user1" style="height:${(w.user1 / maxScore) * 140}px" title="Alice: ${w.user1}"></div>
+                    <div class="dual-bar user2" style="height:${(w.user2 / maxScore) * 140}px" title="Bob: ${w.user2}"></div>
+                  </div>
+                  <div class="dual-bar-label">${w.week}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+
+        <!-- Task Completion Donut -->
+        <div class="card">
+          <div class="card-header">
+            <h2>📋 Task Completion</h2>
+          </div>
+          <div class="donut-container">
+            <div class="donut">
+              <svg viewBox="0 0 120 120">
+                <circle class="bg" cx="60" cy="60" r="48"/>
+                <circle class="fill" cx="60" cy="60" r="48"
+                  stroke="var(--success)"
+                  stroke-dasharray="${circumference}"
+                  stroke-dashoffset="${doneOffset}"/>
+              </svg>
+              <div class="donut-label">
+                <div class="donut-value">${completionRate}%</div>
+                <div class="donut-text">Complete</div>
+              </div>
+            </div>
+            <div class="donut-legend">
+              <div class="donut-legend-item">
+                <div class="donut-legend-color" style="background:var(--success)"></div>
+                Done (${doneTasks})
+              </div>
+              <div class="donut-legend-item">
+                <div class="donut-legend-color" style="background:var(--warning)"></div>
+                Pending (${pendingTasks})
+              </div>
+              <div class="donut-legend-item">
+                <div class="donut-legend-color" style="background:var(--primary)"></div>
+                In Progress (${inProgressTasks})
+              </div>
+              <div class="donut-legend-item">
+                <div class="donut-legend-color" style="background:var(--accent)"></div>
+                Validating (${validationTasks})
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Score by Pair -->
+        <div class="card">
+          <div class="card-header">
+            <h2>👥 Score by Pair</h2>
+          </div>
+          <div style="margin-bottom:16px">
+            <div style="display:flex; justify-content:space-between; margin-bottom:6px">
+              <span style="font-size:13px; font-weight:600">Alice</span>
+              <span style="font-size:13px; font-weight:700; color:var(--primary)">${scores.user1.current} pts</span>
+            </div>
+            <div class="progress-bar" style="height:16px">
+              <div class="progress-fill blue" style="width:${(scores.user1.current / scores.user1.goal) * 100}%"></div>
+            </div>
+          </div>
+          <div style="margin-bottom:16px">
+            <div style="display:flex; justify-content:space-between; margin-bottom:6px">
+              <span style="font-size:13px; font-weight:600">Bob</span>
+              <span style="font-size:13px; font-weight:700; color:var(--accent)">${scores.user2.current} pts</span>
+            </div>
+            <div class="progress-bar" style="height:16px">
+              <div class="progress-fill" style="width:${(scores.user2.current / scores.user2.goal) * 100}%"></div>
+            </div>
+          </div>
+
+          <!-- Thermometer comparison -->
+          <div style="display:flex; justify-content:center; gap:40px; padding:16px 0">
+            <div style="text-align:center">
+              <div class="thermometer">
+                <div class="thermometer-vertical" style="height:140px; width:36px">
+                  <div class="thermometer-fill" style="height:${(scores.user1.current / scores.user1.goal) * 100}%; background:linear-gradient(180deg, var(--primary-light) 0%, var(--primary) 100%)"></div>
+                </div>
+                <div class="thermometer-bulb" style="width:48px; height:48px; font-size:12px; background:var(--primary)">${scores.user1.current}</div>
+              </div>
+              <div style="font-size:12px; font-weight:600; margin-top:4px">Alice</div>
+            </div>
+            <div style="text-align:center">
+              <div class="thermometer">
+                <div class="thermometer-vertical" style="height:140px; width:36px">
+                  <div class="thermometer-fill" style="height:${(scores.user2.current / scores.user2.goal) * 100}%"></div>
+                </div>
+                <div class="thermometer-bulb" style="width:48px; height:48px; font-size:12px">${scores.user2.current}</div>
+              </div>
+              <div style="font-size:12px; font-weight:600; margin-top:4px">Bob</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detailed Stats -->
+        <div class="card">
+          <div class="card-header">
+            <h2>📈 Statistics</h2>
+          </div>
+          <div class="stat-row">
+            <span class="label">Total Tasks</span>
+            <span class="value">${totalTasks}</span>
+          </div>
+          <div class="stat-row">
+            <span class="label">Completed Tasks</span>
+            <span class="value" style="color:var(--success)">${doneTasks}</span>
+          </div>
+          <div class="stat-row">
+            <span class="label">Pending Tasks</span>
+            <span class="value" style="color:var(--warning)">${pendingTasks}</span>
+          </div>
+          <div class="stat-row">
+            <span class="label">In Progress</span>
+            <span class="value" style="color:var(--primary)">${inProgressTasks}</span>
+          </div>
+          <div class="stat-row">
+            <span class="label">Awaiting Validation</span>
+            <span class="value" style="color:var(--accent)">${validationTasks}</span>
+          </div>
+          <div class="stat-row">
+            <span class="label">Alice Weekly Average</span>
+            <span class="value">${scores.user1.weeklyAvg} pts</span>
+          </div>
+          <div class="stat-row">
+            <span class="label">Bob Weekly Average</span>
+            <span class="value">${scores.user2.weeklyAvg} pts</span>
+          </div>
+          <div class="stat-row">
+            <span class="label">Rewards Unlocked</span>
+            <span class="value" style="color:var(--success)">${MockData.rewards.filter(r => r.unlocked).length} / ${MockData.rewards.length}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function setPeriod(period) {
+      currentPeriod = period;
+      render();
+      renderTopBar('Reports', { backPage: 'dashboard.html' });
+      renderBottomNav('');
+    }
+  </script>
+</body>
+</html>

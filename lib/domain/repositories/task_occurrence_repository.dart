@@ -5,7 +5,10 @@ abstract class TaskOccurrenceRepository {
   Future<List<TaskOccurrenceEntity>> getOccurrencesByPairId(String pairId);
   Future<List<TaskOccurrenceEntity>> getOccurrencesByTaskId(String taskId);
   Future<List<TaskOccurrenceEntity>> getPendingOccurrences(String pairId);
-  Future<TaskOccurrenceEntity> createOccurrence(TaskOccurrenceEntity occurrence);
+  Future<List<TaskOccurrenceEntity>> getOccurrencesByStatus(
+      String pairId, String status);
+  Future<TaskOccurrenceEntity> createOccurrence(
+      TaskOccurrenceEntity occurrence);
   Future<void> updateOccurrenceStatus(String id, String status);
   Stream<List<TaskOccurrenceEntity>> watchOccurrencesByPairId(String pairId);
 }

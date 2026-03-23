@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Pair App - Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .thermo-row {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      padding: 16px;
+    }
+    .thermo-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .thermo-name {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    .thermo-score-text {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+    .pair-banner {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: 20px;
+      margin: 0 16px;
+      border-radius: var(--radius);
+      text-align: center;
+      margin-top: 12px;
+    }
+    .pair-banner h2 { font-size: 18px; margin-bottom: 4px; }
+    .pair-banner p { font-size: 13px; opacity: 0.85; }
+    .today-task {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-bottom: 1px solid var(--divider);
+    }
+    .today-task:last-child { border-bottom: none; }
+    .today-task .task-time {
+      font-size: 12px;
+      color: var(--text-secondary);
+      min-width: 44px;
+      text-align: center;
+    }
+    .today-task .task-info { flex: 1; }
+    .today-task .task-info .task-name { font-size: 14px; font-weight: 600; }
+    .today-task .task-info .task-meta { font-size: 12px; color: var(--text-secondary); }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <div id="content"></div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      renderTopBar('Dashboard', {
+        actions: `<a href="pairs.html" class="action-btn">👥</a>
+                  <a href="reports.html" class="action-btn">📊</a>`
+      });
+      renderBottomNav('dashboard.html');
+
+      const scores = MockData.scores;
+      const pendingValidations = MockData.validations.filter(v => v.status === 'pending').length;
+      const todayTasks = MockData.tasks.filter(t =>
+        t.dueDate === '2026-03-23' && t.executorId === 'user1'
+      );
+      const completedToday = todayTasks.filter(t => t.status === 'done' || t.status === 'pending_validation').length;
+
+      const content = document.getElementById('content');
+      content.innerHTML = `
+        <!-- Pair Banner -->
+        <div class="pair-banner">
+          <h2>👫 Alice &amp; Bob</h2>
+          <p>Active pair since Jan 15, 2026</p>
+        </div>
+
+        <!-- Thermometers -->
+        <div class="card" style="margin-top:12px">
+          <div class="card-header">
+            <h2>🌡️ Score Progress</h2>
+            <a href="reports.html" style="font-size:13px">Details →</a>
+          </div>
+          <div class="thermo-row">
+            <div class="thermo-wrapper">
+              <div class="thermo-name">Alice</div>
+              <div class="thermometer">
+                <div class="thermometer-vertical">
+                  <div class="thermometer-fill" style="height: ${(scores.user1.current / scores.user1.goal) * 100}%"></div>
+                </div>
+                <div class="thermometer-bulb">${scores.user1.current}</div>
+              </div>
+              <div class="thermo-score-text">${scores.user1.current} / ${scores.user1.goal}</div>
+            </div>
+            <div class="thermo-wrapper">
+              <div class="thermo-name">Bob</div>
+              <div class="thermometer">
+                <div class="thermometer-vertical">
+                  <div class="thermometer-fill" style="height: ${(scores.user2.current / scores.user2.goal) * 100}%"></div>
+                </div>
+                <div class="thermometer-bulb">${scores.user2.current}</div>
+              </div>
+              <div class="thermo-score-text">${scores.user2.current} / ${scores.user2.goal}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value">${completedToday}/${todayTasks.length}</div>
+            <div class="stat-label">Today's Tasks</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" style="color:var(--accent)">${pendingValidations}</div>
+            <div class="stat-label">Pending Validations</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">${scores.user1.weeklyAvg}</div>
+            <div class="stat-label">Your Weekly Avg</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" style="color:var(--success)">${MockData.rewards.filter(r => r.unlocked).length}</div>
+            <div class="stat-label">Rewards Unlocked</div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="section-header">
+          <h2>Quick Actions</h2>
+        </div>
+        <div class="quick-actions">
+          <a href="tasks.html" class="quick-action">
+            <span class="qa-icon">📋</span>
+            <span class="qa-label">Tasks</span>
+          </a>
+          <a href="execution.html" class="quick-action">
+            <span class="qa-icon">▶️</span>
+            <span class="qa-label">Execute</span>
+          </a>
+          <a href="validation.html" class="quick-action">
+            <span class="qa-icon">✅</span>
+            <span class="qa-label">Validate</span>
+          </a>
+          <a href="pairs.html" class="quick-action">
+            <span class="qa-icon">👥</span>
+            <span class="qa-label">Pairs</span>
+          </a>
+          <a href="rewards.html" class="quick-action">
+            <span class="qa-icon">🏆</span>
+            <span class="qa-label">Rewards</span>
+          </a>
+        </div>
+
+        <!-- Today's Tasks -->
+        <div class="section-header">
+          <h2>Today's Tasks</h2>
+          <a href="tasks.html">See all →</a>
+        </div>
+        <div class="card" style="padding:0; overflow:hidden">
+          ${todayTasks.length > 0 ? todayTasks.map(t => `
+            <div class="today-task">
+              <div class="task-time">${t.scheduledTime}</div>
+              <div class="task-info">
+                <div class="task-name">${t.name}</div>
+                <div class="task-meta">${recurrenceLabel(t.recurrence)} · ${t.points} pts</div>
+              </div>
+              ${statusBadge(t.status)}
+            </div>
+          `).join('') : `
+            <div class="empty-state">
+              <p>No tasks for today! 🎉</p>
+            </div>
+          `}
+        </div>
+
+        <!-- Score Summary -->
+        <div class="section-header">
+          <h2>This Week</h2>
+          <a href="reports.html">Reports →</a>
+        </div>
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
+            <div>
+              <div style="font-size:13px; color:var(--text-secondary)">Alice's Score</div>
+              <div style="font-size:20px; font-weight:700; color:var(--primary)">${scores.user1.current}</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:13px; color:var(--text-secondary)">Bob's Score</div>
+              <div style="font-size:20px; font-weight:700; color:var(--accent)">${scores.user2.current}</div>
+            </div>
+          </div>
+          <div style="margin-bottom:8px">
+            <div style="font-size:12px; color:var(--text-secondary); margin-bottom:4px">Alice</div>
+            <div class="progress-bar"><div class="progress-fill blue" style="width:${(scores.user1.current / scores.user1.goal) * 100}%"></div></div>
+          </div>
+          <div>
+            <div style="font-size:12px; color:var(--text-secondary); margin-bottom:4px">Bob</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:${(scores.user2.current / scores.user2.goal) * 100}%"></div></div>
+          </div>
+        </div>
+      `;
+    });
+  </script>
+</body>
+</html>

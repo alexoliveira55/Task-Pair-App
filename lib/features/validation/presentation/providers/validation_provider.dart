@@ -1,8 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:task_pair_app/data/repositories/task_validation_repository_impl.dart';
-import 'package:task_pair_app/domain/repositories/score_repository.dart';
 import 'package:task_pair_app/features/auth/presentation/providers/auth_provider.dart';
-import 'package:task_pair_app/features/execution/presentation/providers/execution_provider.dart';
 import 'package:task_pair_app/features/recurrence/presentation/providers/recurrence_provider.dart';
 import 'package:task_pair_app/features/score/presentation/providers/score_provider.dart';
 import 'package:task_pair_app/features/validation/use_cases/validate_task_use_case.dart';
@@ -15,7 +13,6 @@ final validateTaskUseCaseProvider = Provider((ref) {
   return ValidateTaskUseCase(
     ref.watch(taskValidationRepositoryProvider),
     ref.watch(taskOccurrenceRepositoryProvider),
-    ref.watch(taskExecutionRepositoryProvider as ProviderListenable<ScoreRepository>),
     ref.watch(scoreRepositoryProvider),
   );
 });
