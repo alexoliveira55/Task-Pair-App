@@ -198,6 +198,43 @@ Pontuação = PontosDaTarefa * -1
 
 ---
 
+# 4.7 Internacionalização (i18n)
+
+## RF200 – Detecção Automática de Idioma
+
+O sistema deve detectar automaticamente o idioma do sistema operacional e configurar a interface:
+
+* `pt` ou `pt_BR` → Português (Brasil)
+* `en` ou variantes → Inglês
+* Outros idiomas → Português (Brasil) como fallback
+
+## RF201 – Troca Manual de Idioma
+
+Usuário deve poder trocar o idioma manualmente via configurações:
+
+* Opções: Padrão do Sistema, Português (Brasil), Inglês
+* Troca imediata sem reiniciar o app
+* Preferência persistida em SharedPreferences
+
+## RF202 – Textos Localizados
+
+Todas as strings de interface devem estar em arquivos ARB:
+
+* Labels, botões, mensagens, títulos, status
+* Strings com parâmetros (interpolação)
+* Pluralização conforme idioma
+
+## RF203 – Formatação Regional
+
+Datas e números formatados conforme convenção do idioma:
+
+| Aspecto | pt_BR | en |
+|---------|-------|----|
+| Data | dd/MM/yyyy | MM/dd/yyyy |
+| Hora | HH:mm | h:mm AM/PM |
+
+---
+
 # 5. Acompanhamento (Termômetros)
 
 ## RF060 – Termômetro por Tarefa
@@ -432,6 +469,14 @@ Include:
 * Metas
 * Histórico
 * Relatórios
+
+## Fase 7 – Internacionalização
+
+* Detecção automática de idioma do sistema
+* Suporte a Português (Brasil) e Inglês
+* Seletor manual de idioma
+* Migração de strings hardcoded para ARB
+* Formatação regional de datas e números
 
 ---
 

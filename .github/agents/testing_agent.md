@@ -28,6 +28,7 @@ You are the Testing Agent.
 - Data layer (repositories, datasources): 80%+
 - Recurrence engine: 95%+
 - Score calculator: 95%+
+- i18n (locale detection, ARB completeness): 90%+
 
 ## Output artifacts
 - `test/unit/**_test.dart`

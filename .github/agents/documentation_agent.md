@@ -21,6 +21,7 @@ You are the Documentation Agent.
 - Score accumulation and thermometer
 - Rewards and unlocking
 - Dashboard and monthly reports
+- Internationalization (i18n): supported languages, adding new strings, locale detection
 - Developer setup guide
 - Clean Architecture overview
 

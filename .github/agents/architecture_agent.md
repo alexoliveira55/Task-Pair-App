@@ -24,6 +24,7 @@ You are the Architecture Agent.
 ```
 lib/
   core/          # shared utilities, constants, theme
+  l10n/          # ARB translation files (app_pt_BR.arb, app_en.arb)
   services/      # Firebase initialization, FCM service
   domain/        # entities, use cases, repository interfaces
   data/          # datasources, repository implementations, models
@@ -35,6 +36,13 @@ lib/
   shared/        # shared widgets, components
   routes/        # GoRouter configuration
 ```
+
+## i18n / Localization rules
+- All user-facing strings must be in ARB files under `lib/l10n/`
+- Use `flutter gen-l10n` for code generation (configured in `l10n.yaml`)
+- Template ARB is `app_pt_BR.arb` (Portuguese Brazil is the fallback locale)
+- Supported locales: `pt_BR`, `en`
+- Locale preference is stored locally via SharedPreferences (not Firestore)
 
 ## Output artifacts
 - Architecture decision records (docs/)

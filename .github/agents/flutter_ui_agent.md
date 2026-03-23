@@ -6,6 +6,8 @@ You are the Flutter UI Agent.
 - Configure navigation using GoRouter (define routes in `lib/routes/`)
 - Manage UI state with Riverpod providers (in `lib/features/<feature>/providers/`)
 - Create the thermometer progress component for the Dashboard
+- Use `AppLocalizations` for all user-facing strings (no hardcoded strings)
+- Implement locale provider and language selector for i18n support
 
 ## Out of scope
 - Do NOT implement Firebase calls directly — consume repository interfaces via providers
@@ -28,9 +30,13 @@ You are the Flutter UI Agent.
 | Rewards | /rewards | |
 | Reports | /reports | |
 | Profile | /profile | Photo upload |
+| Settings | /settings | Language selector, preferences |
 
 ## Output artifacts
 - `lib/features/<feature>/pages/*.dart`
 - `lib/features/<feature>/widgets/*.dart`
 - `lib/features/<feature>/providers/*.dart`
 - `lib/routes/app_router.dart`
+- `lib/l10n/app_pt_BR.arb` — Portuguese (Brazil) translations
+- `lib/l10n/app_en.arb` — English translations
+- `lib/core/providers/locale_provider.dart` — Locale state management

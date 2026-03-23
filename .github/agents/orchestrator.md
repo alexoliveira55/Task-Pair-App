@@ -48,3 +48,4 @@ You are the Orchestrator Agent responsible for coordinating the development of t
 8. Score system (RF100–RF119)
 9. Rewards and thermometer (RF120–RF139)
 10. Dashboard and reports (RF140–RF159)
+11. Internationalization / i18n (RF200–RF204)
