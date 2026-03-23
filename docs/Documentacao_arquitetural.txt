@@ -1,0 +1,450 @@
+## Documentação inicial com descrição de estrutura e arquitetura ##
+
+1. **Arquitetura completa do App Flutter**
+2. **Prompt inicial para colocar no repositório (Copilot Agent)**
+
+Tudo voltado para **Flutter + Firebase + desenvolvimento orientado por agentes**.
+
+---
+
+# 📄 Arquitetura do App Flutter – Task Pair App
+
+## 1. Arquitetura Geral
+
+O app deve seguir **Clean Architecture + Feature First + Firebase Services**.
+
+## 1.1 Camadas da Arquitetura
+
+```text
+Presentation (UI)
+    |
+State Management
+    |
+Domain (Entities + UseCases)
+    |
+Data (Repositories)
+    |
+Data Sources (Firebase)
+```
+
+### Descrição das Camadas
+
+| Camada       | Responsabilidade               |
+| ------------ | ------------------------------ |
+| Presentation | Telas, Widgets                 |
+| State        | Gerenciamento de estado        |
+| Domain       | Regras de negócio              |
+| Data         | Implementação dos repositórios |
+| Data Sources | Firebase Auth / Firestore      |
+
+---
+
+# 2. Estrutura de Pastas
+
+```text
+lib/
+│
+├── core/
+│   ├── constants/
+│   ├── theme/
+│   ├── utils/
+│   ├── extensions/
+│   └── errors/
+│
+├── services/
+│   ├── firebase/
+│   │   ├── firebase_auth_service.dart
+│   │   ├── firestore_service.dart
+│   │   └── storage_service.dart
+│
+├── domain/
+│   ├── entities/
+│   ├── repositories/
+│   └── usecases/
+│
+├── data/
+│   ├── models/
+│   ├── repositories/
+│   └── datasources/
+│
+├── features/
+│   ├── auth/
+│   ├── pairs/
+│   ├── tasks/
+│   ├── occurrences/
+│   ├── execution/
+│   ├── validation/
+│   ├── dashboard/
+│   ├── rewards/
+│   └── reports/
+│
+├── shared/
+│   ├── widgets/
+│   └── providers/
+│
+├── routes/
+│
+└── main.dart
+```
+
+---
+
+# 3. Módulos do Sistema
+
+| Módulo      | Descrição           |
+| ----------- | ------------------- |
+| Auth        | Login e cadastro    |
+| Pairs       | Formação de pares   |
+| Tasks       | Cadastro de tarefas |
+| Occurrences | Recorrências        |
+| Execution   | Iniciar/finalizar   |
+| Validation  | Validação           |
+| Score       | Pontuação           |
+| Dashboard   | Termômetros         |
+| Rewards     | Recompensas         |
+| Reports     | Relatórios          |
+
+---
+
+# 4. Entidades de Domínio
+
+## 4.1 User
+
+```dart
+class User {
+  String id;
+  String name;
+  String email;
+  String photoUrl;
+}
+```
+
+## 4.2 Pair
+
+```dart
+class Pair {
+  String id;
+  String userA;
+  String userB;
+  DateTime createdAt;
+}
+```
+
+## 4.3 Task
+
+```dart
+class Task {
+  String id;
+  String pairId;
+  String name;
+  String description;
+  String recurrence;
+  DateTime startDate;
+  DateTime endDate;
+  String scheduledTime;
+  int expectedDuration;
+  int points;
+  String reward;
+  String executorId;
+  String requesterId;
+}
+```
+
+## 4.4 TaskOccurrence
+
+```dart
+class TaskOccurrence {
+  String id;
+  String taskId;
+  DateTime date;
+  String status;
+  String executionId;
+}
+```
+
+## 4.5 TaskExecution
+
+```dart
+class TaskExecution {
+  String id;
+  String occurrenceId;
+  DateTime startTime;
+  DateTime endTime;
+}
+```
+
+## 4.6 TaskValidation
+
+```dart
+class TaskValidation {
+  String id;
+  String executionId;
+  int percent;
+  String note;
+  int score;
+}
+```
+
+---
+
+# 5. Repositórios (Domain Layer)
+
+Interfaces:
+
+```dart
+abstract class AuthRepository {}
+abstract class PairRepository {}
+abstract class TaskRepository {}
+abstract class OccurrenceRepository {}
+abstract class ExecutionRepository {}
+abstract class ValidationRepository {}
+abstract class ScoreRepository {}
+abstract class RewardRepository {}
+```
+
+---
+
+# 6. Serviços Firebase
+
+## Serviços necessários
+
+| Serviço             | Função   |
+| ------------------- | -------- |
+| FirebaseAuthService | Login    |
+| FirestoreService    | Banco    |
+| StorageService      | Arquivos |
+| NotificationService | Push     |
+
+---
+
+# 7. State Management
+
+Usar **Riverpod**.
+
+Providers principais:
+
+```text
+authProvider
+pairProvider
+taskProvider
+occurrenceProvider
+executionProvider
+validationProvider
+scoreProvider
+dashboardProvider
+rewardProvider
+```
+
+---
+
+# 8. Navegação
+
+Usar **GoRouter**.
+
+Rotas:
+
+```text
+/login
+/register
+/dashboard
+/pairs
+/pair/invites
+/tasks
+/tasks/create
+/tasks/details
+/execution
+/validation
+/rewards
+/reports
+/profile
+```
+
+---
+
+# 9. Fluxo de Dados Firebase
+
+```text
+User -> Pair -> Task -> Occurrence -> Execution -> Validation -> Score -> Reward
+```
+
+---
+
+# 10. Estrutura Firestore
+
+```text
+users
+pairs
+pairInvites
+tasks
+taskOccurrences
+taskExecutions
+taskValidations
+scores
+rewards
+```
+
+---
+
+# 11. Regras Importantes do Sistema
+
+## Regras principais
+
+1. Toda tarefa pertence a um par
+2. Toda tarefa tem recorrência
+3. Recorrência gera ocorrências
+4. Ocorrência gera execução
+5. Execução gera validação
+6. Validação gera pontuação
+7. Pontuação gera progresso
+8. Progresso gera recompensa
+
+---
+
+# 12. Prompt Inicial para Colocar no Repositório (Muito Importante)
+
+Este é o prompt que você deve colocar no **README.md** ou como **copilot-instructions.md**.
+
+## PROMPT INICIAL – AGENTE COPILOT
+
+```text
+You are responsible for developing a Flutter multi-platform application (web, desktop and mobile) using Firebase as backend.
+
+Project: Task Pair App
+A task tracking and scoring app for pairs of users (couples, parent-child, leader-collaborator).
+
+Main concepts:
+- Users
+- Pairs
+- Tasks
+- Task Recurrence
+- Task Occurrences
+- Task Execution
+- Task Validation
+- Score System
+- Rewards
+- Dashboard with thermometer progress
+
+Tech stack:
+- Flutter
+- Riverpod
+- GoRouter
+- Firebase Authentication
+- Cloud Firestore
+- Firebase Storage
+- Firebase Cloud Messaging
+
+Architecture:
+- Clean Architecture
+- Feature First
+- Repository Pattern
+- Services for Firebase
+- Domain Entities
+- Use Cases
+- State Management with Riverpod
+
+Main modules:
+- Authentication
+- Pair Management
+- Task Management
+- Recurrence Engine
+- Task Execution
+- Task Validation
+- Score System
+- Dashboard
+- Rewards
+- Reports
+
+Firestore collections:
+- users
+- pairs
+- pairInvites
+- tasks
+- taskOccurrences
+- taskExecutions
+- taskValidations
+- scores
+- rewards
+
+Business rules:
+- Tasks belong to a pair
+- Tasks have recurrence
+- Recurrence generates occurrences
+- Occurrence can be executed
+- Execution must be validated
+- Validation generates score
+- Score updates thermometer progress
+- Rewards are unlocked when score target is reached
+
+The project must be organized in:
+- core
+- services
+- domain
+- data
+- features
+- shared
+- routes
+
+Always create models, repositories, services and providers for each module.
+Follow clean architecture and scalable folder structure.
+```
+
+---
+
+# 13. Prompt para Criar o Projeto Flutter Inicial
+
+Use no Copilot quando criar o repo:
+
+```text
+Create the initial structure of a Flutter multi-platform project using clean architecture.
+
+Include:
+- Riverpod
+- GoRouter
+- Firebase initialization
+- Folder structure for features
+- Authentication module
+- Firestore base service
+- Base repository pattern
+- Theme and shared widgets
+- Responsive layout for web, desktop and mobile
+
+The project must be scalable and modular.
+```
+
+---
+
+# 14. Ordem Recomendada de Desenvolvimento
+
+Siga essa ordem no projeto:
+
+| Ordem | Módulo         |
+| ----- | -------------- |
+| 1     | Estrutura base |
+| 2     | Firebase       |
+| 3     | Auth           |
+| 4     | Pairs          |
+| 5     | Tasks          |
+| 6     | Recurrence     |
+| 7     | Occurrences    |
+| 8     | Execution      |
+| 9     | Validation     |
+| 10    | Score          |
+| 11    | Dashboard      |
+| 12    | Rewards        |
+| 13    | Reports        |
+
+---
+
+# 15. Próximo Passo Recomendado
+
+O próximo passo ideal agora seria:
+
+## Criar:
+
+* Modelo de Recorrência (engine)
+* Modelo de Pontuação acumulada
+* Regras de termômetro
+* Regras de recompensa
+* Modelo de notificações
+
+Se quiser, posso desenhar essa parte agora, que é o **coração do sistema**.
