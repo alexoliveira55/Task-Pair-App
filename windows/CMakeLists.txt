@@ -39,9 +39,13 @@ add_definitions(-DUNICODE -D_UNICODE)
 # of modifying this function.
 function(APPLY_STANDARD_SETTINGS TARGET)
   target_compile_features(${TARGET} PUBLIC cxx_std_17)
-  target_compile_options(${TARGET} PRIVATE /W4 /WX /wd"4100")
+  # /wd4996 suppresses C4996 (deprecated declarations) raised by the Firebase
+  # C++ SDK (strncpy in variant.h, User::UpdateEmail, etc.).
+  target_compile_options(${TARGET} PRIVATE /W4 /WX /wd"4100" /wd"4996")
   target_compile_options(${TARGET} PRIVATE /EHsc)
-  target_compile_definitions(${TARGET} PRIVATE "_HAS_EXCEPTIONS=0")
+  # NOTE: _HAS_EXCEPTIONS=0 was removed because it causes LNK2019 unresolved
+  # symbols (std::bad_cast, etc.) when linking against Firebase prebuilt libs
+  # that require STL exception support.
   target_compile_definitions(${TARGET} PRIVATE "$<$<CONFIG:Debug>:_DEBUG>")
 endfunction()
 
