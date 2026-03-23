@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/execution_provider.dart';
@@ -28,13 +29,14 @@ class _TaskExecutionPageState extends ConsumerState<TaskExecutionPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final occurrencesAsync = ref.watch(occurrencesProvider);
     final executionState = ref.watch(executionNotifierProvider);
 
     ref.listen(executionNotifierProvider, (_, next) {
       if (next.hasValue && !next.isLoading) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Task executed successfully!')),
+          SnackBar(content: Text(l10n.executionCompleted)),
         );
         context.pop();
       }
@@ -46,14 +48,13 @@ class _TaskExecutionPageState extends ConsumerState<TaskExecutionPage> {
     });
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Execute Task')),
+      appBar: AppBar(title: Text(l10n.execute)),
       body: occurrencesAsync.when(
         data: (occurrences) {
-          final occurrence = occurrences
-              .where((o) => o.id == widget.occurrenceId)
-              .firstOrNull;
+          final occurrence =
+              occurrences.where((o) => o.id == widget.occurrenceId).firstOrNull;
           if (occurrence == null) {
-            return const Center(child: Text('Occurrence not found'));
+            return Center(child: Text(l10n.noData));
           }
           if (occurrence.status != AppConstants.pendingStatus) {
             return Center(
@@ -62,7 +63,7 @@ class _TaskExecutionPageState extends ConsumerState<TaskExecutionPage> {
                 children: [
                   const Icon(Icons.check_circle, color: Colors.green, size: 64),
                   const SizedBox(height: 16),
-                  Text('This task is already ${occurrence.status}'),
+                  Text(l10n.taskAlreadyStatus(occurrence.status)),
                 ],
               ),
             );
@@ -79,7 +80,8 @@ class _TaskExecutionPageState extends ConsumerState<TaskExecutionPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('Task ID: ${occurrence.taskId}'),
-                        Text('Due: ${occurrence.dueDate.toString().split(' ').first}'),
+                        Text(
+                            '${l10n.dueDate}: ${occurrence.dueDate.toString().split(' ').first}'),
                         Text('Status: ${occurrence.status}'),
                       ],
                     ),
@@ -87,14 +89,14 @@ class _TaskExecutionPageState extends ConsumerState<TaskExecutionPage> {
                 ),
                 const SizedBox(height: 16),
                 AppTextField(
-                  label: 'Notes (optional)',
+                  label: l10n.executionNotes,
                   controller: _notesController,
                   maxLines: 4,
-                  hint: 'Add any notes about the execution...',
+                  hint: l10n.executionNotesHint,
                 ),
                 const SizedBox(height: 24),
                 AppButton(
-                  label: 'Mark as Done',
+                  label: l10n.finishExecution,
                   icon: Icons.check,
                   isLoading: executionState.isLoading,
                   onPressed: () async {

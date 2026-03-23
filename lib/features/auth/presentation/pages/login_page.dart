@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/auth_provider.dart';
@@ -35,6 +36,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final authState = ref.watch(authNotifierProvider);
     final isLoading = authState.isLoading;
 
@@ -63,7 +65,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Task Pair App',
+                    l10n.appName,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.bold,
@@ -71,7 +73,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Sign in to continue',
+                    l10n.signInToContinue,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Colors.grey,
@@ -79,19 +81,19 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   ),
                   const SizedBox(height: 40),
                   AppTextField(
-                    label: 'Email',
+                    label: l10n.email,
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     prefixIcon: Icons.email_outlined,
                     validator: (v) {
-                      if (v == null || v.isEmpty) return 'Email is required';
-                      if (!v.contains('@')) return 'Enter a valid email';
+                      if (v == null || v.isEmpty) return l10n.requiredField;
+                      if (!v.contains('@')) return l10n.enterValidEmail;
                       return null;
                     },
                   ),
                   const SizedBox(height: 16),
                   AppTextField(
-                    label: 'Password',
+                    label: l10n.password,
                     controller: _passwordController,
                     obscureText: _obscurePassword,
                     prefixIcon: Icons.lock_outlined,
@@ -105,21 +107,21 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           setState(() => _obscurePassword = !_obscurePassword),
                     ),
                     validator: (v) {
-                      if (v == null || v.isEmpty) return 'Password is required';
-                      if (v.length < 6) return 'Minimum 6 characters';
+                      if (v == null || v.isEmpty) return l10n.requiredField;
+                      if (v.length < 6) return l10n.minimumCharacters;
                       return null;
                     },
                   ),
                   const SizedBox(height: 24),
                   AppButton(
-                    label: 'Sign In',
+                    label: l10n.login,
                     onPressed: isLoading ? null : _signIn,
                     isLoading: isLoading,
                   ),
                   const SizedBox(height: 16),
                   TextButton(
                     onPressed: () => context.push('/register'),
-                    child: const Text("Don't have an account? Register"),
+                    child: Text(l10n.noAccount),
                   ),
                 ],
               ),

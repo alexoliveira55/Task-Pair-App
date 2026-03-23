@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/task_provider.dart';
@@ -47,6 +48,7 @@ class _TaskFormPageState extends ConsumerState<TaskFormPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final taskState = ref.watch(taskNotifierProvider);
 
     // Load existing task data when editing
@@ -65,7 +67,7 @@ class _TaskFormPageState extends ConsumerState<TaskFormPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(isEditing ? 'Edit Task' : 'New Task'),
+        title: Text(isEditing ? l10n.editTask : l10n.newTask),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -75,30 +77,30 @@ class _TaskFormPageState extends ConsumerState<TaskFormPage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppTextField(
-                label: 'Task Title',
+                label: l10n.taskTitle,
                 controller: _titleController,
                 validator: (v) =>
-                    v == null || v.isEmpty ? 'Title is required' : null,
+                    v == null || v.isEmpty ? l10n.requiredField : null,
               ),
               const SizedBox(height: 16),
               AppTextField(
-                label: 'Description (optional)',
+                label: l10n.taskDescription,
                 controller: _descriptionController,
                 maxLines: 3,
               ),
               const SizedBox(height: 16),
               AppTextField(
-                label: 'Points',
+                label: l10n.points,
                 controller: _pointsController,
                 keyboardType: TextInputType.number,
                 validator: (v) {
-                  if (v == null || v.isEmpty) return 'Points required';
-                  if (int.tryParse(v) == null) return 'Enter a valid number';
+                  if (v == null || v.isEmpty) return l10n.requiredField;
+                  if (int.tryParse(v) == null) return l10n.invalidNumber;
                   return null;
                 },
               ),
               const SizedBox(height: 16),
-              Text('Recurrence',
+              Text(l10n.recurrence,
                   style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
@@ -114,9 +116,15 @@ class _TaskFormPageState extends ConsumerState<TaskFormPage> {
                   AppConstants.monthlyRecurrence,
                   AppConstants.onceRecurrence,
                 ].map((type) {
+                  final labels = {
+                    AppConstants.dailyRecurrence: l10n.daily,
+                    AppConstants.weeklyRecurrence: l10n.weekly,
+                    AppConstants.monthlyRecurrence: l10n.monthly,
+                    AppConstants.onceRecurrence: l10n.once,
+                  };
                   return DropdownMenuItem(
                     value: type,
-                    child: Text(type.toUpperCase()),
+                    child: Text(labels[type] ?? type),
                   );
                 }).toList(),
                 onChanged: (v) {
@@ -125,15 +133,20 @@ class _TaskFormPageState extends ConsumerState<TaskFormPage> {
               ),
               if (_recurrenceType == AppConstants.weeklyRecurrence) ...[
                 const SizedBox(height: 16),
-                Text('Days of Week',
+                Text(l10n.daysOfWeek,
                     style: Theme.of(context).textTheme.titleSmall),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 8,
-                  children: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-                      .asMap()
-                      .entries
-                      .map((e) {
+                  children: [
+                    l10n.mon,
+                    l10n.tue,
+                    l10n.wed,
+                    l10n.thu,
+                    l10n.fri,
+                    l10n.sat,
+                    l10n.sun
+                  ].asMap().entries.map((e) {
                     final dayNum = e.key + 1;
                     final isSelected = _selectedDays.contains(dayNum);
                     return FilterChip(
@@ -154,7 +167,7 @@ class _TaskFormPageState extends ConsumerState<TaskFormPage> {
               ],
               const SizedBox(height: 24),
               AppButton(
-                label: isEditing ? 'Update Task' : 'Create Task',
+                label: isEditing ? l10n.updateTask : l10n.createTask,
                 isLoading: taskState.isLoading,
                 onPressed: () async {
                   if (!_formKey.currentState!.validate()) return;

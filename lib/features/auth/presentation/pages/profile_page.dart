@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -43,14 +44,16 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
       await ref.read(authNotifierProvider.notifier).updateProfilePhoto(bytes);
 
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Photo updated!')),
+          SnackBar(content: Text(l10n.photoUpdated)),
         );
       }
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to update photo: $e')),
+          SnackBar(content: Text('${l10n.failedToUpdatePhoto}: $e')),
         );
       }
     } finally {
@@ -66,26 +69,28 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
     if (mounted) {
       setState(() => _isEditingName = false);
+      final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Display name updated!')),
+        SnackBar(content: Text(l10n.displayNameUpdated)),
       );
     }
   }
 
   Future<void> _confirmSignOut() async {
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Sign Out'),
-        content: const Text('Are you sure you want to sign out?'),
+        title: Text(l10n.logout),
+        content: Text(l10n.confirmSignOut),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Sign Out'),
+            child: Text(l10n.logout),
           ),
         ],
       ),
@@ -97,15 +102,16 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final userAsync = ref.watch(currentUserEntityProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Profile')),
+      appBar: AppBar(title: Text(l10n.profile)),
       body: ResponsiveLayout(
         child: userAsync.when(
           data: (user) {
             if (user == null) {
-              return const Center(child: Text('Not signed in'));
+              return Center(child: Text(l10n.notSignedIn));
             }
 
             if (!_isEditingName) {
@@ -158,7 +164,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   Card(
                     child: ListTile(
                       leading: const Icon(Icons.email_outlined),
-                      title: const Text('Email'),
+                      title: Text(l10n.email),
                       subtitle: Text(user.email),
                     ),
                   ),
@@ -173,7 +179,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                               children: [
                                 Expanded(
                                   child: AppTextField(
-                                    label: 'Display Name',
+                                    label: l10n.displayName,
                                     controller: _nameController,
                                   ),
                                 ),
@@ -193,8 +199,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                           )
                         : ListTile(
                             leading: const Icon(Icons.person_outlined),
-                            title: const Text('Display Name'),
-                            subtitle: Text(user.displayName ?? 'Not set'),
+                            title: Text(l10n.displayName),
+                            subtitle: Text(user.displayName ?? l10n.notSet),
                             trailing: IconButton(
                               icon: const Icon(Icons.edit),
                               onPressed: () =>
@@ -208,9 +214,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   Card(
                     child: ListTile(
                       leading: const Icon(Icons.people_outlined),
-                      title: const Text('Pair'),
-                      subtitle:
-                          Text(user.pairId != null ? 'Paired' : 'No pair yet'),
+                      title: Text(l10n.pairs),
+                      subtitle: Text(
+                          user.pairId != null ? l10n.paired : l10n.noPairYet),
                       trailing: user.pairId != null
                           ? IconButton(
                               icon: const Icon(Icons.arrow_forward),
@@ -225,15 +231,26 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   Card(
                     child: ListTile(
                       leading: const Icon(Icons.calendar_today),
-                      title: const Text('Member Since'),
+                      title: Text(l10n.memberSince),
                       subtitle:
                           Text(user.createdAt.toString().split(' ').first),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Settings
+                  Card(
+                    child: ListTile(
+                      leading: const Icon(Icons.settings),
+                      title: Text(l10n.settings),
+                      trailing: const Icon(Icons.arrow_forward),
+                      onTap: () => context.push('/settings'),
                     ),
                   ),
 
                   const SizedBox(height: 32),
                   AppButton(
-                    label: 'Sign Out',
+                    label: l10n.logout,
                     icon: Icons.logout,
                     color: Colors.red,
                     onPressed: _confirmSignOut,

@@ -3,34 +3,33 @@ import 'package:intl/intl.dart';
 class AppDateUtils {
   AppDateUtils._();
 
-  static final DateFormat _dateFormat = DateFormat('MMM dd, yyyy');
-  static final DateFormat _timeFormat = DateFormat('hh:mm a');
-  static final DateFormat _dateTimeFormat = DateFormat('MMM dd, yyyy hh:mm a');
-  static final DateFormat _shortDateFormat = DateFormat('MM/dd/yyyy');
+  static String formatDate(DateTime date, [String? locale]) =>
+      DateFormat.yMMMd(locale).format(date);
 
-  static String formatDate(DateTime date) => _dateFormat.format(date);
+  static String formatTime(DateTime date, [String? locale]) =>
+      DateFormat.jm(locale).format(date);
 
-  static String formatTime(DateTime date) => _timeFormat.format(date);
+  static String formatDateTime(DateTime date, [String? locale]) =>
+      DateFormat.yMMMd(locale).add_jm().format(date);
 
-  static String formatDateTime(DateTime date) => _dateTimeFormat.format(date);
+  static String formatShortDate(DateTime date, [String? locale]) =>
+      DateFormat.yMd(locale).format(date);
 
-  static String formatShortDate(DateTime date) => _shortDateFormat.format(date);
-
-  static String formatRelative(DateTime date) {
+  static String formatRelative(DateTime date, [String? locale]) {
     final now = DateTime.now();
     final diff = now.difference(date);
 
     if (diff.inDays == 0) {
       if (diff.inHours == 0) {
-        return '${diff.inMinutes}m ago';
+        return '${diff.inMinutes}m';
       }
-      return '${diff.inHours}h ago';
+      return '${diff.inHours}h';
     } else if (diff.inDays == 1) {
-      return 'Yesterday';
+      return DateFormat.E(locale).format(date);
     } else if (diff.inDays < 7) {
-      return '${diff.inDays}d ago';
+      return '${diff.inDays}d';
     }
-    return formatDate(date);
+    return formatDate(date, locale);
   }
 
   static List<DateTime> getWeekDays(DateTime weekStart) {

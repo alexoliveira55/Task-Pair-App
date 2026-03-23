@@ -4,23 +4,25 @@ import '../providers/score_provider.dart';
 import '../../../../features/auth/presentation/providers/auth_provider.dart';
 import '../../../../features/pairs/presentation/providers/pair_provider.dart';
 import '../../../../shared/widgets/loading_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ScorePage extends ConsumerWidget {
   const ScorePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final scoresAsync = ref.watch(scoresProvider);
     final pairAsync = ref.watch(currentPairProvider);
     final currentUserAsync = ref.watch(currentUserEntityProvider);
     final thermometerProgress = ref.watch(thermometerProgressProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Scores')),
+      appBar: AppBar(title: Text(l10n.score)),
       body: pairAsync.when(
         data: (pair) {
           if (pair == null) {
-            return const Center(child: Text('No pair found'));
+            return Center(child: Text(l10n.noPairs));
           }
           return scoresAsync.when(
             data: (scores) {
@@ -41,7 +43,7 @@ class ScorePage extends ConsumerWidget {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              '$totalPoints / ${pair.scoreTarget} points',
+                              l10n.pointsOf(totalPoints, pair.scoreTarget),
                               style: Theme.of(context)
                                   .textTheme
                                   .titleLarge
@@ -54,14 +56,14 @@ class ScorePage extends ConsumerWidget {
                               borderRadius: BorderRadius.circular(6),
                             ),
                             const SizedBox(height: 8),
-                            Text(
-                                '${(thermometerProgress * 100).toStringAsFixed(1)}% complete'),
+                            Text(l10n.scoreProgress((thermometerProgress * 100)
+                                .toStringAsFixed(1))),
                           ],
                         ),
                       ),
                     ),
                     const SizedBox(height: 16),
-                    Text('Individual Scores',
+                    Text(l10n.individualScores,
                         style: Theme.of(context).textTheme.titleMedium),
                     const SizedBox(height: 8),
                     ...scores.map((score) {
@@ -70,9 +72,8 @@ class ScorePage extends ConsumerWidget {
                       return Card(
                         child: ListTile(
                           leading: CircleAvatar(
-                            backgroundColor: isCurrentUser
-                                ? Colors.deepPurple
-                                : Colors.grey,
+                            backgroundColor:
+                                isCurrentUser ? Colors.deepPurple : Colors.grey,
                             child: Text(
                               '${score.totalPoints}',
                               style: const TextStyle(
@@ -82,15 +83,15 @@ class ScorePage extends ConsumerWidget {
                             ),
                           ),
                           title: Text(
-                            isCurrentUser ? 'You' : 'Partner',
+                            isCurrentUser ? l10n.you : l10n.partner,
                             style: isCurrentUser
                                 ? const TextStyle(fontWeight: FontWeight.bold)
                                 : null,
                           ),
-                          subtitle: Text(
-                              'Period: ${score.periodPoints} pts | Total: ${score.totalPoints} pts'),
+                          subtitle: Text(l10n.periodAndTotal(
+                              score.periodPoints, score.totalPoints)),
                           trailing: isCurrentUser
-                              ? const Chip(label: Text('You'))
+                              ? Chip(label: Text(l10n.you))
                               : null,
                         ),
                       );

@@ -15,6 +15,8 @@ import '../features/validation/presentation/pages/validation_page.dart';
 import '../features/score/presentation/pages/score_page.dart';
 import '../features/rewards/presentation/pages/rewards_page.dart';
 import '../features/reports/presentation/pages/reports_page.dart';
+import '../features/settings/presentation/pages/settings_page.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
@@ -97,6 +99,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/profile',
         builder: (context, state) => const ProfilePage(),
       ),
+      GoRoute(
+        path: '/settings',
+        builder: (context, state) => const SettingsPage(),
+      ),
     ],
     errorBuilder: (context, state) => Scaffold(
       body: Center(
@@ -105,11 +111,11 @@ final routerProvider = Provider<GoRouter>((ref) {
           children: [
             const Icon(Icons.error_outline, size: 64, color: Colors.red),
             const SizedBox(height: 16),
-            Text('Page not found: ${state.error}'),
+            Text(AppLocalizations.of(context).pageNotFound),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () => context.go('/dashboard'),
-              child: const Text('Go Home'),
+              child: Text(AppLocalizations.of(context).goHome),
             ),
           ],
         ),

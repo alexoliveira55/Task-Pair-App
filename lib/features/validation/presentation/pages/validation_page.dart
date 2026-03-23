@@ -10,6 +10,7 @@ import '../../../../shared/widgets/app_text_field.dart';
 import '../../../../shared/widgets/loading_widget.dart';
 import '../../../../shared/widgets/app_error_widget.dart';
 import '../../../../core/constants/app_constants.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ValidationPage extends ConsumerStatefulWidget {
   final String executionId;
@@ -51,6 +52,7 @@ class _ValidationPageState extends ConsumerState<ValidationPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final validationState = ref.watch(validationNotifierProvider);
     // Watch the stream of executions to find this execution's data
     final executionAsync = ref.watch(executionByIdProvider(widget.executionId));
@@ -59,7 +61,7 @@ class _ValidationPageState extends ConsumerState<ValidationPage> {
     ref.listen(validationNotifierProvider, (_, next) {
       if (next.hasValue && !next.isLoading) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Validation submitted!')),
+          SnackBar(content: Text(l10n.validationCompleted)),
         );
         context.pop();
       }
@@ -71,16 +73,16 @@ class _ValidationPageState extends ConsumerState<ValidationPage> {
     });
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Validate Task')),
+      appBar: AppBar(title: Text(l10n.validate)),
       body: executionAsync.when(
         data: (execution) {
           if (execution == null) {
-            return const Center(child: Text('Execution not found'));
+            return Center(child: Text(l10n.noData));
           }
           return pairAsync.when(
             data: (pair) {
               if (pair == null) {
-                return const Center(child: Text('No pair found'));
+                return Center(child: Text(l10n.noPairs));
               }
               // Look up the task to get its points value
               final tasksAsync = ref.watch(tasksProvider);
@@ -100,20 +102,22 @@ class _ValidationPageState extends ConsumerState<ValidationPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Review Task Execution',
+                              l10n.reviewExecution,
                               style: Theme.of(context).textTheme.titleMedium,
                             ),
                             const SizedBox(height: 8),
                             if (task != null) ...[
-                              Text('Task: ${task.title}'),
-                              Text('Points: ${task.points}'),
+                              Text(l10n.taskLabel(task.title)),
+                              Text(l10n.pointsLabel(task.points)),
                             ],
-                            Text(
-                                'Executed at: ${execution.executedAt.toString().split('.').first}'),
+                            Text(l10n.executedAtDate(execution.executedAt
+                                .toString()
+                                .split('.')
+                                .first)),
                             if (execution.notes != null &&
                                 execution.notes!.isNotEmpty) ...[
                               const SizedBox(height: 8),
-                              Text('Notes: ${execution.notes}'),
+                              Text(l10n.notesLabel(execution.notes!)),
                             ],
                           ],
                         ),
@@ -121,14 +125,14 @@ class _ValidationPageState extends ConsumerState<ValidationPage> {
                     ),
                     const SizedBox(height: 16),
                     AppTextField(
-                      label: 'Feedback (optional)',
+                      label: l10n.feedbackOptional,
                       controller: _feedbackController,
                       maxLines: 4,
-                      hint: 'Add any feedback...',
+                      hint: l10n.feedbackHint,
                     ),
                     const SizedBox(height: 24),
                     AppButton(
-                      label: 'Approve',
+                      label: l10n.approve,
                       icon: Icons.check_circle,
                       color: Colors.green,
                       isLoading: validationState.isLoading,
@@ -142,7 +146,7 @@ class _ValidationPageState extends ConsumerState<ValidationPage> {
                     ),
                     const SizedBox(height: 12),
                     AppButton(
-                      label: 'Reject',
+                      label: l10n.reject,
                       icon: Icons.cancel,
                       color: Colors.red,
                       isOutlined: true,

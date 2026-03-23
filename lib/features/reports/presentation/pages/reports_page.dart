@@ -2,28 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/reports_provider.dart';
 import '../../../../shared/themes/app_colors.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ReportsPage extends ConsumerWidget {
   const ReportsPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final reportData = ref.watch(reportsProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Reports')),
+      appBar: AppBar(title: Text(l10n.reports)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('Overview', style: Theme.of(context).textTheme.titleMedium),
+            Text(l10n.statistics,
+                style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
             Row(
               children: [
                 Expanded(
                   child: _ReportCard(
-                    label: 'Completed',
+                    label: l10n.statusExecuted,
                     value: '${reportData.completedOccurrences.length}',
                     color: Colors.green,
                     icon: Icons.check_circle,
@@ -32,7 +35,7 @@ class ReportsPage extends ConsumerWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: _ReportCard(
-                    label: 'Pending',
+                    label: l10n.statusPending,
                     value: '${reportData.pendingOccurrences.length}',
                     color: Colors.orange,
                     icon: Icons.pending,
@@ -41,7 +44,7 @@ class ReportsPage extends ConsumerWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: _ReportCard(
-                    label: 'Missed',
+                    label: l10n.statusMissed,
                     value: '${reportData.missedOccurrences.length}',
                     color: Colors.red,
                     icon: Icons.cancel,
@@ -56,7 +59,7 @@ class ReportsPage extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Completion Rate',
+                    Text(l10n.completionRate,
                         style: Theme.of(context).textTheme.titleSmall),
                     const SizedBox(height: 8),
                     LinearProgressIndicator(
@@ -75,16 +78,17 @@ class ReportsPage extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 16),
-            Text('Scores', style: Theme.of(context).textTheme.titleMedium),
+            Text(l10n.score, style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
             ...reportData.scores.map((score) => Card(
                   child: ListTile(
                     leading: const CircleAvatar(
                       child: Icon(Icons.person),
                     ),
-                    title: Text('User: ${score.userId.substring(0, 6)}...'),
-                    subtitle: Text(
-                        'Total: ${score.totalPoints} pts | Period: ${score.periodPoints} pts'),
+                    title: Text(
+                        l10n.userLabel('${score.userId.substring(0, 6)}...')),
+                    subtitle: Text(l10n.totalAndPeriodPoints(
+                        score.totalPoints, score.periodPoints)),
                     trailing: Text(
                       '+${score.totalPoints}',
                       style: const TextStyle(
@@ -95,8 +99,7 @@ class ReportsPage extends ConsumerWidget {
                     ),
                   ),
                 )),
-            if (reportData.scores.isEmpty)
-              const Center(child: Text('No score data yet')),
+            if (reportData.scores.isEmpty) Center(child: Text(l10n.noData)),
           ],
         ),
       ),

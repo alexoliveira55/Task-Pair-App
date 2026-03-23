@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/dashboard_provider.dart';
@@ -16,19 +17,25 @@ class DashboardPage extends ConsumerWidget {
     final dashboardData = ref.watch(dashboardDataProvider);
     final currentUserAsync = ref.watch(currentUserEntityProvider);
     final pairAsync = ref.watch(currentPairProvider);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dashboard'),
+        title: Text(l10n.dashboard),
         actions: [
           IconButton(
+            icon: const Icon(Icons.settings),
+            tooltip: l10n.settings,
+            onPressed: () => context.push('/settings'),
+          ),
+          IconButton(
             icon: const Icon(Icons.person_outline),
-            tooltip: 'Profile',
+            tooltip: l10n.profile,
             onPressed: () => context.push('/profile'),
           ),
           IconButton(
             icon: const Icon(Icons.logout),
-            tooltip: 'Sign Out',
+            tooltip: l10n.logout,
             onPressed: () => ref.read(authNotifierProvider.notifier).signOut(),
           ),
         ],
@@ -43,11 +50,11 @@ class DashboardPage extends ConsumerWidget {
                   const Icon(Icons.people_outline,
                       size: 64, color: Colors.grey),
                   const SizedBox(height: 16),
-                  const Text('No pair yet'),
+                  Text(l10n.noPairYet),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => context.push('/pair-management'),
-                    child: const Text('Create or Join a Pair'),
+                    child: Text(l10n.createOrJoinPair),
                   ),
                 ],
               ),
@@ -61,7 +68,7 @@ class DashboardPage extends ConsumerWidget {
                 children: [
                   currentUserAsync.when(
                     data: (user) => Text(
-                      'Welcome back, ${user?.displayName ?? 'User'}!',
+                      l10n.welcomeUser(user?.displayName ?? 'User'),
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     loading: () => const SizedBox.shrink(),
@@ -93,7 +100,7 @@ class DashboardPage extends ConsumerWidget {
                     children: [
                       Expanded(
                         child: _StatCard(
-                          label: 'Total Tasks',
+                          label: l10n.totalTasks,
                           value: '${dashboardData.totalTasks}',
                           icon: Icons.task_alt,
                           color: Colors.blue,
@@ -102,7 +109,7 @@ class DashboardPage extends ConsumerWidget {
                       const SizedBox(width: 8),
                       Expanded(
                         child: _StatCard(
-                          label: "Today's Tasks",
+                          label: l10n.todayTasks,
                           value: '${dashboardData.todayCount}',
                           icon: Icons.today,
                           color: Colors.orange,
@@ -111,7 +118,7 @@ class DashboardPage extends ConsumerWidget {
                       const SizedBox(width: 8),
                       Expanded(
                         child: _StatCard(
-                          label: 'Pending',
+                          label: l10n.statusPending,
                           value: '${dashboardData.pendingCount}',
                           icon: Icons.pending_outlined,
                           color: Colors.red,
@@ -120,7 +127,7 @@ class DashboardPage extends ConsumerWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  Text('Quick Actions',
+                  Text(l10n.quickActions,
                       style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 8),
                   Wrap(
@@ -129,32 +136,32 @@ class DashboardPage extends ConsumerWidget {
                     children: [
                       ActionChip(
                         avatar: const Icon(Icons.add_task),
-                        label: const Text('New Task'),
+                        label: Text(l10n.createTask),
                         onPressed: () => context.push('/tasks/new'),
                       ),
                       ActionChip(
                         avatar: const Icon(Icons.list),
-                        label: const Text('All Tasks'),
+                        label: Text(l10n.tasks),
                         onPressed: () => context.push('/tasks'),
                       ),
                       ActionChip(
                         avatar: const Icon(Icons.star),
-                        label: const Text('Rewards'),
+                        label: Text(l10n.rewards),
                         onPressed: () => context.push('/rewards'),
                       ),
                       ActionChip(
                         avatar: const Icon(Icons.bar_chart),
-                        label: const Text('Reports'),
+                        label: Text(l10n.reports),
                         onPressed: () => context.push('/reports'),
                       ),
                       ActionChip(
                         avatar: const Icon(Icons.people),
-                        label: const Text('Pair'),
+                        label: Text(l10n.pairs),
                         onPressed: () => context.push('/pair-management'),
                       ),
                       ActionChip(
                         avatar: const Icon(Icons.person),
-                        label: const Text('Profile'),
+                        label: Text(l10n.profile),
                         onPressed: () => context.push('/profile'),
                       ),
                     ],

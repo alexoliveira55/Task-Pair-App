@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/auth_provider.dart';
@@ -40,6 +41,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final authState = ref.watch(authNotifierProvider);
     final isLoading = authState.isLoading;
 
@@ -52,7 +54,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     });
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Create Account')),
+      appBar: AppBar(title: Text(l10n.createAccount)),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -62,29 +64,29 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 AppTextField(
-                  label: 'Display Name',
+                  label: l10n.displayName,
                   controller: _nameController,
                   prefixIcon: Icons.person_outlined,
                   validator: (v) {
-                    if (v == null || v.isEmpty) return 'Name is required';
+                    if (v == null || v.isEmpty) return l10n.requiredField;
                     return null;
                   },
                 ),
                 const SizedBox(height: 16),
                 AppTextField(
-                  label: 'Email',
+                  label: l10n.email,
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   prefixIcon: Icons.email_outlined,
                   validator: (v) {
-                    if (v == null || v.isEmpty) return 'Email is required';
-                    if (!v.contains('@')) return 'Enter a valid email';
+                    if (v == null || v.isEmpty) return l10n.requiredField;
+                    if (!v.contains('@')) return l10n.enterValidEmail;
                     return null;
                   },
                 ),
                 const SizedBox(height: 16),
                 AppTextField(
-                  label: 'Password',
+                  label: l10n.password,
                   controller: _passwordController,
                   obscureText: _obscurePassword,
                   prefixIcon: Icons.lock_outlined,
@@ -98,34 +100,34 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         setState(() => _obscurePassword = !_obscurePassword),
                   ),
                   validator: (v) {
-                    if (v == null || v.isEmpty) return 'Password is required';
-                    if (v.length < 6) return 'Minimum 6 characters';
+                    if (v == null || v.isEmpty) return l10n.requiredField;
+                    if (v.length < 6) return l10n.minimumCharacters;
                     return null;
                   },
                 ),
                 const SizedBox(height: 16),
                 AppTextField(
-                  label: 'Confirm Password',
+                  label: l10n.confirmPassword,
                   controller: _confirmPasswordController,
                   obscureText: true,
                   prefixIcon: Icons.lock_outlined,
                   validator: (v) {
                     if (v != _passwordController.text) {
-                      return 'Passwords do not match';
+                      return l10n.passwordsDontMatch;
                     }
                     return null;
                   },
                 ),
                 const SizedBox(height: 24),
                 AppButton(
-                  label: 'Create Account',
+                  label: l10n.createAccount,
                   onPressed: isLoading ? null : _register,
                   isLoading: isLoading,
                 ),
                 const SizedBox(height: 16),
                 TextButton(
                   onPressed: () => context.pop(),
-                  child: const Text('Already have an account? Sign In'),
+                  child: Text(l10n.hasAccount),
                 ),
               ],
             ),

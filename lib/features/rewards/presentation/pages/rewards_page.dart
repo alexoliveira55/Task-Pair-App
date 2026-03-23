@@ -6,6 +6,7 @@ import '../../../../shared/widgets/loading_widget.dart';
 import '../../../../shared/widgets/app_button.dart';
 import '../../../../shared/widgets/app_text_field.dart';
 import '../../../../shared/themes/app_colors.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RewardsPage extends ConsumerStatefulWidget {
   const RewardsPage({super.key});
@@ -31,13 +32,14 @@ class _RewardsPageState extends ConsumerState<RewardsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final rewardsAsync = ref.watch(rewardsProvider);
     final rewardsState = ref.watch(rewardsNotifierProvider);
     final totalPoints = ref.watch(totalPairPointsProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Rewards'),
+        title: Text(l10n.rewards),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -57,35 +59,36 @@ class _RewardsPageState extends ConsumerState<RewardsPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Text('New Reward',
+                      Text(l10n.createReward,
                           style: Theme.of(context).textTheme.titleMedium),
                       const SizedBox(height: 12),
                       AppTextField(
-                        label: 'Title',
+                        label: l10n.rewardTitle,
                         controller: _titleController,
                         validator: (v) =>
-                            v == null || v.isEmpty ? 'Required' : null,
+                            v == null || v.isEmpty ? l10n.requiredField : null,
                       ),
                       const SizedBox(height: 8),
                       AppTextField(
-                        label: 'Description',
+                        label: l10n.rewardDescription,
                         controller: _descriptionController,
                         maxLines: 2,
                       ),
                       const SizedBox(height: 8),
                       AppTextField(
-                        label: 'Required Points',
+                        label: l10n.requiredPoints,
                         controller: _pointsController,
                         keyboardType: TextInputType.number,
                         validator: (v) {
-                          if (v == null || v.isEmpty) return 'Required';
-                          if (int.tryParse(v) == null) return 'Invalid number';
+                          if (v == null || v.isEmpty) return l10n.requiredField;
+                          if (int.tryParse(v) == null)
+                            return l10n.invalidNumber;
                           return null;
                         },
                       ),
                       const SizedBox(height: 12),
                       AppButton(
-                        label: 'Create Reward',
+                        label: l10n.createReward,
                         isLoading: rewardsState.isLoading,
                         onPressed: () async {
                           if (!_formKey.currentState!.validate()) return;
@@ -116,7 +119,7 @@ class _RewardsPageState extends ConsumerState<RewardsPage> {
               children: [
                 const Icon(Icons.stars, color: AppColors.scoreGold),
                 const SizedBox(width: 8),
-                Text('Current Points: $totalPoints'),
+                Text(l10n.currentPoints(totalPoints)),
               ],
             ),
           ),
@@ -124,7 +127,7 @@ class _RewardsPageState extends ConsumerState<RewardsPage> {
             child: rewardsAsync.when(
               data: (rewards) {
                 if (rewards.isEmpty) {
-                  return const Center(child: Text('No rewards yet'));
+                  return Center(child: Text(l10n.noRewards));
                 }
                 return ListView.builder(
                   padding: const EdgeInsets.all(8),
@@ -144,9 +147,8 @@ class _RewardsPageState extends ConsumerState<RewardsPage> {
                             reward.isUnlocked
                                 ? Icons.lock_open
                                 : Icons.lock_outline,
-                            color: reward.isUnlocked
-                                ? Colors.white
-                                : Colors.grey,
+                            color:
+                                reward.isUnlocked ? Colors.white : Colors.grey,
                           ),
                         ),
                         title: Text(reward.title),
@@ -155,16 +157,16 @@ class _RewardsPageState extends ConsumerState<RewardsPage> {
                           children: [
                             if (reward.description != null)
                               Text(reward.description!),
-                            Text('${reward.requiredPoints} points required'),
+                            Text(l10n.pointsRequired(reward.requiredPoints)),
                           ],
                         ),
                         trailing: reward.isUnlocked
-                            ? const Chip(
-                                label: Text('Unlocked'),
+                            ? Chip(
+                                label: Text(l10n.unlocked),
                                 backgroundColor: AppColors.scoreGold,
                               )
                             : isEarned
-                                ? const Chip(label: Text('Earned!'))
+                                ? Chip(label: Text(l10n.earned))
                                 : null,
                       ),
                     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/pair_provider.dart';
@@ -13,11 +14,12 @@ class PairManagementPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final pairAsync = ref.watch(currentPairProvider);
     final invitesAsync = ref.watch(pendingInvitesProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Pair Management')),
+      appBar: AppBar(title: Text(l10n.pairs)),
       body: pairAsync.when(
         data: (pair) {
           if (pair != null) {
@@ -50,20 +52,21 @@ class _PairDetailsView extends ConsumerWidget {
   const _PairDetailsView({required this.pair});
 
   Future<void> _confirmLeavePair(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Leave Pair'),
-        content: const Text(
-            'Are you sure you want to leave this pair? This action cannot be undone.'),
+        title: Text(l10n.leavePair),
+        content: Text(l10n.confirmLeavePair),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Leave', style: TextStyle(color: Colors.red)),
+            child:
+                Text(l10n.leavePair, style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -78,6 +81,7 @@ class _PairDetailsView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -94,9 +98,9 @@ class _PairDetailsView extends ConsumerWidget {
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 8),
-                  Text('Score Target: ${pair.scoreTarget} points'),
+                  Text('${l10n.scoreTarget}: ${pair.scoreTarget}'),
                   Text(
-                      'Created: ${pair.createdAt.toString().split(' ').first}'),
+                      '${l10n.createdAt}: ${pair.createdAt.toString().split(' ').first}'),
                 ],
               ),
             ),
@@ -108,7 +112,7 @@ class _PairDetailsView extends ConsumerWidget {
                 child: ElevatedButton.icon(
                   onPressed: () => context.push('/invite'),
                   icon: const Icon(Icons.person_add),
-                  label: const Text('Invite Partner'),
+                  label: Text(l10n.invitePartner),
                 ),
               ),
             ],
@@ -120,8 +124,8 @@ class _PairDetailsView extends ConsumerWidget {
                 child: OutlinedButton.icon(
                   onPressed: () => _confirmLeavePair(context, ref),
                   icon: const Icon(Icons.exit_to_app, color: Colors.red),
-                  label: const Text('Leave Pair',
-                      style: TextStyle(color: Colors.red)),
+                  label: Text(l10n.leavePair,
+                      style: const TextStyle(color: Colors.red)),
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: Colors.red),
                   ),
@@ -142,6 +146,7 @@ class _InvitesView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: invites.length,
@@ -149,8 +154,8 @@ class _InvitesView extends ConsumerWidget {
         final invite = invites[index];
         return Card(
           child: ListTile(
-            title: Text('Invite from ${invite.fromUserId}'),
-            subtitle: const Text('Pair invite pending'),
+            title: Text(l10n.invitedBy(invite.fromUserId)),
+            subtitle: Text(l10n.pendingInvites),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -199,6 +204,7 @@ class _CreatePairViewState extends ConsumerState<_CreatePairView> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final pairState = ref.watch(pairNotifierProvider);
 
     return SingleChildScrollView(
@@ -209,41 +215,41 @@ class _CreatePairViewState extends ConsumerState<_CreatePairView> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Create a Pair',
+              l10n.createPair,
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 16),
             AppTextField(
-              label: 'Pair Name',
+              label: l10n.pairName,
               controller: _pairNameController,
               validator: (v) =>
-                  v == null || v.isEmpty ? 'Name is required' : null,
+                  v == null || v.isEmpty ? l10n.requiredField : null,
             ),
             const SizedBox(height: 16),
             AppTextField(
-              label: 'Score Target',
+              label: l10n.scoreTarget,
               controller: _scoreTargetController,
               keyboardType: TextInputType.number,
               validator: (v) {
-                if (v == null || v.isEmpty) return 'Score target is required';
-                if (int.tryParse(v) == null) return 'Enter a valid number';
+                if (v == null || v.isEmpty) return l10n.requiredField;
+                if (int.tryParse(v) == null) return l10n.invalidNumber;
                 return null;
               },
             ),
             const SizedBox(height: 16),
             AppTextField(
-              label: 'Invite Partner Email',
+              label: l10n.inviteEmail,
               controller: _inviteEmailController,
               keyboardType: TextInputType.emailAddress,
               validator: (v) {
-                if (v == null || v.isEmpty) return 'Email is required';
-                if (!v.contains('@')) return 'Enter a valid email';
+                if (v == null || v.isEmpty) return l10n.requiredField;
+                if (!v.contains('@')) return l10n.enterValidEmail;
                 return null;
               },
             ),
             const SizedBox(height: 24),
             AppButton(
-              label: 'Create Pair & Send Invite',
+              label: l10n.createPairAndInvite,
               isLoading: pairState.isLoading,
               onPressed: () async {
                 if (!_formKey.currentState!.validate()) return;

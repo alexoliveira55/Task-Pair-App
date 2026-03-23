@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/task_provider.dart';
@@ -10,19 +11,20 @@ class TaskListPage extends ConsumerWidget {
 
   Future<void> _confirmDelete(
       BuildContext context, WidgetRef ref, String taskId, String title) async {
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Task'),
-        content: Text('Are you sure you want to delete "$title"?'),
+        title: Text(l10n.deleteTask),
+        content: Text(l10n.confirmDeleteItem(title)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            child: Text(l10n.delete, style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -34,11 +36,12 @@ class TaskListPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final tasksAsync = ref.watch(tasksProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tasks'),
+        title: Text(l10n.tasks),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -55,12 +58,12 @@ class TaskListPage extends ConsumerWidget {
                 children: [
                   const Icon(Icons.task_outlined, size: 64, color: Colors.grey),
                   const SizedBox(height: 16),
-                  const Text('No tasks yet'),
+                  Text(l10n.noTasks),
                   const SizedBox(height: 16),
                   ElevatedButton.icon(
                     onPressed: () => context.push('/tasks/new'),
                     icon: const Icon(Icons.add),
-                    label: const Text('Create Task'),
+                    label: Text(l10n.createTask),
                   ),
                 ],
               ),
@@ -88,7 +91,8 @@ class TaskListPage extends ConsumerWidget {
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      if (!task.isActive) const Chip(label: Text('Inactive')),
+                      if (!task.isActive)
+                        Chip(label: Text(l10n.statusInactive)),
                       IconButton(
                         icon: const Icon(Icons.edit_outlined),
                         onPressed: () => context.push('/tasks/${task.id}/edit'),

@@ -1,0 +1,563 @@
+{
+  "@@locale": "pt_BR",
+
+  "appName": "Task Pair",
+  "@appName": { "description": "Nome do aplicativo" },
+  "save": "Salvar",
+  "@save": { "description": "Botão salvar" },
+  "cancel": "Cancelar",
+  "@cancel": { "description": "Botão cancelar" },
+  "delete": "Excluir",
+  "@delete": { "description": "Botão excluir" },
+  "edit": "Editar",
+  "@edit": { "description": "Botão editar" },
+  "confirm": "Confirmar",
+  "@confirm": { "description": "Botão confirmar" },
+  "back": "Voltar",
+  "@back": { "description": "Botão voltar" },
+  "loading": "Carregando...",
+  "@loading": { "description": "Indicador de carregamento" },
+  "error": "Erro",
+  "@error": { "description": "Mensagem de erro genérica" },
+  "success": "Sucesso",
+  "@success": { "description": "Mensagem de sucesso genérica" },
+  "yes": "Sim",
+  "@yes": { "description": "Confirmação positiva" },
+  "no": "Não",
+  "@no": { "description": "Confirmação negativa" },
+  "requiredField": "Campo obrigatório",
+  "@requiredField": { "description": "Validação de campo obrigatório" },
+  "noData": "Nenhum dado encontrado",
+  "@noData": { "description": "Mensagem quando não há dados" },
+  "retry": "Tentar novamente",
+  "@retry": { "description": "Botão tentar novamente" },
+
+  "login": "Entrar",
+  "@login": { "description": "Botão/tela de login" },
+  "register": "Cadastrar",
+  "@register": { "description": "Botão/tela de cadastro" },
+  "logout": "Sair",
+  "@logout": { "description": "Botão de logout" },
+  "email": "E-mail",
+  "@email": { "description": "Campo de e-mail" },
+  "password": "Senha",
+  "@password": { "description": "Campo de senha" },
+  "confirmPassword": "Confirmar senha",
+  "@confirmPassword": { "description": "Campo de confirmação de senha" },
+  "forgotPassword": "Esqueceu a senha?",
+  "@forgotPassword": { "description": "Link esqueceu a senha" },
+  "resetPassword": "Redefinir senha",
+  "@resetPassword": { "description": "Botão redefinir senha" },
+  "displayName": "Nome de exibição",
+  "@displayName": { "description": "Campo nome de exibição" },
+  "invalidEmail": "E-mail inválido",
+  "@invalidEmail": { "description": "Erro de e-mail inválido" },
+  "weakPassword": "Senha muito fraca",
+  "@weakPassword": { "description": "Erro de senha fraca" },
+  "emailInUse": "E-mail já está em uso",
+  "@emailInUse": { "description": "Erro de e-mail duplicado" },
+  "userNotFound": "Usuário não encontrado",
+  "@userNotFound": { "description": "Erro usuário não encontrado" },
+  "wrongPassword": "Senha incorreta",
+  "@wrongPassword": { "description": "Erro de senha incorreta" },
+  "noAccount": "Não tem conta? Cadastre-se",
+  "@noAccount": { "description": "Link para cadastro" },
+  "hasAccount": "Já tem conta? Entre",
+  "@hasAccount": { "description": "Link para login" },
+
+  "pairs": "Pares",
+  "@pairs": { "description": "Título da seção pares" },
+  "createPair": "Criar par",
+  "@createPair": { "description": "Botão criar par" },
+  "inviteUser": "Convidar usuário",
+  "@inviteUser": { "description": "Botão convidar usuário" },
+  "pendingInvites": "Convites pendentes",
+  "@pendingInvites": { "description": "Título convites pendentes" },
+  "acceptInvite": "Aceitar convite",
+  "@acceptInvite": { "description": "Botão aceitar convite" },
+  "declineInvite": "Recusar convite",
+  "@declineInvite": { "description": "Botão recusar convite" },
+  "leavePair": "Sair do par",
+  "@leavePair": { "description": "Botão sair do par" },
+  "pairName": "Nome do par",
+  "@pairName": { "description": "Campo nome do par" },
+  "scoreTarget": "Meta de pontos",
+  "@scoreTarget": { "description": "Campo meta de pontos" },
+  "inviteSent": "Convite enviado",
+  "@inviteSent": { "description": "Mensagem convite enviado" },
+  "inviteAccepted": "Convite aceito",
+  "@inviteAccepted": { "description": "Mensagem convite aceito" },
+  "inviteDeclined": "Convite recusado",
+  "@inviteDeclined": { "description": "Mensagem convite recusado" },
+  "noPairs": "Nenhum par encontrado",
+  "@noPairs": { "description": "Mensagem sem pares" },
+  "inviteEmail": "E-mail do convidado",
+  "@inviteEmail": { "description": "Campo e-mail do convidado" },
+
+  "tasks": "Tarefas",
+  "@tasks": { "description": "Título da seção tarefas" },
+  "createTask": "Criar tarefa",
+  "@createTask": { "description": "Botão criar tarefa" },
+  "editTask": "Editar tarefa",
+  "@editTask": { "description": "Botão editar tarefa" },
+  "deleteTask": "Excluir tarefa",
+  "@deleteTask": { "description": "Botão excluir tarefa" },
+  "taskTitle": "Título da tarefa",
+  "@taskTitle": { "description": "Campo título da tarefa" },
+  "taskDescription": "Descrição da tarefa",
+  "@taskDescription": { "description": "Campo descrição da tarefa" },
+  "assignedTo": "Atribuída a",
+  "@assignedTo": { "description": "Campo atribuição" },
+  "points": "Pontos",
+  "@points": { "description": "Campo pontos" },
+  "recurrence": "Recorrência",
+  "@recurrence": { "description": "Campo recorrência" },
+  "daily": "Diária",
+  "@daily": { "description": "Recorrência diária" },
+  "weekly": "Semanal",
+  "@weekly": { "description": "Recorrência semanal" },
+  "monthly": "Mensal",
+  "@monthly": { "description": "Recorrência mensal" },
+  "once": "Uma vez",
+  "@once": { "description": "Recorrência única" },
+  "startDate": "Data inicial",
+  "@startDate": { "description": "Campo data inicial" },
+  "endDate": "Data final",
+  "@endDate": { "description": "Campo data final" },
+  "active": "Ativo",
+  "@active": { "description": "Status ativo" },
+  "inactive": "Inativo",
+  "@inactive": { "description": "Status inativo" },
+  "noTasks": "Nenhuma tarefa encontrada",
+  "@noTasks": { "description": "Mensagem sem tarefas" },
+  "taskCreated": "Tarefa criada com sucesso",
+  "@taskCreated": { "description": "Mensagem tarefa criada" },
+  "taskUpdated": "Tarefa atualizada com sucesso",
+  "@taskUpdated": { "description": "Mensagem tarefa atualizada" },
+  "taskDeleted": "Tarefa excluída com sucesso",
+  "@taskDeleted": { "description": "Mensagem tarefa excluída" },
+
+  "execute": "Executar",
+  "@execute": { "description": "Botão executar" },
+  "execution": "Execução",
+  "@execution": { "description": "Título execução" },
+  "startExecution": "Iniciar execução",
+  "@startExecution": { "description": "Botão iniciar execução" },
+  "finishExecution": "Finalizar execução",
+  "@finishExecution": { "description": "Botão finalizar execução" },
+  "executionNotes": "Observações da execução",
+  "@executionNotes": { "description": "Campo observações" },
+  "attachPhoto": "Anexar foto",
+  "@attachPhoto": { "description": "Botão anexar foto" },
+  "executionCompleted": "Execução concluída",
+  "@executionCompleted": { "description": "Mensagem execução concluída" },
+  "noExecutions": "Nenhuma execução encontrada",
+  "@noExecutions": { "description": "Mensagem sem execuções" },
+  "pendingExecutions": "Execuções pendentes",
+  "@pendingExecutions": { "description": "Título execuções pendentes" },
+
+  "validate": "Validar",
+  "@validate": { "description": "Botão validar" },
+  "validation": "Validação",
+  "@validation": { "description": "Título validação" },
+  "approved": "Aprovado",
+  "@approved": { "description": "Status aprovado" },
+  "rejected": "Rejeitado",
+  "@rejected": { "description": "Status rejeitado" },
+  "feedback": "Feedback",
+  "@feedback": { "description": "Campo feedback" },
+  "pendingValidation": "Validação pendente",
+  "@pendingValidation": { "description": "Status validação pendente" },
+  "validationCompleted": "Validação concluída",
+  "@validationCompleted": { "description": "Mensagem validação concluída" },
+  "noValidations": "Nenhuma validação encontrada",
+  "@noValidations": { "description": "Mensagem sem validações" },
+  "pendingValidations": "Validações pendentes",
+  "@pendingValidations": { "description": "Título validações pendentes" },
+
+  "score": "Pontuação",
+  "@score": { "description": "Título pontuação" },
+  "totalPoints": "Pontos totais",
+  "@totalPoints": { "description": "Rótulo pontos totais" },
+  "periodPoints": "Pontos do período",
+  "@periodPoints": { "description": "Rótulo pontos do período" },
+  "thermometer": "Termômetro",
+  "@thermometer": { "description": "Componente termômetro" },
+  "progress": "Progresso",
+  "@progress": { "description": "Rótulo progresso" },
+  "rewards": "Recompensas",
+  "@rewards": { "description": "Título recompensas" },
+  "createReward": "Criar recompensa",
+  "@createReward": { "description": "Botão criar recompensa" },
+  "requiredPoints": "Pontos necessários",
+  "@requiredPoints": { "description": "Rótulo pontos necessários" },
+  "unlocked": "Desbloqueado",
+  "@unlocked": { "description": "Status desbloqueado" },
+  "locked": "Bloqueado",
+  "@locked": { "description": "Status bloqueado" },
+  "rewardTitle": "Título da recompensa",
+  "@rewardTitle": { "description": "Campo título da recompensa" },
+  "rewardDescription": "Descrição da recompensa",
+  "@rewardDescription": { "description": "Campo descrição da recompensa" },
+  "noRewards": "Nenhuma recompensa encontrada",
+  "@noRewards": { "description": "Mensagem sem recompensas" },
+
+  "dashboard": "Painel",
+  "@dashboard": { "description": "Título do painel" },
+  "todayTasks": "Tarefas de hoje",
+  "@todayTasks": { "description": "Rótulo tarefas de hoje" },
+  "quickActions": "Ações rápidas",
+  "@quickActions": { "description": "Rótulo ações rápidas" },
+  "reports": "Relatórios",
+  "@reports": { "description": "Título relatórios" },
+  "statistics": "Estatísticas",
+  "@statistics": { "description": "Título estatísticas" },
+  "totalTasks": "Total de tarefas",
+  "@totalTasks": { "description": "Rótulo total de tarefas" },
+  "executedTasks": "Tarefas executadas",
+  "@executedTasks": { "description": "Rótulo tarefas executadas" },
+  "validatedTasks": "Tarefas validadas",
+  "@validatedTasks": { "description": "Rótulo tarefas validadas" },
+  "pendingTasks": "Tarefas pendentes",
+  "@pendingTasks": { "description": "Rótulo tarefas pendentes" },
+  "missedTasks": "Tarefas perdidas",
+  "@missedTasks": { "description": "Rótulo tarefas perdidas" },
+  "filterByPeriod": "Filtrar por período",
+  "@filterByPeriod": { "description": "Rótulo filtro por período" },
+  "thisWeek": "Esta semana",
+  "@thisWeek": { "description": "Filtro esta semana" },
+  "thisMonth": "Este mês",
+  "@thisMonth": { "description": "Filtro este mês" },
+  "customPeriod": "Período personalizado",
+  "@customPeriod": { "description": "Filtro período personalizado" },
+
+  "settings": "Configurações",
+  "@settings": { "description": "Título configurações" },
+  "language": "Idioma",
+  "@language": { "description": "Rótulo idioma" },
+  "portuguese": "Português",
+  "@portuguese": { "description": "Idioma português" },
+  "english": "Inglês",
+  "@english": { "description": "Idioma inglês" },
+  "systemDefault": "Padrão do sistema",
+  "@systemDefault": { "description": "Opção padrão do sistema" },
+  "profile": "Perfil",
+  "@profile": { "description": "Título perfil" },
+  "changePhoto": "Alterar foto",
+  "@changePhoto": { "description": "Botão alterar foto" },
+  "about": "Sobre",
+  "@about": { "description": "Título sobre" },
+
+  "statusPending": "Pendente",
+  "@statusPending": { "description": "Status pendente" },
+  "statusExecuted": "Executado",
+  "@statusExecuted": { "description": "Status executado" },
+  "statusValidated": "Validado",
+  "@statusValidated": { "description": "Status validado" },
+  "statusMissed": "Perdido",
+  "@statusMissed": { "description": "Status perdido" },
+  "statusApproved": "Aprovado",
+  "@statusApproved": { "description": "Status aprovado" },
+  "statusRejected": "Rejeitado",
+  "@statusRejected": { "description": "Status rejeitado" },
+  "statusActive": "Ativo",
+  "@statusActive": { "description": "Status ativo" },
+  "statusInactive": "Inativo",
+  "@statusInactive": { "description": "Status inativo" },
+
+  "welcomeUser": "Bem-vindo(a), {name}!",
+  "@welcomeUser": {
+    "description": "Mensagem de boas-vindas com nome do usuário",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Maria"
+      }
+    }
+  },
+  "pointsOf": "{current} de {target} pontos",
+  "@pointsOf": {
+    "description": "Progresso de pontos atual/meta",
+    "placeholders": {
+      "current": {
+        "type": "int",
+        "example": "150"
+      },
+      "target": {
+        "type": "int",
+        "example": "500"
+      }
+    }
+  },
+  "tasksCount": "{count, plural, =0{Nenhuma tarefa} =1{1 tarefa} other{{count} tarefas}}",
+  "@tasksCount": {
+    "description": "Contagem de tarefas com plural",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "pendingCount": "{count, plural, =0{Nenhuma pendência} =1{1 pendência} other{{count} pendências}}",
+  "@pendingCount": {
+    "description": "Contagem de pendências com plural",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "confirmDeleteItem": "Tem certeza que deseja excluir {item}?",
+  "@confirmDeleteItem": {
+    "description": "Confirmação de exclusão com nome do item",
+    "placeholders": {
+      "item": {
+        "type": "String",
+        "example": "tarefa"
+      }
+    }
+  },
+  "scoreProgress": "{percent}% concluído",
+  "@scoreProgress": {
+    "description": "Porcentagem de progresso da pontuação",
+    "placeholders": {
+      "percent": {
+        "type": "String",
+        "example": "75.5"
+      }
+    }
+  },
+  "rewardUnlockedMsg": "Recompensa \"{title}\" desbloqueada!",
+  "@rewardUnlockedMsg": {
+    "description": "Mensagem de recompensa desbloqueada",
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "example": "Cinema"
+      }
+    }
+  },
+  "invitedBy": "Convidado por {name}",
+  "@invitedBy": {
+    "description": "Mensagem de convite recebido",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "João"
+      }
+    }
+  },
+
+  "signInToContinue": "Entre para continuar",
+  "@signInToContinue": { "description": "Subtítulo da tela de login" },
+  "createAccount": "Criar conta",
+  "@createAccount": { "description": "Título/botão criar conta" },
+  "enterValidEmail": "Insira um e-mail válido",
+  "@enterValidEmail": { "description": "Erro de validação de e-mail" },
+  "minimumCharacters": "Mínimo de 6 caracteres",
+  "@minimumCharacters": { "description": "Erro de senha curta" },
+  "passwordsDontMatch": "Senhas não coincidem",
+  "@passwordsDontMatch": { "description": "Erro senhas diferentes" },
+  "photoUpdated": "Foto atualizada!",
+  "@photoUpdated": { "description": "Mensagem foto atualizada" },
+  "displayNameUpdated": "Nome de exibição atualizado!",
+  "@displayNameUpdated": { "description": "Mensagem nome atualizado" },
+  "confirmSignOut": "Tem certeza que deseja sair?",
+  "@confirmSignOut": { "description": "Confirmação de logout" },
+  "notSignedIn": "Não conectado",
+  "@notSignedIn": { "description": "Mensagem usuário não autenticado" },
+  "notSet": "Não definido",
+  "@notSet": { "description": "Valor não definido" },
+  "paired": "Pareado",
+  "@paired": { "description": "Status pareado" },
+  "noPairYet": "Sem par ainda",
+  "@noPairYet": { "description": "Sem par configurado" },
+  "memberSince": "Membro desde",
+  "@memberSince": { "description": "Data de cadastro" },
+  "failedToUpdatePhoto": "Falha ao atualizar foto",
+  "@failedToUpdatePhoto": { "description": "Erro ao atualizar foto" },
+
+  "createOrJoinPair": "Criar ou Entrar em um Par",
+  "@createOrJoinPair": { "description": "Botão criar ou entrar em par" },
+  "taskAlreadyStatus": "Esta tarefa já está {status}",
+  "@taskAlreadyStatus": {
+    "description": "Mensagem tarefa já no status indicado",
+    "placeholders": {
+      "status": {
+        "type": "String",
+        "example": "executed"
+      }
+    }
+  },
+  "dueDate": "Vencimento",
+  "@dueDate": { "description": "Rótulo data de vencimento" },
+  "executionNotesHint": "Adicione observações sobre a execução...",
+  "@executionNotesHint": { "description": "Dica do campo de observações" },
+  "confirmLeavePair": "Tem certeza que deseja sair deste par? Esta ação não pode ser desfeita.",
+  "@confirmLeavePair": { "description": "Confirmação para sair do par" },
+  "createdAt": "Criado em",
+  "@createdAt": { "description": "Rótulo data de criação" },
+  "invalidNumber": "Insira um número válido",
+  "@invalidNumber": { "description": "Erro de número inválido" },
+  "createPairAndInvite": "Criar Par e Enviar Convite",
+  "@createPairAndInvite": { "description": "Botão criar par e enviar convite" },
+  "invitePartner": "Convidar Parceiro",
+  "@invitePartner": { "description": "Botão convidar parceiro" },
+  "sendInvite": "Enviar Convite",
+  "@sendInvite": { "description": "Botão enviar convite" },
+  "targetPoints": "Meta: {count} pontos",
+  "@targetPoints": {
+    "description": "Meta de pontos",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "500"
+      }
+    }
+  },
+  "daysOfWeek": "Dias da Semana",
+  "@daysOfWeek": { "description": "Rótulo dias da semana" },
+  "updateTask": "Atualizar Tarefa",
+  "@updateTask": { "description": "Botão atualizar tarefa" },
+  "newTask": "Nova Tarefa",
+  "@newTask": { "description": "Título nova tarefa" },
+  "mon": "Seg",
+  "@mon": { "description": "Segunda-feira abreviado" },
+  "tue": "Ter",
+  "@tue": { "description": "Terça-feira abreviado" },
+  "wed": "Qua",
+  "@wed": { "description": "Quarta-feira abreviado" },
+  "thu": "Qui",
+  "@thu": { "description": "Quinta-feira abreviado" },
+  "fri": "Sex",
+  "@fri": { "description": "Sexta-feira abreviado" },
+  "sat": "Sáb",
+  "@sat": { "description": "Sábado abreviado" },
+  "sun": "Dom",
+  "@sun": { "description": "Domingo abreviado" },
+
+  "completionRate": "Taxa de Conclusão",
+  "@completionRate": { "description": "Rótulo taxa de conclusão" },
+  "currentPoints": "Pontos Atuais: {count}",
+  "@currentPoints": {
+    "description": "Pontos atuais do par",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "150"
+      }
+    }
+  },
+  "earned": "Conquistado!",
+  "@earned": { "description": "Status recompensa conquistada" },
+  "pointsRequired": "{count} pontos necessários",
+  "@pointsRequired": {
+    "description": "Pontos necessários para recompensa",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "100"
+      }
+    }
+  },
+  "individualScores": "Pontuações Individuais",
+  "@individualScores": { "description": "Título pontuações individuais" },
+  "you": "Você",
+  "@you": { "description": "Rótulo usuário atual" },
+  "partner": "Parceiro(a)",
+  "@partner": { "description": "Rótulo parceiro" },
+  "periodAndTotal": "Período: {period} pts | Total: {total} pts",
+  "@periodAndTotal": {
+    "description": "Pontos do período e total",
+    "placeholders": {
+      "period": {
+        "type": "int",
+        "example": "50"
+      },
+      "total": {
+        "type": "int",
+        "example": "150"
+      }
+    }
+  },
+  "reviewExecution": "Revisar Execução da Tarefa",
+  "@reviewExecution": { "description": "Título revisão de execução" },
+  "executedAtDate": "Executado em: {date}",
+  "@executedAtDate": {
+    "description": "Data de execução",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "2024-01-01 10:00"
+      }
+    }
+  },
+  "feedbackHint": "Adicione qualquer feedback...",
+  "@feedbackHint": { "description": "Dica do campo de feedback" },
+  "feedbackOptional": "Feedback (opcional)",
+  "@feedbackOptional": { "description": "Rótulo feedback opcional" },
+  "approve": "Aprovar",
+  "@approve": { "description": "Botão aprovar" },
+  "reject": "Rejeitar",
+  "@reject": { "description": "Botão rejeitar" },
+  "pageNotFound": "Página não encontrada",
+  "@pageNotFound": { "description": "Mensagem página não encontrada" },
+  "goHome": "Ir para o início",
+  "@goHome": { "description": "Botão ir para o início" },
+  "userLabel": "Usuário: {id}",
+  "@userLabel": {
+    "description": "Rótulo de usuário com ID",
+    "placeholders": {
+      "id": {
+        "type": "String",
+        "example": "abc123"
+      }
+    }
+  },
+  "totalAndPeriodPoints": "Total: {total} pts | Período: {period} pts",
+  "@totalAndPeriodPoints": {
+    "description": "Pontos total e período",
+    "placeholders": {
+      "total": {
+        "type": "int",
+        "example": "150"
+      },
+      "period": {
+        "type": "int",
+        "example": "50"
+      }
+    }
+  },
+  "taskLabel": "Tarefa: {title}",
+  "@taskLabel": {
+    "description": "Rótulo de tarefa com título",
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "example": "Limpeza"
+      }
+    }
+  },
+  "pointsLabel": "Pontos: {count}",
+  "@pointsLabel": {
+    "description": "Rótulo de pontos com valor",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "10"
+      }
+    }
+  },
+  "notesLabel": "Observações: {notes}",
+  "@notesLabel": {
+    "description": "Rótulo de observações com texto",
+    "placeholders": {
+      "notes": {
+        "type": "String",
+        "example": "Feito com cuidado"
+      }
+    }
+  }
+}
