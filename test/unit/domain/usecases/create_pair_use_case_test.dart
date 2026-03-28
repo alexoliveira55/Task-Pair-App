@@ -8,21 +8,19 @@ import '../../../mocks/mock_repositories.dart';
 void main() {
   late CreatePairUseCase useCase;
   late MockPairRepository mockPairRepo;
-  late MockUserRepository mockUserRepo;
 
   final now = DateTime(2024, 1, 1);
 
   setUp(() {
     mockPairRepo = MockPairRepository();
-    mockUserRepo = MockUserRepository();
-    useCase = CreatePairUseCase(mockPairRepo, mockUserRepo);
+    useCase = CreatePairUseCase(mockPairRepo);
   });
 
   setUpAll(() {
     registerFallbackValue(PairEntity(
       id: '',
-      user1Id: '',
-      user2Id: '',
+      requesterId: '',
+      executorId: '',
       createdAt: DateTime.now(),
       name: '',
       scoreTarget: 0,
@@ -30,11 +28,11 @@ void main() {
   });
 
   group('CreatePairUseCase', () {
-    test('should create pair and update both users pairId', () async {
+    test('should create pair successfully', () async {
       final createdPair = PairEntity(
         id: 'pair-1',
-        user1Id: 'user-1',
-        user2Id: 'user-2',
+        requesterId: 'user-1',
+        executorId: 'user-2',
         createdAt: now,
         name: 'Test Pair',
         scoreTarget: 100,
@@ -42,27 +40,25 @@ void main() {
 
       when(() => mockPairRepo.createPair(any()))
           .thenAnswer((_) async => createdPair);
-      when(() => mockUserRepo.updatePairId(any(), any()))
-          .thenAnswer((_) async {});
 
       final result = await useCase.execute(
-        user1Id: 'user-1',
-        user2Id: 'user-2',
+        requesterId: 'user-1',
+        executorId: 'user-2',
         name: 'Test Pair',
       );
 
       expect(result.id, 'pair-1');
       expect(result.name, 'Test Pair');
+      expect(result.requesterId, 'user-1');
+      expect(result.executorId, 'user-2');
       verify(() => mockPairRepo.createPair(any())).called(1);
-      verify(() => mockUserRepo.updatePairId('user-1', 'pair-1')).called(1);
-      verify(() => mockUserRepo.updatePairId('user-2', 'pair-1')).called(1);
     });
 
     test('should use default scoreTarget of 100', () async {
       final createdPair = PairEntity(
         id: 'pair-1',
-        user1Id: 'user-1',
-        user2Id: 'user-2',
+        requesterId: 'user-1',
+        executorId: 'user-2',
         createdAt: now,
         name: 'Test',
         scoreTarget: 100,
@@ -70,12 +66,10 @@ void main() {
 
       when(() => mockPairRepo.createPair(any()))
           .thenAnswer((_) async => createdPair);
-      when(() => mockUserRepo.updatePairId(any(), any()))
-          .thenAnswer((_) async {});
 
       await useCase.execute(
-        user1Id: 'user-1',
-        user2Id: 'user-2',
+        requesterId: 'user-1',
+        executorId: 'user-2',
         name: 'Test',
       );
 
@@ -88,8 +82,8 @@ void main() {
     test('should use custom scoreTarget when provided', () async {
       final createdPair = PairEntity(
         id: 'pair-1',
-        user1Id: 'user-1',
-        user2Id: 'user-2',
+        requesterId: 'user-1',
+        executorId: 'user-2',
         createdAt: now,
         name: 'Test',
         scoreTarget: 200,
@@ -97,12 +91,10 @@ void main() {
 
       when(() => mockPairRepo.createPair(any()))
           .thenAnswer((_) async => createdPair);
-      when(() => mockUserRepo.updatePairId(any(), any()))
-          .thenAnswer((_) async {});
 
       await useCase.execute(
-        user1Id: 'user-1',
-        user2Id: 'user-2',
+        requesterId: 'user-1',
+        executorId: 'user-2',
         name: 'Test',
         scoreTarget: 200,
       );
@@ -119,8 +111,8 @@ void main() {
 
       expect(
         () => useCase.execute(
-          user1Id: 'user-1',
-          user2Id: 'user-2',
+          requesterId: 'user-1',
+          executorId: 'user-2',
           name: 'Test',
         ),
         throwsException,

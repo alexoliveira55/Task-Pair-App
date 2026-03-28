@@ -169,3 +169,14 @@ Orchestrator, Architecture, Flutter UI, Firebase, Domain, Recurrence, Score, Tes
 ## Licença
 
 Projeto privado. Todos os direitos reservados.
+
+## Firebase
+|Platform | Firebase App Id                                |
+|---------| ------------------------------------------------
+|web      | 1:272270147263:web:3dd5b0ce6405466b7a100a      |
+|android  |  1:272270147263:android:ba455e014288c2ba7a100a |
+|ios      |  1:272270147263:ios:90354746485cbc407a100a     |
+|macos    |  1:272270147263:ios:90354746485cbc407a100a     |
+|windows  |  1:272270147263:web:94b0323858bb06c17a100a     |
+
+---

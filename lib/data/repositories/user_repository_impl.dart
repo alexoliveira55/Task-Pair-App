@@ -20,19 +20,22 @@ class UserRepositoryImpl implements UserRepository {
       if (!doc.exists || doc.data() == null) return null;
       return UserModel.fromMap(doc.data()!, doc.id).toEntity();
     } on FirebaseException catch (e) {
-      throw FirestoreException(message: e.message ?? 'Failed to get user', code: e.code);
+      throw FirestoreException(
+          message: e.message ?? 'Failed to get user', code: e.code);
     }
   }
 
   @override
   Future<UserEntity?> getUserByEmail(String email) async {
     try {
-      final snapshot = await _collection.where('email', isEqualTo: email).limit(1).get();
+      final snapshot =
+          await _collection.where('email', isEqualTo: email).limit(1).get();
       if (snapshot.docs.isEmpty) return null;
       final doc = snapshot.docs.first;
       return UserModel.fromMap(doc.data(), doc.id).toEntity();
     } on FirebaseException catch (e) {
-      throw FirestoreException(message: e.message ?? 'Failed to get user', code: e.code);
+      throw FirestoreException(
+          message: e.message ?? 'Failed to get user', code: e.code);
     }
   }
 
@@ -41,7 +44,8 @@ class UserRepositoryImpl implements UserRepository {
     try {
       await _collection.doc(user.id).set(UserModel.fromEntity(user).toMap());
     } on FirebaseException catch (e) {
-      throw FirestoreException(message: e.message ?? 'Failed to create user', code: e.code);
+      throw FirestoreException(
+          message: e.message ?? 'Failed to create user', code: e.code);
     }
   }
 
@@ -50,16 +54,8 @@ class UserRepositoryImpl implements UserRepository {
     try {
       await _collection.doc(user.id).update(UserModel.fromEntity(user).toMap());
     } on FirebaseException catch (e) {
-      throw FirestoreException(message: e.message ?? 'Failed to update user', code: e.code);
-    }
-  }
-
-  @override
-  Future<void> updatePairId(String userId, String? pairId) async {
-    try {
-      await _collection.doc(userId).update({'pairId': pairId});
-    } on FirebaseException catch (e) {
-      throw FirestoreException(message: e.message ?? 'Failed to update pairId', code: e.code);
+      throw FirestoreException(
+          message: e.message ?? 'Failed to update user', code: e.code);
     }
   }
 
@@ -69,5 +65,28 @@ class UserRepositoryImpl implements UserRepository {
       if (!doc.exists || doc.data() == null) return null;
       return UserModel.fromMap(doc.data()!, doc.id).toEntity();
     });
+  }
+
+  @override
+  Future<List<UserEntity>> getAllUsers() async {
+    try {
+      final snapshot = await _collection.orderBy('email').get();
+      return snapshot.docs
+          .map((doc) => UserModel.fromMap(doc.data(), doc.id).toEntity())
+          .toList();
+    } on FirebaseException catch (e) {
+      throw FirestoreException(
+          message: e.message ?? 'Failed to list users', code: e.code);
+    }
+  }
+
+  @override
+  Future<void> updateIsAdmin(String userId, bool isAdmin) async {
+    try {
+      await _collection.doc(userId).update({'isAdmin': isAdmin});
+    } on FirebaseException catch (e) {
+      throw FirestoreException(
+          message: e.message ?? 'Failed to update admin status', code: e.code);
+    }
   }
 }

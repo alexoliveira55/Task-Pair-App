@@ -6,7 +6,8 @@ class TaskExecutionModel {
   final String occurrenceId;
   final String taskId;
   final String executedBy;
-  final DateTime executedAt;
+  final DateTime startedAt;
+  final DateTime? finishedAt;
   final String? notes;
   final String? photoUrl;
 
@@ -15,7 +16,8 @@ class TaskExecutionModel {
     required this.occurrenceId,
     required this.taskId,
     required this.executedBy,
-    required this.executedAt,
+    required this.startedAt,
+    this.finishedAt,
     this.notes,
     this.photoUrl,
   });
@@ -26,7 +28,8 @@ class TaskExecutionModel {
       occurrenceId: map['occurrenceId'] as String,
       taskId: map['taskId'] as String,
       executedBy: map['executedBy'] as String,
-      executedAt: (map['executedAt'] as Timestamp).toDate(),
+      startedAt: (map['startedAt'] as Timestamp).toDate(),
+      finishedAt: (map['finishedAt'] as Timestamp?)?.toDate(),
       notes: map['notes'] as String?,
       photoUrl: map['photoUrl'] as String?,
     );
@@ -38,7 +41,8 @@ class TaskExecutionModel {
       occurrenceId: entity.occurrenceId,
       taskId: entity.taskId,
       executedBy: entity.executedBy,
-      executedAt: entity.executedAt,
+      startedAt: entity.startedAt,
+      finishedAt: entity.finishedAt,
       notes: entity.notes,
       photoUrl: entity.photoUrl,
     );
@@ -49,7 +53,8 @@ class TaskExecutionModel {
       'occurrenceId': occurrenceId,
       'taskId': taskId,
       'executedBy': executedBy,
-      'executedAt': Timestamp.fromDate(executedAt),
+      'startedAt': Timestamp.fromDate(startedAt),
+      'finishedAt': finishedAt != null ? Timestamp.fromDate(finishedAt!) : null,
       'notes': notes,
       'photoUrl': photoUrl,
     };
@@ -61,7 +66,8 @@ class TaskExecutionModel {
       occurrenceId: occurrenceId,
       taskId: taskId,
       executedBy: executedBy,
-      executedAt: executedAt,
+      startedAt: startedAt,
+      finishedAt: finishedAt,
       notes: notes,
       photoUrl: photoUrl,
     );

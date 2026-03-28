@@ -18,15 +18,9 @@ final checkRewardsUseCaseProvider = Provider((ref) {
 });
 
 final rewardsProvider = StreamProvider<List<RewardEntity>>((ref) {
-  final pairAsync = ref.watch(currentPairProvider);
-  return pairAsync.when(
-    data: (pair) {
-      if (pair == null) return Stream.value([]);
-      return ref.watch(rewardRepositoryProvider).watchRewardsByPairId(pair.id);
-    },
-    loading: () => Stream.value([]),
-    error: (_, __) => Stream.value([]),
-  );
+  final pair = ref.watch(currentPairProvider);
+  if (pair == null) return Stream.value([]);
+  return ref.watch(rewardRepositoryProvider).watchRewardsByPairId(pair.id);
 });
 
 class RewardsNotifier extends StateNotifier<AsyncValue<void>> {
@@ -44,7 +38,7 @@ class RewardsNotifier extends StateNotifier<AsyncValue<void>> {
   }) async {
     state = const AsyncValue.loading();
     try {
-      final pair = _ref.read(currentPairProvider).value;
+      final pair = _ref.read(currentPairProvider);
       if (pair == null) throw Exception('No pair found');
 
       await _rewardRepository.createReward(RewardEntity(
@@ -62,7 +56,7 @@ class RewardsNotifier extends StateNotifier<AsyncValue<void>> {
   }
 
   Future<void> checkAndUnlockRewards() async {
-    final pair = _ref.read(currentPairProvider).value;
+    final pair = _ref.read(currentPairProvider);
     if (pair == null) return;
     await _checkRewardsUseCase.execute(pair.id);
   }

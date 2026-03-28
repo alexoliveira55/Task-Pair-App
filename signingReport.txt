@@ -1,0 +1,130 @@
+####### ARQUIVO CRIADO MANUALMENTE, O CONTEÚDO FOI EXTRAÍDO DO COMANDO: gradlew signingReport ########
+   
+> Task :app:signingReport
+Variant: debug
+Config: debug
+Store: C:\Users\Alexd\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: 50:61:40:B5:A9:BF:13:8C:B1:C0:BB:73:4F:C9:BE:C0
+SHA1: 0E:E3:2E:53:E1:A1:89:CF:E5:EA:A8:91:43:29:D7:CC:F3:71:86:D7
+SHA-256: CB:32:86:51:52:03:0E:17:3A:DE:D4:49:BF:2D:C3:CC:B1:CC:CB:38:B1:A0:C0:EB:E9:56:36:60:41:9F:7B:A4
+Valid until: quinta-feira, 26 de setembro de 2052
+----------
+Variant: release
+Config: debug
+Store: C:\Users\Alexd\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: 50:61:40:B5:A9:BF:13:8C:B1:C0:BB:73:4F:C9:BE:C0
+SHA1: 0E:E3:2E:53:E1:A1:89:CF:E5:EA:A8:91:43:29:D7:CC:F3:71:86:D7
+SHA-256: CB:32:86:51:52:03:0E:17:3A:DE:D4:49:BF:2D:C3:CC:B1:CC:CB:38:B1:A0:C0:EB:E9:56:36:60:41:9F:7B:A4
+Valid until: quinta-feira, 26 de setembro de 2052
+----------
+Variant: profile
+Config: debug
+Store: C:\Users\Alexd\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: 50:61:40:B5:A9:BF:13:8C:B1:C0:BB:73:4F:C9:BE:C0
+SHA1: 0E:E3:2E:53:E1:A1:89:CF:E5:EA:A8:91:43:29:D7:CC:F3:71:86:D7
+SHA-256: CB:32:86:51:52:03:0E:17:3A:DE:D4:49:BF:2D:C3:CC:B1:CC:CB:38:B1:A0:C0:EB:E9:56:36:60:41:9F:7B:A4
+Valid until: quinta-feira, 26 de setembro de 2052
+----------
+Variant: debugAndroidTest
+Config: debug
+Store: C:\Users\Alexd\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: 50:61:40:B5:A9:BF:13:8C:B1:C0:BB:73:4F:C9:BE:C0
+SHA1: 0E:E3:2E:53:E1:A1:89:CF:E5:EA:A8:91:43:29:D7:CC:F3:71:86:D7
+SHA-256: CB:32:86:51:52:03:0E:17:3A:DE:D4:49:BF:2D:C3:CC:B1:CC:CB:38:B1:A0:C0:EB:E9:56:36:60:41:9F:7B:A4
+Valid until: quinta-feira, 26 de setembro de 2052
+----------
+
+> Task :cloud_firestore:signingReport
+Variant: debugAndroidTest
+Config: debug
+Store: C:\Users\Alexd\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: 50:61:40:B5:A9:BF:13:8C:B1:C0:BB:73:4F:C9:BE:C0
+SHA1: 0E:E3:2E:53:E1:A1:89:CF:E5:EA:A8:91:43:29:D7:CC:F3:71:86:D7
+SHA-256: CB:32:86:51:52:03:0E:17:3A:DE:D4:49:BF:2D:C3:CC:B1:CC:CB:38:B1:A0:C0:EB:E9:56:36:60:41:9F:7B:A4
+Valid until: quinta-feira, 26 de setembro de 2052
+----------
+
+> Task :firebase_auth:signingReport
+Variant: debugAndroidTest
+Config: debug
+Store: C:\Users\Alexd\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: 50:61:40:B5:A9:BF:13:8C:B1:C0:BB:73:4F:C9:BE:C0
+SHA1: 0E:E3:2E:53:E1:A1:89:CF:E5:EA:A8:91:43:29:D7:CC:F3:71:86:D7
+SHA-256: CB:32:86:51:52:03:0E:17:3A:DE:D4:49:BF:2D:C3:CC:B1:CC:CB:38:B1:A0:C0:EB:E9:56:36:60:41:9F:7B:A4
+Valid until: quinta-feira, 26 de setembro de 2052
+----------
+
+> Task :firebase_core:signingReport
+Variant: debugAndroidTest
+Config: debug
+Store: C:\Users\Alexd\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: 50:61:40:B5:A9:BF:13:8C:B1:C0:BB:73:4F:C9:BE:C0
+SHA1: 0E:E3:2E:53:E1:A1:89:CF:E5:EA:A8:91:43:29:D7:CC:F3:71:86:D7
+SHA-256: CB:32:86:51:52:03:0E:17:3A:DE:D4:49:BF:2D:C3:CC:B1:CC:CB:38:B1:A0:C0:EB:E9:56:36:60:41:9F:7B:A4
+Valid until: quinta-feira, 26 de setembro de 2052
+----------
+
+> Task :firebase_messaging:signingReport
+Variant: debugAndroidTest
+Config: debug
+Store: C:\Users\Alexd\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: 50:61:40:B5:A9:BF:13:8C:B1:C0:BB:73:4F:C9:BE:C0
+SHA1: 0E:E3:2E:53:E1:A1:89:CF:E5:EA:A8:91:43:29:D7:CC:F3:71:86:D7
+SHA-256: CB:32:86:51:52:03:0E:17:3A:DE:D4:49:BF:2D:C3:CC:B1:CC:CB:38:B1:A0:C0:EB:E9:56:36:60:41:9F:7B:A4
+Valid until: quinta-feira, 26 de setembro de 2052
+----------
+
+> Task :firebase_storage:signingReport
+Variant: debugAndroidTest
+Config: debug
+Store: C:\Users\Alexd\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: 50:61:40:B5:A9:BF:13:8C:B1:C0:BB:73:4F:C9:BE:C0
+SHA1: 0E:E3:2E:53:E1:A1:89:CF:E5:EA:A8:91:43:29:D7:CC:F3:71:86:D7
+SHA-256: CB:32:86:51:52:03:0E:17:3A:DE:D4:49:BF:2D:C3:CC:B1:CC:CB:38:B1:A0:C0:EB:E9:56:36:60:41:9F:7B:A4
+Valid until: quinta-feira, 26 de setembro de 2052
+----------
+
+> Task :flutter_plugin_android_lifecycle:signingReport
+Variant: debugAndroidTest
+Config: debug
+Store: C:\Users\Alexd\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: 50:61:40:B5:A9:BF:13:8C:B1:C0:BB:73:4F:C9:BE:C0
+SHA1: 0E:E3:2E:53:E1:A1:89:CF:E5:EA:A8:91:43:29:D7:CC:F3:71:86:D7
+SHA-256: CB:32:86:51:52:03:0E:17:3A:DE:D4:49:BF:2D:C3:CC:B1:CC:CB:38:B1:A0:C0:EB:E9:56:36:60:41:9F:7B:A4
+Valid until: quinta-feira, 26 de setembro de 2052
+----------
+
+> Task :image_picker_android:signingReport
+Variant: debugAndroidTest
+Config: debug
+Store: C:\Users\Alexd\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: 50:61:40:B5:A9:BF:13:8C:B1:C0:BB:73:4F:C9:BE:C0
+SHA1: 0E:E3:2E:53:E1:A1:89:CF:E5:EA:A8:91:43:29:D7:CC:F3:71:86:D7
+SHA-256: CB:32:86:51:52:03:0E:17:3A:DE:D4:49:BF:2D:C3:CC:B1:CC:CB:38:B1:A0:C0:EB:E9:56:36:60:41:9F:7B:A4
+Valid until: quinta-feira, 26 de setembro de 2052
+----------
+
+> Task :shared_preferences_android:signingReport
+Variant: debugAndroidTest
+Config: debug
+Store: C:\Users\Alexd\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: 50:61:40:B5:A9:BF:13:8C:B1:C0:BB:73:4F:C9:BE:C0
+SHA1: 0E:E3:2E:53:E1:A1:89:CF:E5:EA:A8:91:43:29:D7:CC:F3:71:86:D7
+SHA-256: CB:32:86:51:52:03:0E:17:3A:DE:D4:49:BF:2D:C3:CC:B1:CC:CB:38:B1:A0:C0:EB:E9:56:36:60:41:9F:7B:A4
+Valid until: quinta-feira, 26 de setembro de 2052
+----------
+
+BUILD SUCCESSFUL in 2m 13s
+13 actionable tasks: 13 executed

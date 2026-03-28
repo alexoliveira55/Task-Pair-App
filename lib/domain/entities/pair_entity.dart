@@ -2,16 +2,16 @@ import 'package:equatable/equatable.dart';
 
 class PairEntity extends Equatable {
   final String id;
-  final String user1Id;
-  final String user2Id;
+  final String requesterId;
+  final String executorId;
   final DateTime createdAt;
   final String name;
   final int scoreTarget;
 
   const PairEntity({
     required this.id,
-    required this.user1Id,
-    required this.user2Id,
+    required this.requesterId,
+    required this.executorId,
     required this.createdAt,
     required this.name,
     required this.scoreTarget,
@@ -19,16 +19,16 @@ class PairEntity extends Equatable {
 
   PairEntity copyWith({
     String? id,
-    String? user1Id,
-    String? user2Id,
+    String? requesterId,
+    String? executorId,
     DateTime? createdAt,
     String? name,
     int? scoreTarget,
   }) {
     return PairEntity(
       id: id ?? this.id,
-      user1Id: user1Id ?? this.user1Id,
-      user2Id: user2Id ?? this.user2Id,
+      requesterId: requesterId ?? this.requesterId,
+      executorId: executorId ?? this.executorId,
       createdAt: createdAt ?? this.createdAt,
       name: name ?? this.name,
       scoreTarget: scoreTarget ?? this.scoreTarget,
@@ -37,5 +37,5 @@ class PairEntity extends Equatable {
 
   @override
   List<Object?> get props =>
-      [id, user1Id, user2Id, createdAt, name, scoreTarget];
+      [id, requesterId, executorId, createdAt, name, scoreTarget];
 }

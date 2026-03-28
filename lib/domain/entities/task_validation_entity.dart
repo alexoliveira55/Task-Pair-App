@@ -6,7 +6,7 @@ class TaskValidationEntity extends Equatable {
   final String occurrenceId;
   final String validatedBy;
   final DateTime validatedAt;
-  final bool isApproved;
+  final int percentage; // 0-100 (0 = não cumprida)
   final String? feedback;
 
   const TaskValidationEntity({
@@ -15,7 +15,7 @@ class TaskValidationEntity extends Equatable {
     required this.occurrenceId,
     required this.validatedBy,
     required this.validatedAt,
-    required this.isApproved,
+    required this.percentage,
     this.feedback,
   });
 
@@ -25,7 +25,7 @@ class TaskValidationEntity extends Equatable {
     String? occurrenceId,
     String? validatedBy,
     DateTime? validatedAt,
-    bool? isApproved,
+    int? percentage,
     String? feedback,
   }) {
     return TaskValidationEntity(
@@ -34,7 +34,7 @@ class TaskValidationEntity extends Equatable {
       occurrenceId: occurrenceId ?? this.occurrenceId,
       validatedBy: validatedBy ?? this.validatedBy,
       validatedAt: validatedAt ?? this.validatedAt,
-      isApproved: isApproved ?? this.isApproved,
+      percentage: percentage ?? this.percentage,
       feedback: feedback ?? this.feedback,
     );
   }
@@ -46,7 +46,7 @@ class TaskValidationEntity extends Equatable {
         occurrenceId,
         validatedBy,
         validatedAt,
-        isApproved,
+        percentage,
         feedback,
       ];
 }

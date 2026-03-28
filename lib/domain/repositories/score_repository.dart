@@ -7,4 +7,5 @@ abstract class ScoreRepository {
   Future<void> upsertScore(ScoreEntity score);
   Future<void> addPoints(String userId, String pairId, int points);
   Stream<List<ScoreEntity>> watchScoresByPairId(String pairId);
+  Stream<List<ScoreEntity>> watchAllScores();
 }

@@ -88,6 +88,32 @@ Autenticação via:
 * Email e senha
 * Google (futuro)
 
+## RF002 – Administração de Usuários
+
+Deve existir um usuário administrador interno do sistema (`adm@administrator.com.br`).
+
+### Regras de Administrador:
+
+| Regra | Descrição |
+|-------|----------|
+| Cadastro de terceiros | Somente admin pode cadastrar usuários em nome de terceiros |
+| Definição de admin | Admin pode tornar outros usuários administradores |
+| Gestão de usuários | Admin visualiza lista de todos os usuários do sistema |
+| Auto-cadastro | Usuários comuns podem se cadastrar normalmente pelo app |
+
+### Campo `isAdmin`:
+
+* Tipo: `boolean`
+* Default: `false`
+* Persistido na coleção `users` no Firestore
+* Apenas admin pode alterar o campo `isAdmin` de outros usuários
+
+### Restrições de segurança:
+
+* Regras do Firestore permitem admin criar/atualizar documentos de qualquer usuário
+* Usuários comuns só podem criar/atualizar seu próprio documento
+* Funcionalidade de admin só é visível na UI para usuários com `isAdmin == true`
+
 ---
 
 # 4.2 Formação de Pares
@@ -97,7 +123,8 @@ Autenticação via:
 Usuário deve poder convidar outro usuário por:
 
 * Email
-* Código de convite
+
+**Restrição:** O email convidado deve pertencer a um usuário já cadastrado no sistema. Convites para emails não cadastrados são rejeitados com mensagem de erro.
 
 ## RF011 – Aceitar Convite
 
@@ -280,7 +307,8 @@ rewards
   "name": "João",
   "email": "joao@email.com",
   "photoUrl": "",
-  "createdAt": "timestamp"
+  "createdAt": "timestamp",
+  "isAdmin": false
 }
 ```
 
@@ -341,17 +369,18 @@ rewards
 
 # 7. Telas do Sistema
 
-| Tela        | Descrição         |
-| ----------- | ----------------- |
-| Login       | Autenticação      |
-| Dashboard   | Termômetros       |
-| Pares       | Gerenciar pares   |
-| Tarefas     | Lista de tarefas  |
-| Nova tarefa | Cadastro          |
-| Execução    | Iniciar/finalizar |
-| Validação   | Validar execução  |
-| Relatórios  | Histórico         |
-| Recompensas | Metas             |
+| Tela              | Descrição                |
+| ----------------- | ------------------------ |
+| Login             | Autenticação             |
+| Dashboard         | Termômetros              |
+| Pares             | Gerenciar pares          |
+| Tarefas           | Lista de tarefas         |
+| Nova tarefa       | Cadastro                 |
+| Execução          | Iniciar/finalizar        |
+| Validação         | Validar execução         |
+| Relatórios        | Histórico                |
+| Recompensas       | Metas                    |
+| Admin – Usuários  | Gerenciar usuários (admin) |
 
 ---
 

@@ -43,7 +43,8 @@ class FirebaseAuthService {
     try {
       await _auth.signOut();
     } on FirebaseAuthException catch (e) {
-      throw AuthException(message: e.message ?? 'Sign out failed', code: e.code);
+      throw AuthException(
+          message: e.message ?? 'Sign out failed', code: e.code);
     }
   }
 
@@ -51,8 +52,7 @@ class FirebaseAuthService {
     try {
       await _auth.currentUser?.updateDisplayName(displayName);
     } on FirebaseAuthException catch (e) {
-      throw AuthException(
-          message: e.message ?? 'Update failed', code: e.code);
+      throw AuthException(message: e.message ?? 'Update failed', code: e.code);
     }
   }
 

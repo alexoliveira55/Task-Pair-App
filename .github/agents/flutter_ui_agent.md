@@ -31,6 +31,13 @@ You are the Flutter UI Agent.
 | Reports | /reports | |
 | Profile | /profile | Photo upload |
 | Settings | /settings | Language selector, preferences |
+| Admin Users | /admin/users | Admin-only, user management |
+
+## Admin Feature UI Notes
+- Admin pages are only visible/accessible when `isAdminProvider` returns `true`
+- Admin icon in dashboard AppBar and profile page links to `/admin/users`
+- Admin can create users for third parties via dialog
+- Admin can toggle `isAdmin` flag via popup menu on each user row
 
 ## Output artifacts
 - `lib/features/<feature>/pages/*.dart`

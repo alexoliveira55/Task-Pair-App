@@ -1,18 +1,15 @@
 import '../entities/pair_entity.dart';
 import '../repositories/pair_repository.dart';
-import '../repositories/user_repository.dart';
 
 class GetUserPairsUseCase {
   final PairRepository _pairRepository;
-  final UserRepository _userRepository;
 
-  GetUserPairsUseCase(this._pairRepository, this._userRepository);
+  GetUserPairsUseCase(this._pairRepository);
 
-  Future<PairEntity?> execute(String userId) async {
-    final user = await _userRepository.getUserById(userId);
-    if (user == null || user.pairId == null) return null;
-
-    return _pairRepository.getPairById(user.pairId!);
+  /// Returns all pairs the user belongs to (as requester or executor).
+  Future<List<PairEntity>> execute(String userId) async {
+    final pairs = await _pairRepository.watchPairsByUserId(userId).first;
+    return pairs;
   }
 
   Stream<PairEntity?> watch(String pairId) {

@@ -10,7 +10,7 @@ void main() {
     String? displayName = 'Test User',
     String? photoUrl,
     DateTime? createdAt,
-    String? pairId,
+    bool isAdmin = false,
   }) {
     return UserEntity(
       id: id,
@@ -18,7 +18,7 @@ void main() {
       displayName: displayName,
       photoUrl: photoUrl,
       createdAt: createdAt ?? now,
-      pairId: pairId,
+      isAdmin: isAdmin,
     );
   }
 
@@ -35,13 +35,13 @@ void main() {
       expect(user.createdAt, now);
       expect(user.displayName, isNull);
       expect(user.photoUrl, isNull);
-      expect(user.pairId, isNull);
+      expect(user.isAdmin, false);
     });
 
     test('should create with all fields', () {
       final user = createUser(
         photoUrl: 'https://example.com/photo.jpg',
-        pairId: 'pair-1',
+        isAdmin: true,
       );
 
       expect(user.id, 'user-1');
@@ -49,7 +49,7 @@ void main() {
       expect(user.displayName, 'Test User');
       expect(user.photoUrl, 'https://example.com/photo.jpg');
       expect(user.createdAt, now);
-      expect(user.pairId, 'pair-1');
+      expect(user.isAdmin, true);
     });
 
     group('copyWith', () {
@@ -89,11 +89,11 @@ void main() {
         expect(copy.photoUrl, 'https://example.com/new.jpg');
       });
 
-      test('should copy with changed pairId', () {
+      test('should copy with changed isAdmin', () {
         final user = createUser();
-        final copy = user.copyWith(pairId: 'pair-1');
+        final copy = user.copyWith(isAdmin: true);
 
-        expect(copy.pairId, 'pair-1');
+        expect(copy.isAdmin, true);
       });
     });
 
@@ -128,7 +128,7 @@ void main() {
     });
 
     test('props should contain all fields', () {
-      final user = createUser(pairId: 'pair-1');
+      final user = createUser(isAdmin: true);
 
       expect(user.props, [
         'user-1',
@@ -136,7 +136,7 @@ void main() {
         'Test User',
         null,
         now,
-        'pair-1',
+        true,
       ]);
     });
   });

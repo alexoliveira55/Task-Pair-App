@@ -5,6 +5,7 @@ abstract class UserRepository {
   Future<UserEntity?> getUserByEmail(String email);
   Future<void> createUser(UserEntity user);
   Future<void> updateUser(UserEntity user);
-  Future<void> updatePairId(String userId, String? pairId);
   Stream<UserEntity?> watchUser(String id);
+  Future<List<UserEntity>> getAllUsers();
+  Future<void> updateIsAdmin(String userId, bool isAdmin);
 }

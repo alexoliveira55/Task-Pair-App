@@ -5,7 +5,8 @@ class TaskExecutionEntity extends Equatable {
   final String occurrenceId;
   final String taskId;
   final String executedBy;
-  final DateTime executedAt;
+  final DateTime startedAt;
+  final DateTime? finishedAt;
   final String? notes;
   final String? photoUrl;
 
@@ -14,7 +15,8 @@ class TaskExecutionEntity extends Equatable {
     required this.occurrenceId,
     required this.taskId,
     required this.executedBy,
-    required this.executedAt,
+    required this.startedAt,
+    this.finishedAt,
     this.notes,
     this.photoUrl,
   });
@@ -24,7 +26,8 @@ class TaskExecutionEntity extends Equatable {
     String? occurrenceId,
     String? taskId,
     String? executedBy,
-    DateTime? executedAt,
+    DateTime? startedAt,
+    DateTime? finishedAt,
     String? notes,
     String? photoUrl,
   }) {
@@ -33,13 +36,22 @@ class TaskExecutionEntity extends Equatable {
       occurrenceId: occurrenceId ?? this.occurrenceId,
       taskId: taskId ?? this.taskId,
       executedBy: executedBy ?? this.executedBy,
-      executedAt: executedAt ?? this.executedAt,
+      startedAt: startedAt ?? this.startedAt,
+      finishedAt: finishedAt ?? this.finishedAt,
       notes: notes ?? this.notes,
       photoUrl: photoUrl ?? this.photoUrl,
     );
   }
 
   @override
-  List<Object?> get props =>
-      [id, occurrenceId, taskId, executedBy, executedAt, notes, photoUrl];
+  List<Object?> get props => [
+        id,
+        occurrenceId,
+        taskId,
+        executedBy,
+        startedAt,
+        finishedAt,
+        notes,
+        photoUrl
+      ];
 }

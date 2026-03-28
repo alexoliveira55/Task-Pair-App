@@ -10,7 +10,7 @@ void main() {
     String occurrenceId = 'occ-1',
     String validatedBy = 'user-2',
     DateTime? validatedAt_,
-    bool isApproved = true,
+    int percentage = 100,
     String? feedback,
   }) {
     return TaskValidationEntity(
@@ -19,7 +19,7 @@ void main() {
       occurrenceId: occurrenceId,
       validatedBy: validatedBy,
       validatedAt: validatedAt_ ?? validatedAt,
-      isApproved: isApproved,
+      percentage: percentage,
       feedback: feedback,
     );
   }
@@ -32,7 +32,7 @@ void main() {
         occurrenceId: 'occ-1',
         validatedBy: 'user-2',
         validatedAt: validatedAt,
-        isApproved: true,
+        percentage: 100,
       );
 
       expect(val.id, 'val-1');
@@ -40,7 +40,7 @@ void main() {
       expect(val.occurrenceId, 'occ-1');
       expect(val.validatedBy, 'user-2');
       expect(val.validatedAt, validatedAt);
-      expect(val.isApproved, true);
+      expect(val.percentage, 100);
       expect(val.feedback, isNull);
     });
 
@@ -58,11 +58,11 @@ void main() {
         expect(copy, equals(val));
       });
 
-      test('should copy with changed isApproved', () {
-        final val = createValidation(isApproved: true);
-        final copy = val.copyWith(isApproved: false);
+      test('should copy with changed percentage', () {
+        final val = createValidation(percentage: 100);
+        final copy = val.copyWith(percentage: 50);
 
-        expect(copy.isApproved, false);
+        expect(copy.percentage, 50);
         expect(copy.id, val.id);
       });
 
@@ -96,9 +96,9 @@ void main() {
         expect(val1, isNot(equals(val2)));
       });
 
-      test('should not be equal when isApproved differs', () {
-        final val1 = createValidation(isApproved: true);
-        final val2 = createValidation(isApproved: false);
+      test('should not be equal when percentage differs', () {
+        final val1 = createValidation(percentage: 100);
+        final val2 = createValidation(percentage: 50);
 
         expect(val1, isNot(equals(val2)));
       });
@@ -120,7 +120,7 @@ void main() {
         'occ-1',
         'user-2',
         validatedAt,
-        true,
+        100,
         'Good',
       ]);
     });

@@ -10,6 +10,8 @@ class TaskModel {
   final int points;
   final bool isActive;
   final String? recurrenceId;
+  final String? scheduledStartTime;
+  final int? expectedDuration;
   final DateTime createdAt;
   final String createdBy;
 
@@ -22,6 +24,8 @@ class TaskModel {
     required this.points,
     required this.isActive,
     this.recurrenceId,
+    this.scheduledStartTime,
+    this.expectedDuration,
     required this.createdAt,
     required this.createdBy,
   });
@@ -36,6 +40,8 @@ class TaskModel {
       points: (map['points'] as num).toInt(),
       isActive: map['isActive'] as bool? ?? true,
       recurrenceId: map['recurrenceId'] as String?,
+      scheduledStartTime: map['scheduledStartTime'] as String?,
+      expectedDuration: (map['expectedDuration'] as num?)?.toInt(),
       createdAt: (map['createdAt'] as Timestamp).toDate(),
       createdBy: map['createdBy'] as String,
     );
@@ -51,6 +57,8 @@ class TaskModel {
       points: entity.points,
       isActive: entity.isActive,
       recurrenceId: entity.recurrenceId,
+      scheduledStartTime: entity.scheduledStartTime,
+      expectedDuration: entity.expectedDuration,
       createdAt: entity.createdAt,
       createdBy: entity.createdBy,
     );
@@ -65,6 +73,8 @@ class TaskModel {
       'points': points,
       'isActive': isActive,
       'recurrenceId': recurrenceId,
+      'scheduledStartTime': scheduledStartTime,
+      'expectedDuration': expectedDuration,
       'createdAt': Timestamp.fromDate(createdAt),
       'createdBy': createdBy,
     };
@@ -80,6 +90,8 @@ class TaskModel {
       points: points,
       isActive: isActive,
       recurrenceId: recurrenceId,
+      scheduledStartTime: scheduledStartTime,
+      expectedDuration: expectedDuration,
       createdAt: createdAt,
       createdBy: createdBy,
     );

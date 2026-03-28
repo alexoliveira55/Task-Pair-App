@@ -2,14 +2,16 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:task_pair_app/domain/entities/task_execution_entity.dart';
 
 void main() {
-  final executedAt = DateTime(2024, 1, 15, 10, 30);
+  final startedAt = DateTime(2024, 1, 15, 10, 30);
+  final finishedAt = DateTime(2024, 1, 15, 11, 0);
 
   TaskExecutionEntity createExecution({
     String id = 'exec-1',
     String occurrenceId = 'occ-1',
     String taskId = 'task-1',
     String executedBy = 'user-1',
-    DateTime? executedAt_,
+    DateTime? startedAt_,
+    DateTime? finishedAt_,
     String? notes = 'Done',
     String? photoUrl,
   }) {
@@ -18,7 +20,8 @@ void main() {
       occurrenceId: occurrenceId,
       taskId: taskId,
       executedBy: executedBy,
-      executedAt: executedAt_ ?? executedAt,
+      startedAt: startedAt_ ?? startedAt,
+      finishedAt: finishedAt_,
       notes: notes,
       photoUrl: photoUrl,
     );
@@ -31,14 +34,15 @@ void main() {
         occurrenceId: 'occ-1',
         taskId: 'task-1',
         executedBy: 'user-1',
-        executedAt: executedAt,
+        startedAt: startedAt,
       );
 
       expect(exec.id, 'exec-1');
       expect(exec.occurrenceId, 'occ-1');
       expect(exec.taskId, 'task-1');
       expect(exec.executedBy, 'user-1');
-      expect(exec.executedAt, executedAt);
+      expect(exec.startedAt, startedAt);
+      expect(exec.finishedAt, isNull);
       expect(exec.notes, isNull);
       expect(exec.photoUrl, isNull);
     });
@@ -112,7 +116,8 @@ void main() {
         'occ-1',
         'task-1',
         'user-1',
-        executedAt,
+        startedAt,
+        null,
         'Done',
         null,
       ]);

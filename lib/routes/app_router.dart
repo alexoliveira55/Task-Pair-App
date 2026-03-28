@@ -5,12 +5,14 @@ import '../features/auth/presentation/pages/login_page.dart';
 import '../features/auth/presentation/pages/register_page.dart';
 import '../features/auth/presentation/pages/profile_page.dart';
 import '../features/auth/presentation/providers/auth_provider.dart';
+import '../features/admin/presentation/pages/admin_users_page.dart';
 import '../features/dashboard/presentation/pages/dashboard_page.dart';
 import '../features/pairs/presentation/pages/pair_management_page.dart';
 import '../features/pairs/presentation/pages/invite_page.dart';
 import '../features/tasks/presentation/pages/task_list_page.dart';
 import '../features/tasks/presentation/pages/task_form_page.dart';
 import '../features/execution/presentation/pages/task_execution_page.dart';
+import '../features/execution/presentation/pages/my_tasks_page.dart';
 import '../features/validation/presentation/pages/validation_page.dart';
 import '../features/score/presentation/pages/score_page.dart';
 import '../features/rewards/presentation/pages/rewards_page.dart';
@@ -70,6 +72,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
       ),
       GoRoute(
+        path: '/my-tasks',
+        builder: (context, state) => const MyTasksPage(),
+      ),
+      GoRoute(
         path: '/execute/:occurrenceId',
         builder: (context, state) {
           final occurrenceId = state.pathParameters['occurrenceId']!;
@@ -102,6 +108,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/settings',
         builder: (context, state) => const SettingsPage(),
+      ),
+      GoRoute(
+        path: '/admin/users',
+        builder: (context, state) => const AdminUsersPage(),
       ),
     ],
     errorBuilder: (context, state) => Scaffold(

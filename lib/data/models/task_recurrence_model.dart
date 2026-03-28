@@ -7,6 +7,7 @@ class TaskRecurrenceModel {
   final String type;
   final List<int>? daysOfWeek;
   final int? dayOfMonth;
+  final int? intervalDays;
   final DateTime startDate;
   final DateTime? endDate;
   final bool isActive;
@@ -17,6 +18,7 @@ class TaskRecurrenceModel {
     required this.type,
     this.daysOfWeek,
     this.dayOfMonth,
+    this.intervalDays,
     required this.startDate,
     this.endDate,
     required this.isActive,
@@ -31,6 +33,7 @@ class TaskRecurrenceModel {
           ?.map((e) => (e as num).toInt())
           .toList(),
       dayOfMonth: (map['dayOfMonth'] as num?)?.toInt(),
+      intervalDays: (map['intervalDays'] as num?)?.toInt(),
       startDate: (map['startDate'] as Timestamp).toDate(),
       endDate: (map['endDate'] as Timestamp?)?.toDate(),
       isActive: map['isActive'] as bool? ?? true,
@@ -44,6 +47,7 @@ class TaskRecurrenceModel {
       type: entity.type,
       daysOfWeek: entity.daysOfWeek,
       dayOfMonth: entity.dayOfMonth,
+      intervalDays: entity.intervalDays,
       startDate: entity.startDate,
       endDate: entity.endDate,
       isActive: entity.isActive,
@@ -56,6 +60,7 @@ class TaskRecurrenceModel {
       'type': type,
       'daysOfWeek': daysOfWeek,
       'dayOfMonth': dayOfMonth,
+      'intervalDays': intervalDays,
       'startDate': Timestamp.fromDate(startDate),
       'endDate': endDate != null ? Timestamp.fromDate(endDate!) : null,
       'isActive': isActive,
@@ -69,6 +74,7 @@ class TaskRecurrenceModel {
       type: type,
       daysOfWeek: daysOfWeek,
       dayOfMonth: dayOfMonth,
+      intervalDays: intervalDays,
       startDate: startDate,
       endDate: endDate,
       isActive: isActive,

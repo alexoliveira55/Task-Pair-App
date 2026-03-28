@@ -55,7 +55,6 @@ Perfis dos usuários do sistema. O ID do documento é o UID do Firebase Auth.
 | `displayName` | string      | Não         | Nome de exibição                |
 | `photoUrl`    | string      | Não         | URL da foto de perfil (Storage) |
 | `createdAt`   | timestamp   | Sim         | Data de criação da conta        |
-| `pairId`      | string      | Não         | ID do par ativo                 |
 
 **Exemplo de documento:**
 ```json
@@ -63,21 +62,22 @@ Perfis dos usuários do sistema. O ID do documento é o UID do Firebase Auth.
   "email": "joao@email.com",
   "displayName": "João Silva",
   "photoUrl": "https://firebasestorage.googleapis.com/.../profile.jpg",
-  "createdAt": "2026-01-15T10:30:00Z",
-  "pairId": "pair_abc123"
+  "createdAt": "2026-01-15T10:30:00Z"
 }
 ```
+
+> **Nota**: O campo `pairId` foi removido. A participação em pares é descoberta consultando a coleção `pairs` onde `requesterId == userId` OU `executorId == userId`. Um usuário pode participar de múltiplos pares.
 
 ---
 
 ### pairs
 
-Pares formados entre dois usuários.
+Pares formados entre dois usuários com papéis explícitos (solicitante e executor).
 
 | Campo         | Tipo        | Obrigatório | Descrição                         |
 | ------------- | ----------- | ----------- | --------------------------------- |
-| `user1Id`     | string      | Sim         | UID do primeiro membro            |
-| `user2Id`     | string      | Sim         | UID do segundo membro             |
+| `requesterId` | string      | Sim         | UID do solicitante (cria tarefas) |
+| `executorId`  | string      | Sim         | UID do executor (executa tarefas) |
 | `createdAt`   | timestamp   | Sim         | Data de criação do par            |
 | `name`        | string      | Sim         | Nome do par                       |
 | `scoreTarget` | number      | Sim         | Meta de pontuação (padrão: 100)   |
@@ -85,13 +85,15 @@ Pares formados entre dois usuários.
 **Exemplo de documento:**
 ```json
 {
-  "user1Id": "uid_joao",
-  "user2Id": "uid_maria",
+  "requesterId": "uid_joao",
+  "executorId": "uid_maria",
   "createdAt": "2026-01-20T14:00:00Z",
   "name": "João & Maria",
   "scoreTarget": 100
 }
 ```
+
+> **Nota**: O modelo suporta relacionamento **1:N** — um mesmo usuário pode participar de múltiplos pares com diferentes pessoas, podendo ser solicitante em alguns pares e executor em outros.
 
 ---
 
@@ -360,7 +362,7 @@ Recompensas configuradas para um par.
 
 ```
 users ────────┐
-              │ user1Id / user2Id
+              │ requesterId / executorId
               ▼
            pairs ──────────┐
               │             │ pairId
@@ -394,7 +396,8 @@ users ────────┐
 
 | Origem            | Destino            | Tipo   | Campo(s)                        |
 | ----------------- | ------------------ | ------ | ------------------------------- |
-| pairs             | users              | N:2    | `user1Id`, `user2Id` → users.id |
+| pairs             | users (solicitante)| N:1    | `requesterId` → users.id        |
+| pairs             | users (executor)   | N:1    | `executorId` → users.id         |
 | pairInvites       | pairs              | N:1    | `pairId` → pairs.id             |
 | pairInvites       | users              | N:1    | `fromUserId` → users.id         |
 | tasks             | pairs              | N:1    | `pairId` → pairs.id             |
@@ -442,7 +445,7 @@ As regras de segurança do Firestore estão definidas em `firebase/firestore.rul
 ```javascript
 isAuthenticated()     // Verifica se request.auth != null
 isOwner(userId)       // Verifica se auth.uid == userId
-isPairMember(pairId)  // Verifica se auth.uid é user1Id ou user2Id do par
+isPairMember(pairId)  // Verifica se auth.uid é requesterId ou executorId do par
 isTaskPairMember(taskId) // Verifica se é membro do par via tarefa
 ```
 

@@ -9,6 +9,8 @@ class TaskEntity extends Equatable {
   final int points;
   final bool isActive;
   final String? recurrenceId;
+  final String? scheduledStartTime;
+  final int? expectedDuration;
   final DateTime createdAt;
   final String createdBy;
 
@@ -21,6 +23,8 @@ class TaskEntity extends Equatable {
     required this.points,
     required this.isActive,
     this.recurrenceId,
+    this.scheduledStartTime,
+    this.expectedDuration,
     required this.createdAt,
     required this.createdBy,
   });
@@ -34,6 +38,8 @@ class TaskEntity extends Equatable {
     int? points,
     bool? isActive,
     String? recurrenceId,
+    String? scheduledStartTime,
+    int? expectedDuration,
     DateTime? createdAt,
     String? createdBy,
   }) {
@@ -46,6 +52,8 @@ class TaskEntity extends Equatable {
       points: points ?? this.points,
       isActive: isActive ?? this.isActive,
       recurrenceId: recurrenceId ?? this.recurrenceId,
+      scheduledStartTime: scheduledStartTime ?? this.scheduledStartTime,
+      expectedDuration: expectedDuration ?? this.expectedDuration,
       createdAt: createdAt ?? this.createdAt,
       createdBy: createdBy ?? this.createdBy,
     );
@@ -61,6 +69,8 @@ class TaskEntity extends Equatable {
         points,
         isActive,
         recurrenceId,
+        scheduledStartTime,
+        expectedDuration,
         createdAt,
         createdBy,
       ];

@@ -9,7 +9,7 @@ class RejectInviteUseCase {
   Future<void> execute(String inviteId) async {
     await _pairRepository.updateInviteStatus(
       inviteId,
-      AppConstants.inviteStatusDeclined,
+      AppConstants.inviteStatusRejected,
     );
   }
 }

@@ -20,7 +20,7 @@ You are the Firebase Agent.
 
 | Collection | Key fields |
 |------------|------------|
-| users | uid, displayName, email, photoUrl, createdAt |
+| users | uid, displayName, email, photoUrl, createdAt, isAdmin |
 | pairs | userIds[], status, createdAt |
 | pairInvites | fromUid, toEmail, pairId, status, expiresAt |
 | tasks | pairId, title, points, recurrenceType, createdBy |
@@ -31,11 +31,13 @@ You are the Firebase Agent.
 | rewards | pairId, title, targetPoints, unlockedAt |
 
 ## Security rules (firestore.rules) must enforce
-- Users can only read/write their own `users` document
+- Users can only read/write their own `users` document, unless they are admin
+- Admin users (with `isAdmin == true` in their Firestore doc) can create/update any user document
 - `pairs` readable only by pair members (userIds array-contains)
 - `pairInvites` writable only by the inviting user, readable by the recipient
 - `taskExecutions` writable only by the assigned executor
 - `taskValidations` writable only by the validating pair member
+- The `isAdmin()` helper function checks the requesting user's Firestore document
 
 ## Output artifacts
 - `lib/data/datasources/firebase/*.dart` — Firebase data sources

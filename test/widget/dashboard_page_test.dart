@@ -11,8 +11,8 @@ import 'package:task_pair_app/features/pairs/presentation/providers/pair_provide
 void main() {
   final testPair = PairEntity(
     id: 'pair-1',
-    user1Id: 'user-1',
-    user2Id: 'user-2',
+    requesterId: 'user-1',
+    executorId: 'user-2',
     createdAt: DateTime(2024, 1, 1),
     name: 'Test Pair',
     scoreTarget: 100,
@@ -23,15 +23,12 @@ void main() {
     email: 'test@example.com',
     displayName: 'Tester',
     createdAt: DateTime(2024, 1, 1),
-    pairId: 'pair-1',
   );
 
   Widget createDashboard({PairEntity? pair, UserEntity? user}) {
     return ProviderScope(
       overrides: [
-        currentPairProvider.overrideWith(
-          (ref) => Stream.value(pair ?? testPair),
-        ),
+        currentPairProvider.overrideWithValue(pair ?? testPair),
         currentUserEntityProvider.overrideWith(
           (ref) => Stream.value(user ?? testUser),
         ),
@@ -83,9 +80,7 @@ void main() {
         (WidgetTester tester) async {
       await tester.pumpWidget(ProviderScope(
         overrides: [
-          currentPairProvider.overrideWith(
-            (ref) => Stream.value(null),
-          ),
+          currentPairProvider.overrideWithValue(null),
           currentUserEntityProvider.overrideWith(
             (ref) => Stream.value(testUser),
           ),

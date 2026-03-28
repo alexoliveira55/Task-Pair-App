@@ -119,6 +119,18 @@ class TaskOccurrenceRepositoryImpl implements TaskOccurrenceRepository {
   }
 
   @override
+  Future<void> updateOccurrenceExecutionId(
+      String id, String executionId) async {
+    try {
+      await _collection.doc(id).update({'executionId': executionId});
+    } on FirebaseException catch (e) {
+      throw FirestoreException(
+          message: e.message ?? 'Failed to update occurrence executionId',
+          code: e.code);
+    }
+  }
+
+  @override
   Stream<List<TaskOccurrenceEntity>> watchOccurrencesByPairId(String pairId) {
     return _collection.where('pairId', isEqualTo: pairId).snapshots().map(
         (snapshot) => snapshot.docs

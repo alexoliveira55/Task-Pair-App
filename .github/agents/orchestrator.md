@@ -40,12 +40,21 @@ You are the Orchestrator Agent responsible for coordinating the development of t
 ## Feature Backlog (development order)
 1. Project structure and Firebase setup
 2. Authentication (RF001–RF009)
-3. Pair management and invitations (RF010–RF019)
-4. Task management (RF020–RF039)
-5. Recurrence engine and occurrences (RF040–RF059)
-6. Task execution (RF060–RF079)
-7. Task validation (RF080–RF099)
-8. Score system (RF100–RF119)
-9. Rewards and thermometer (RF120–RF139)
-10. Dashboard and reports (RF140–RF159)
-11. Internationalization / i18n (RF200–RF204)
+3. Admin user management (RF002)
+4. Pair management and invitations (RF010–RF019)
+5. Task management (RF020–RF039)
+6. Recurrence engine and occurrences (RF040–RF059)
+7. Task execution (RF060–RF079)
+8. Task validation (RF080–RF099)
+9. Score system (RF100–RF119)
+10. Rewards and thermometer (RF120–RF139)
+11. Dashboard and reports (RF140–RF159)
+12. Internationalization / i18n (RF200–RF204)
+
+## Admin Feature (RF002)
+- Admin user (`adm@administrator.com.br`) can manage all users
+- Admin can create users on behalf of third parties (Firebase Auth + Firestore)
+- Admin can toggle `isAdmin` flag on any user
+- Pair invites are restricted to registered users only
+- Admin UI is only visible to users with `isAdmin == true`
+- Firestore rules enforce admin privileges via `isAdmin()` helper function

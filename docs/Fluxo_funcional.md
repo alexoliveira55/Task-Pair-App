@@ -46,8 +46,9 @@ Ao final da recorrência → Recompensa
 | 6     | Lista de Tarefas   |           |
 | 7     | Nova Tarefa        |           |
 | 8     | Detalhe da Tarefa  |           |
-| 9     | Execução da Tarefa |           |
-| 10    | Validação          |           |
+| 9     | Minhas Tarefas (MyTasksPage) | Tarefas atribuídas ao executor (NOVO) |
+| 10    | Execução da Tarefa |           |
+| 11    | Validação          |           |
 | 11    | Termômetro         |           |
 | 12    | Relatórios         |           |
 | 13    | Recompensas        |           |
@@ -85,15 +86,48 @@ Par pode criar tarefas
 Selecionar Par
 Inserir Nome
 Inserir Descrição
-Selecionar Executor
-Selecionar Solicitante
-Selecionar Recorrência
+Definir Recorrência
 Definir período da recorrência
 Definir horário
 Definir tempo previsto
 Definir pontuação
 Definir recompensa
 Salvar
+```
+
+## 4.2 Regra de Auto-Atribuição (NOVO)
+
+O sistema **não permite** que o criador da tarefa a execute. A atribuição é automática:
+
+```text
+• createdBy = usuário logado (solicitante/requester)
+• assignedTo = outro membro do par (executor)
+• NÃO existe campo de seleção de executor na UI
+• O sistema calcula automaticamente quem é o executor
+```
+
+### Regras do Firestore
+
+```text
+assignedTo != request.auth.uid   (executor não pode ser o criador)
+createdBy == request.auth.uid    (criador deve ser o usuário logado)
+```
+
+### Fluxo Atualizado
+
+```text
+Usuário A seleciona par (A + B)
+      ↓
+Preenche: nome, descrição, pontuação, recorrência
+      ↓
+Sistema define automaticamente:
+  createdBy = A (solicitante)
+  assignedTo = B (executor)
+      ↓
+Firestore valida regras de segurança
+      ↓
+Tarefa salva
+      ↓
 Sistema gera recorrências automaticamente
 ```
 
@@ -152,10 +186,26 @@ Cada ocorrência terá status próprio.
 
 # 7. Fluxo de Execução da Tarefa
 
+## 7.1 Acesso via MyTasksPage (NOVO)
+
+O executor acessa suas tarefas pela rota `/my-tasks` (MyTasksPage), que exibe:
+
+| Seção              | Conteúdo                                         |
+| ------------------- | ------------------------------------------------ |
+| **Pendentes**       | Ocorrências a executar, com botão "Executar"     |
+| **Executadas**      | Ocorrências feitas, aguardando validação          |
+| **Validadas**       | Ocorrências já validadas pelo solicitante         |
+
+## 7.2 Fluxo de Execução
+
 ```text
-Executor abre tarefa
+Executor abre MyTasksPage (/my-tasks)
       ↓
-Clica "Iniciar"
+Vê ocorrências pendentes atribuídas a ele
+      ↓
+Clica "Executar" em uma ocorrência
+      ↓
+Navega para /execute/:occurrenceId
       ↓
 Sistema grava data/hora início
       ↓
@@ -165,8 +215,19 @@ Clica "Finalizar"
       ↓
 Sistema grava data/hora fim
       ↓
-Tarefa vai para validação
+Ocorrência move para seção "Executadas"
+      ↓
+Tarefa vai para validação do solicitante
 ```
+
+### Providers novos
+
+| Provider                               | Função                                        |
+| -------------------------------------- | --------------------------------------------- |
+| `myPendingOccurrencesProvider`         | Ocorrências do executor com status pending     |
+| `myExecutedOccurrencesProvider`        | Ocorrências executadas aguardando validação    |
+| `myValidatedOccurrencesProvider`       | Ocorrências já validadas                       |
+| `executionByOccurrenceIdProvider`      | Busca execução por ID da ocorrência            |
 
 ---
 
@@ -308,27 +369,59 @@ rewards
 
 ---
 
-# 15. Dashboard (Tela Principal)
+# 15. Dashboard (Tela Principal) — Redesenhado com 2 Abas
 
-O Dashboard deve mostrar:
+O Dashboard foi redesenhado com **2 abas (TabBar)** para separar as visões de executor e solicitante.
 
-## Executor
+## Aba 1: "Tarefas que faço" (Visão do Executor)
 
-* Termômetro geral
-* Termômetro por tarefa
-* Tarefas de hoje
-* Validações pendentes
-* Recompensas
-* Pontuação total
-* Sequência de dias cumpridos
+Exibe as tarefas atribuídas ao usuário logado:
 
-## Solicitante
+* **Termômetro de progresso** do executor (pontuação própria)
+* **Ocorrências pendentes** com botão "Executar" (→ /execute/:id)
+* **Ocorrências executadas** aguardando validação do solicitante
 
-* Execuções pendentes de validação
-* Pontuação por executor
-* Ranking
-* Tarefas atrasadas
-* Relatório semanal
+> O termômetro aparece **apenas nesta aba** (progresso do executor).
+
+## Aba 2: "Tarefas que solicito" (Visão do Solicitante)
+
+Exibe as tarefas criadas pelo usuário logado:
+
+* **Ações rápidas**: Criar Tarefa, Recompensas, Relatórios, Meus Pares
+* **Ocorrências aguardando validação** com botão "Validar" (→ /validate/:id)
+* **Tarefas que criei**: lista com opções de editar e deletar
+
+> **Não há termômetro** nesta aba — é uma visão de gerenciamento.
+
+## Providers do Dashboard
+
+| Provider                                | Função                                          |
+| --------------------------------------- | ----------------------------------------------- |
+| `myAssignedTasksProvider`               | Tarefas onde sou executor (assignedTo == eu)    |
+| `myRequestedTasksProvider`              | Tarefas onde sou solicitante (createdBy == eu)  |
+| `pendingValidationOccurrencesProvider`  | Ocorrências executadas pelo parceiro, aguardando minha validação |
+| `myPendingOccurrencesProvider`          | Ocorrências atribuídas a mim, status pending     |
+| `myExecutedOccurrencesProvider`         | Ocorrências que executei, aguardando validação   |
+
+## Fluxo Atualizado
+
+```text
+Usuário faz login
+      ↓
+Redireciona para /dashboard
+      ↓
+Carrega dados do par ativo
+      ↓
+Aba "Tarefas que faço" (padrão):
+  ├── Termômetro de progresso do executor
+  ├── Ocorrências pendentes (botão Executar)
+  └── Ocorrências executadas (aguardando validação)
+
+Aba "Tarefas que solicito":
+  ├── Ações rápidas
+  ├── Ocorrências para validar (botão Validar)
+  └── Minhas tarefas (editar/deletar)
+```
 
 ---
 

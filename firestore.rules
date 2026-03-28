@@ -1,0 +1,15 @@
+// This file is kept in sync with firebase/firestore.rules.
+// The canonical rules are in firebase/firestore.rules.
+// See firebase.json for the active rules path.
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Qualquer usuário autenticado tem acesso total a todas as coleções
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}

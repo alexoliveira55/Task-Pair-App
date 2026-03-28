@@ -70,8 +70,8 @@ void main() {
         expect(AppConstants.inviteStatusAccepted, 'accepted');
       });
 
-      test('inviteStatusDeclined should be declined', () {
-        expect(AppConstants.inviteStatusDeclined, 'declined');
+      test('inviteStatusRejected should be rejected', () {
+        expect(AppConstants.inviteStatusRejected, 'rejected');
       });
     });
   });

@@ -14,13 +14,13 @@ void main() {
   });
 
   group('RejectInviteUseCase', () {
-    test('should update invite status to declined', () async {
+    test('should update invite status to rejected', () async {
       when(() => mockPairRepo.updateInviteStatus(any(), any()))
           .thenAnswer((_) async {});
 
       await useCase.execute('invite-1');
 
-      verify(() => mockPairRepo.updateInviteStatus('invite-1', 'declined'))
+      verify(() => mockPairRepo.updateInviteStatus('invite-1', 'rejected'))
           .called(1);
     });
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import '../providers/task_provider.dart';
 import '../../../../shared/widgets/app_button.dart';
 import '../../../../shared/widgets/app_text_field.dart';
@@ -21,8 +22,12 @@ class _TaskFormPageState extends ConsumerState<TaskFormPage> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _pointsController = TextEditingController(text: '10');
+  final _intervalDaysController = TextEditingController(text: '2');
+  final _expectedDurationController = TextEditingController();
   String _recurrenceType = AppConstants.dailyRecurrence;
   final List<int> _selectedDays = [];
+  String? _scheduledStartTime;
+  DateTime? _endDate;
   bool _didLoadTask = false;
 
   bool get isEditing => widget.taskId != null;
@@ -32,6 +37,8 @@ class _TaskFormPageState extends ConsumerState<TaskFormPage> {
     _titleController.dispose();
     _descriptionController.dispose();
     _pointsController.dispose();
+    _intervalDaysController.dispose();
+    _expectedDurationController.dispose();
     super.dispose();
   }
 
@@ -42,7 +49,36 @@ class _TaskFormPageState extends ConsumerState<TaskFormPage> {
       _titleController.text = task.title;
       _descriptionController.text = task.description ?? '';
       _pointsController.text = task.points.toString();
+      _scheduledStartTime = task.scheduledStartTime;
+      if (task.expectedDuration != null) {
+        _expectedDurationController.text = task.expectedDuration.toString();
+      }
       _didLoadTask = true;
+    }
+  }
+
+  Future<void> _pickTime() async {
+    final time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+    if (time != null) {
+      setState(() {
+        _scheduledStartTime =
+            '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+      });
+    }
+  }
+
+  Future<void> _pickEndDate() async {
+    final date = await showDatePicker(
+      context: context,
+      initialDate: _endDate ?? DateTime.now().add(const Duration(days: 30)),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+    );
+    if (date != null) {
+      setState(() => _endDate = date);
     }
   }
 
@@ -114,12 +150,14 @@ class _TaskFormPageState extends ConsumerState<TaskFormPage> {
                   AppConstants.dailyRecurrence,
                   AppConstants.weeklyRecurrence,
                   AppConstants.monthlyRecurrence,
+                  AppConstants.intervalRecurrence,
                   AppConstants.onceRecurrence,
                 ].map((type) {
                   final labels = {
                     AppConstants.dailyRecurrence: l10n.daily,
                     AppConstants.weeklyRecurrence: l10n.weekly,
                     AppConstants.monthlyRecurrence: l10n.monthly,
+                    AppConstants.intervalRecurrence: l10n.interval,
                     AppConstants.onceRecurrence: l10n.once,
                   };
                   return DropdownMenuItem(
@@ -165,6 +203,50 @@ class _TaskFormPageState extends ConsumerState<TaskFormPage> {
                   }).toList(),
                 ),
               ],
+              if (_recurrenceType == AppConstants.intervalRecurrence) ...[
+                const SizedBox(height: 16),
+                AppTextField(
+                  label: l10n.intervalDays,
+                  controller: _intervalDaysController,
+                  keyboardType: TextInputType.number,
+                  validator: (v) {
+                    if (v == null || v.isEmpty) return l10n.requiredField;
+                    final parsed = int.tryParse(v);
+                    if (parsed == null || parsed < 1) return l10n.invalidNumber;
+                    return null;
+                  },
+                ),
+              ],
+              if (_recurrenceType != AppConstants.onceRecurrence) ...[
+                const SizedBox(height: 16),
+                OutlinedButton.icon(
+                  onPressed: _pickEndDate,
+                  icon: const Icon(Icons.calendar_month),
+                  label: Text(_endDate != null
+                      ? '${l10n.endDate}: ${DateFormat.yMd().format(_endDate!)}'
+                      : l10n.selectEndDate),
+                ),
+              ],
+              const SizedBox(height: 16),
+              OutlinedButton.icon(
+                onPressed: _pickTime,
+                icon: const Icon(Icons.access_time),
+                label: Text(_scheduledStartTime != null
+                    ? '${l10n.scheduledTime}: $_scheduledStartTime'
+                    : l10n.scheduledTime),
+              ),
+              const SizedBox(height: 16),
+              AppTextField(
+                label: l10n.expectedDurationMin,
+                controller: _expectedDurationController,
+                keyboardType: TextInputType.number,
+                validator: (v) {
+                  if (v != null && v.isNotEmpty && int.tryParse(v) == null) {
+                    return l10n.invalidNumber;
+                  }
+                  return null;
+                },
+              ),
               const SizedBox(height: 24),
               AppButton(
                 label: isEditing ? l10n.updateTask : l10n.createTask,
@@ -184,6 +266,11 @@ class _TaskFormPageState extends ConsumerState<TaskFormPage> {
                                     ? null
                                     : _descriptionController.text.trim(),
                             points: int.parse(_pointsController.text),
+                            scheduledStartTime: _scheduledStartTime,
+                            expectedDuration: _expectedDurationController
+                                    .text.isNotEmpty
+                                ? int.tryParse(_expectedDurationController.text)
+                                : null,
                           ));
                     }
                   } else {
@@ -195,8 +282,18 @@ class _TaskFormPageState extends ConsumerState<TaskFormPage> {
                                   : _descriptionController.text.trim(),
                           points: int.parse(_pointsController.text),
                           recurrenceType: _recurrenceType,
+                          scheduledStartTime: _scheduledStartTime,
+                          expectedDuration: _expectedDurationController
+                                  .text.isNotEmpty
+                              ? int.tryParse(_expectedDurationController.text)
+                              : null,
                           daysOfWeek:
                               _selectedDays.isEmpty ? null : _selectedDays,
+                          intervalDays:
+                              _recurrenceType == AppConstants.intervalRecurrence
+                                  ? int.tryParse(_intervalDaysController.text)
+                                  : null,
+                          endDate: _endDate,
                         );
                   }
                 },

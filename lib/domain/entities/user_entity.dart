@@ -6,7 +6,7 @@ class UserEntity extends Equatable {
   final String? displayName;
   final String? photoUrl;
   final DateTime createdAt;
-  final String? pairId;
+  final bool isAdmin;
 
   const UserEntity({
     required this.id,
@@ -14,7 +14,7 @@ class UserEntity extends Equatable {
     this.displayName,
     this.photoUrl,
     required this.createdAt,
-    this.pairId,
+    this.isAdmin = false,
   });
 
   UserEntity copyWith({
@@ -23,7 +23,7 @@ class UserEntity extends Equatable {
     String? displayName,
     String? photoUrl,
     DateTime? createdAt,
-    String? pairId,
+    bool? isAdmin,
   }) {
     return UserEntity(
       id: id ?? this.id,
@@ -31,11 +31,11 @@ class UserEntity extends Equatable {
       displayName: displayName ?? this.displayName,
       photoUrl: photoUrl ?? this.photoUrl,
       createdAt: createdAt ?? this.createdAt,
-      pairId: pairId ?? this.pairId,
+      isAdmin: isAdmin ?? this.isAdmin,
     );
   }
 
   @override
   List<Object?> get props =>
-      [id, email, displayName, photoUrl, createdAt, pairId];
+      [id, email, displayName, photoUrl, createdAt, isAdmin];
 }

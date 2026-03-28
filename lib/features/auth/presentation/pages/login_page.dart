@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../providers/auth_provider.dart';
 import '../../../../shared/widgets/app_button.dart';
 import '../../../../shared/widgets/app_text_field.dart';
+import '../../../../core/errors/auth_error_mapper.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -42,8 +43,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     ref.listen(authNotifierProvider, (_, next) {
       if (next.hasError) {
+        final message = mapAuthErrorToMessage(next.error!, l10n);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(next.error.toString())),
+          SnackBar(
+            content: Text(message),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
         );
       }
     });

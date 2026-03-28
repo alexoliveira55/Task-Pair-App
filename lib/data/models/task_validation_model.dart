@@ -7,7 +7,7 @@ class TaskValidationModel {
   final String occurrenceId;
   final String validatedBy;
   final DateTime validatedAt;
-  final bool isApproved;
+  final int percentage;
   final String? feedback;
   final String? pairId; // Denormalized for efficient Firestore queries
 
@@ -17,7 +17,7 @@ class TaskValidationModel {
     required this.occurrenceId,
     required this.validatedBy,
     required this.validatedAt,
-    required this.isApproved,
+    required this.percentage,
     this.feedback,
     this.pairId,
   });
@@ -29,7 +29,8 @@ class TaskValidationModel {
       occurrenceId: map['occurrenceId'] as String,
       validatedBy: map['validatedBy'] as String,
       validatedAt: (map['validatedAt'] as Timestamp).toDate(),
-      isApproved: map['isApproved'] as bool,
+      percentage: (map['percentage'] as num?)?.toInt() ??
+          (map['isApproved'] == true ? 100 : 0),
       feedback: map['feedback'] as String?,
       pairId: map['pairId'] as String?,
     );
@@ -43,7 +44,7 @@ class TaskValidationModel {
       occurrenceId: entity.occurrenceId,
       validatedBy: entity.validatedBy,
       validatedAt: entity.validatedAt,
-      isApproved: entity.isApproved,
+      percentage: entity.percentage,
       feedback: entity.feedback,
       pairId: pairId,
     );
@@ -55,7 +56,7 @@ class TaskValidationModel {
       'occurrenceId': occurrenceId,
       'validatedBy': validatedBy,
       'validatedAt': Timestamp.fromDate(validatedAt),
-      'isApproved': isApproved,
+      'percentage': percentage,
       'feedback': feedback,
       if (pairId != null) 'pairId': pairId,
     };
@@ -68,7 +69,7 @@ class TaskValidationModel {
       occurrenceId: occurrenceId,
       validatedBy: validatedBy,
       validatedAt: validatedAt,
-      isApproved: isApproved,
+      percentage: percentage,
       feedback: feedback,
     );
   }

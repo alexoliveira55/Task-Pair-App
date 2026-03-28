@@ -5,11 +5,15 @@ abstract class PairRepository {
   Future<PairEntity?> getPairById(String id);
   Future<PairEntity> createPair(PairEntity pair);
   Future<void> updatePair(PairEntity pair);
+  Future<void> setExecutorId(String pairId, String userId);
   Future<void> deletePair(String id);
   Stream<PairEntity?> watchPair(String id);
+  Stream<List<PairEntity>> watchPairsByUserId(String userId);
 
   Future<PairInviteEntity> createInvite(PairInviteEntity invite);
   Future<List<PairInviteEntity>> getInvitesForEmail(String email);
   Future<void> updateInviteStatus(String inviteId, String status);
   Stream<List<PairInviteEntity>> watchInvitesForEmail(String email);
+  Stream<List<PairInviteEntity>> watchInvitesByFromUserId(String userId);
+  Stream<List<PairInviteEntity>> watchAllInvites();
 }

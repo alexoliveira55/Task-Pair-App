@@ -109,4 +109,11 @@ class ScoreRepositoryImpl implements ScoreRepository {
             .map((doc) => ScoreModel.fromMap(doc.data(), doc.id).toEntity())
             .toList());
   }
+
+  @override
+  Stream<List<ScoreEntity>> watchAllScores() {
+    return _collection.snapshots().map((snapshot) => snapshot.docs
+        .map((doc) => ScoreModel.fromMap(doc.data(), doc.id).toEntity())
+        .toList());
+  }
 }

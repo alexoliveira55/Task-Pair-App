@@ -8,6 +8,7 @@ import '../../../../shared/widgets/loading_widget.dart';
 import '../../../../shared/widgets/app_button.dart';
 import '../../../../shared/widgets/app_text_field.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../features/tasks/presentation/providers/task_provider.dart';
 
 class TaskExecutionPage extends ConsumerStatefulWidget {
   final String occurrenceId;
@@ -56,7 +57,14 @@ class _TaskExecutionPageState extends ConsumerState<TaskExecutionPage> {
           if (occurrence == null) {
             return Center(child: Text(l10n.noData));
           }
-          if (occurrence.status != AppConstants.pendingStatus) {
+
+          final isInProgress =
+              occurrence.status == AppConstants.inProgressStatus;
+          final isAlreadyDone =
+              occurrence.status == AppConstants.executedStatus ||
+                  occurrence.status == AppConstants.validatedStatus;
+
+          if (isAlreadyDone) {
             return Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -68,6 +76,7 @@ class _TaskExecutionPageState extends ConsumerState<TaskExecutionPage> {
               ),
             );
           }
+
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -79,38 +88,76 @@ class _TaskExecutionPageState extends ConsumerState<TaskExecutionPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Task ID: ${occurrence.taskId}'),
+                        Builder(builder: (context) {
+                          final task =
+                              ref.watch(taskByIdProvider(occurrence.taskId));
+                          return Text(
+                            task?.title ?? occurrence.taskId,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          );
+                        }),
                         Text(
                             '${l10n.dueDate}: ${occurrence.dueDate.toString().split(' ').first}'),
                         Text('Status: ${occurrence.status}'),
+                        if (isInProgress) ...[
+                          const SizedBox(height: 8),
+                          Text(
+                            l10n.taskInProgress,
+                            style: TextStyle(
+                              color: Colors.deepPurple,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),
                 ),
                 const SizedBox(height: 16),
-                AppTextField(
-                  label: l10n.executionNotes,
-                  controller: _notesController,
-                  maxLines: 4,
-                  hint: l10n.executionNotesHint,
-                ),
-                const SizedBox(height: 24),
-                AppButton(
-                  label: l10n.finishExecution,
-                  icon: Icons.check,
-                  isLoading: executionState.isLoading,
-                  onPressed: () async {
-                    await ref
-                        .read(executionNotifierProvider.notifier)
-                        .executeTask(
-                          occurrenceId: widget.occurrenceId,
-                          taskId: occurrence.taskId,
-                          notes: _notesController.text.trim().isEmpty
-                              ? null
-                              : _notesController.text.trim(),
-                        );
-                  },
-                ),
+
+                // Step 1: Start execution (only when pending)
+                if (!isInProgress) ...[
+                  AppButton(
+                    label: l10n.startExecution,
+                    icon: Icons.play_arrow,
+                    isLoading: executionState.isLoading,
+                    onPressed: () async {
+                      await ref
+                          .read(executionNotifierProvider.notifier)
+                          .startExecution(
+                            occurrenceId: widget.occurrenceId,
+                            taskId: occurrence.taskId,
+                          );
+                    },
+                  ),
+                ],
+
+                // Step 2: Finish execution (only when in_progress)
+                if (isInProgress) ...[
+                  AppTextField(
+                    label: l10n.executionNotes,
+                    controller: _notesController,
+                    maxLines: 4,
+                    hint: l10n.executionNotesHint,
+                  ),
+                  const SizedBox(height: 24),
+                  AppButton(
+                    label: l10n.finishExecution,
+                    icon: Icons.check,
+                    isLoading: executionState.isLoading,
+                    onPressed: () async {
+                      await ref
+                          .read(executionNotifierProvider.notifier)
+                          .finishExecution(
+                            executionId: occurrence.executionId!,
+                            occurrenceId: widget.occurrenceId,
+                            notes: _notesController.text.trim().isEmpty
+                                ? null
+                                : _notesController.text.trim(),
+                          );
+                    },
+                  ),
+                ],
               ],
             ),
           );

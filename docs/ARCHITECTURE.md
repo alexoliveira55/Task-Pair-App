@@ -101,10 +101,10 @@ Contém toda a UI e o gerenciamento de estado.
 │  ┌──────────────────────────────────────────────┐    │
 │  │  Pages (Flutter Widgets)                     │    │
 │  │  ├── LoginPage, RegisterPage, ProfilePage    │    │
-│  │  ├── DashboardPage                           │    │
+│  │  ├── DashboardPage (2 tabs: executor/requester) │    │
 │  │  ├── PairManagementPage, InvitePage          │    │
 │  │  ├── TaskListPage, TaskFormPage              │    │
-│  │  ├── TaskExecutionPage                       │    │
+│  │  ├── TaskExecutionPage, MyTasksPage          │    │
 │  │  ├── ValidationPage                          │    │
 │  │  ├── ScorePage, RewardsPage                  │    │
 │  │  └── ReportsPage                             │    │
@@ -202,7 +202,8 @@ lib/features/
 ├── execution/
 │   └── presentation/
 │       ├── pages/
-│       │   └── task_execution_page.dart
+│       │   ├── task_execution_page.dart
+│       │   └── my_tasks_page.dart
 │       └── providers/
 │           └── execution_provider.dart
 ├── validation/
@@ -300,12 +301,20 @@ tasksAsync.when(
 | `authStateProvider`          | StreamProvider        | Estado de autenticação Firebase        |
 | `currentUserEntityProvider`  | FutureProvider        | Dados do usuário logado                |
 | `authNotifierProvider`       | StateNotifierProvider | Ações de auth (login, register, etc.)  |
-| `currentPairProvider`        | StreamProvider        | Par ativo do usuário                   |
+| `currentPairProvider`        | Provider              | Par selecionado (ou primeiro) do usuário  |
+| `myPairsProvider`            | StreamProvider        | Todos os pares do usuário atual          |
+| `pairsAsRequesterProvider`   | Provider              | Pares onde usuário é solicitante         |
+| `pairsAsExecutorProvider`    | Provider              | Pares onde usuário é executor            |
+| `selectedPairIdProvider`     | StateProvider         | ID do par selecionado atualmente        |
 | `pendingInvitesProvider`     | StreamProvider        | Convites pendentes                     |
 | `pairNotifierProvider`       | StateNotifierProvider | Ações de pares                         |
 | `tasksProvider`              | StreamProvider.family | Tarefas por pairId (tempo real)        |
 | `taskNotifierProvider`       | StateNotifierProvider | Ações de tarefas (CRUD)                |
 | `executionNotifierProvider`  | StateNotifierProvider | Ações de execução                      |
+| `myPendingOccurrencesProvider` | StreamProvider      | Occurrences assigned to user (pending)  |
+| `myExecutedOccurrencesProvider` | StreamProvider     | Occurrences executed by user (awaiting) |
+| `myValidatedOccurrencesProvider` | StreamProvider    | Occurrences validated for user          |
+| `executionByOccurrenceIdProvider` | FutureProvider.family | Lookup execution by occurrence ID   |
 | `validationNotifierProvider` | StateNotifierProvider | Ações de validação                     |
 | `scoresProvider`             | StreamProvider.family | Pontuações por par                     |
 | `totalPairPointsProvider`    | Provider              | Total de pontos do par                 |
@@ -315,6 +324,9 @@ tasksAsync.when(
 | `recurrenceProvider`         | Provider              | Use case de gerar ocorrências          |
 | `occurrencesProvider`        | StreamProvider.family | Ocorrências por par/tarefa             |
 | `dashboardDataProvider`      | FutureProvider        | Dados agregados do dashboard           |
+| `myAssignedTasksProvider`    | StreamProvider        | Tasks assigned to current user (executor) |
+| `myRequestedTasksProvider`   | StreamProvider        | Tasks created by current user (requester) |
+| `pendingValidationOccurrencesProvider` | StreamProvider | Occurrences awaiting user's validation |
 | `reportsProvider`            | FutureProvider        | Dados de relatórios                    |
 
 ---
@@ -351,12 +363,13 @@ final routerProvider = Provider<GoRouter>((ref) {
 | --------------------------- | ------------------- | ------------------------ |
 | `/login`                    | LoginPage           | —                        |
 | `/register`                 | RegisterPage        | —                        |
-| `/dashboard`                | DashboardPage       | —                        |
+| `/dashboard`                | DashboardPage (2 tabs)| —                        |
 | `/pair-management`          | PairManagementPage  | —                        |
 | `/invite`                   | InvitePage          | —                        |
 | `/tasks`                    | TaskListPage        | —                        |
 | `/tasks/new`                | TaskFormPage        | —                        |
 | `/tasks/:id/edit`           | TaskFormPage        | `id` (taskId)            |
+| `/my-tasks`                 | MyTasksPage         | —                        |
 | `/execute/:occurrenceId`    | TaskExecutionPage   | `occurrenceId`           |
 | `/validate/:executionId`    | ValidationPage      | `executionId`            |
 | `/score`                    | ScorePage           | —                        |
@@ -651,3 +664,5 @@ Classes de exceção customizadas para cada camada:
 | 6 | Repository Pattern                         | Desacoplamento entre domínio e fonte de dados               |
 | 7 | Modelos separados das entidades            | Responsabilidades distintas (serialização vs. negócio)      |
 | 8 | Feature-first ao invés de layer-first      | Melhor escalabilidade e coesão por funcionalidade           |
+| 9 | Task auto-assignment (self-prevention)     | `assignedTo` auto-computed to other pair member; Firestore rules enforce `assignedTo != auth.uid` and `createdBy == auth.uid` |
+| 10 | Dashboard 2-tab design (executor/requester) | Separates concerns: executor sees own tasks + thermometer, requester manages tasks + validates |

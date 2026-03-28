@@ -15,14 +15,17 @@ class ValidateTaskUseCase {
     this._scoreRepository,
   );
 
+  /// Validates with a percentage (0-100).
+  /// Score formula: taskPoints * percentage / 100
+  /// If percentage == 0 (não cumprida): score = taskPoints * -1
   Future<TaskValidationEntity> execute({
     required String executionId,
     required String occurrenceId,
     required String validatedBy,
-    required bool isApproved,
+    required int percentage,
     String? feedback,
     required String pairId,
-    required int points,
+    required int taskPoints,
     required String executedBy,
   }) async {
     final validation = await _validationRepository.createValidation(
@@ -32,18 +35,26 @@ class ValidateTaskUseCase {
         occurrenceId: occurrenceId,
         validatedBy: validatedBy,
         validatedAt: DateTime.now(),
-        isApproved: isApproved,
+        percentage: percentage,
         feedback: feedback,
       ),
     );
 
-    final newStatus =
-        isApproved ? AppConstants.validatedStatus : AppConstants.rejectedStatus;
+    final newStatus = percentage > 0
+        ? AppConstants.validatedStatus
+        : AppConstants.missedStatus;
     await _occurrenceRepository.updateOccurrenceStatus(occurrenceId, newStatus);
 
-    if (isApproved) {
-      await _scoreRepository.addPoints(executedBy, pairId, points);
+    // Score formula: percentage > 0 → taskPoints * percentage / 100
+    //                percentage == 0 (não cumprida) → taskPoints * -1
+    final int calculatedPoints;
+    if (percentage > 0) {
+      calculatedPoints = (taskPoints * percentage / 100).round();
+    } else {
+      calculatedPoints = taskPoints * -1;
     }
+
+    await _scoreRepository.addPoints(executedBy, pairId, calculatedPoints);
 
     return validation;
   }

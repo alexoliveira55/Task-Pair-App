@@ -27,10 +27,10 @@ class ValidationNotifier extends StateNotifier<AsyncValue<void>> {
   Future<void> validate({
     required String executionId,
     required String occurrenceId,
-    required bool isApproved,
+    required int percentage,
     String? feedback,
     required String pairId,
-    required int points,
+    required int taskPoints,
     required String executedBy,
   }) async {
     state = const AsyncValue.loading();
@@ -42,10 +42,10 @@ class ValidationNotifier extends StateNotifier<AsyncValue<void>> {
         executionId: executionId,
         occurrenceId: occurrenceId,
         validatedBy: currentUser.id,
-        isApproved: isApproved,
+        percentage: percentage,
         feedback: feedback,
         pairId: pairId,
-        points: points,
+        taskPoints: taskPoints,
         executedBy: executedBy,
       );
       state = const AsyncValue.data(null);

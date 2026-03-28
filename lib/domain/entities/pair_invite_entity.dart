@@ -7,6 +7,8 @@ class PairInviteEntity extends Equatable {
   final String pairId;
   final String status;
   final DateTime createdAt;
+  final String pairName;
+  final int scoreTarget;
 
   const PairInviteEntity({
     required this.id,
@@ -15,6 +17,8 @@ class PairInviteEntity extends Equatable {
     required this.pairId,
     required this.status,
     required this.createdAt,
+    this.pairName = '',
+    this.scoreTarget = 100,
   });
 
   PairInviteEntity copyWith({
@@ -24,6 +28,8 @@ class PairInviteEntity extends Equatable {
     String? pairId,
     String? status,
     DateTime? createdAt,
+    String? pairName,
+    int? scoreTarget,
   }) {
     return PairInviteEntity(
       id: id ?? this.id,
@@ -32,10 +38,20 @@ class PairInviteEntity extends Equatable {
       pairId: pairId ?? this.pairId,
       status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
+      pairName: pairName ?? this.pairName,
+      scoreTarget: scoreTarget ?? this.scoreTarget,
     );
   }
 
   @override
-  List<Object?> get props =>
-      [id, fromUserId, toEmail, pairId, status, createdAt];
+  List<Object?> get props => [
+        id,
+        fromUserId,
+        toEmail,
+        pairId,
+        status,
+        createdAt,
+        pairName,
+        scoreTarget
+      ];
 }

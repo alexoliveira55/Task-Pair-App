@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import '../providers/auth_provider.dart';
+import '../../../../features/admin/presentation/providers/admin_provider.dart';
 import '../../../../shared/widgets/app_button.dart';
 import '../../../../shared/widgets/app_text_field.dart';
 import '../../../../shared/widgets/loading_widget.dart';
@@ -215,14 +216,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     child: ListTile(
                       leading: const Icon(Icons.people_outlined),
                       title: Text(l10n.pairs),
-                      subtitle: Text(
-                          user.pairId != null ? l10n.paired : l10n.noPairYet),
-                      trailing: user.pairId != null
-                          ? IconButton(
-                              icon: const Icon(Icons.arrow_forward),
-                              onPressed: () => context.push('/pair-management'),
-                            )
-                          : null,
+                      trailing: IconButton(
+                        icon: const Icon(Icons.arrow_forward),
+                        onPressed: () => context.push('/pair-management'),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -247,6 +244,20 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       onTap: () => context.push('/settings'),
                     ),
                   ),
+
+                  // Admin panel (visible only to admins)
+                  if (ref.watch(isAdminProvider))
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Card(
+                        child: ListTile(
+                          leading: const Icon(Icons.admin_panel_settings),
+                          title: Text(l10n.adminUserManagement),
+                          trailing: const Icon(Icons.arrow_forward),
+                          onTap: () => context.push('/admin/users'),
+                        ),
+                      ),
+                    ),
 
                   const SizedBox(height: 32),
                   AppButton(

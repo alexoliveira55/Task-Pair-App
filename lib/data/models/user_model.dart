@@ -7,7 +7,7 @@ class UserModel {
   final String? displayName;
   final String? photoUrl;
   final DateTime createdAt;
-  final String? pairId;
+  final bool isAdmin;
 
   const UserModel({
     required this.id,
@@ -15,7 +15,7 @@ class UserModel {
     this.displayName,
     this.photoUrl,
     required this.createdAt,
-    this.pairId,
+    this.isAdmin = false,
   });
 
   factory UserModel.fromMap(Map<String, dynamic> map, String id) {
@@ -25,7 +25,7 @@ class UserModel {
       displayName: map['displayName'] as String?,
       photoUrl: map['photoUrl'] as String?,
       createdAt: (map['createdAt'] as Timestamp).toDate(),
-      pairId: map['pairId'] as String?,
+      isAdmin: map['isAdmin'] as bool? ?? false,
     );
   }
 
@@ -36,7 +36,7 @@ class UserModel {
       displayName: entity.displayName,
       photoUrl: entity.photoUrl,
       createdAt: entity.createdAt,
-      pairId: entity.pairId,
+      isAdmin: entity.isAdmin,
     );
   }
 
@@ -46,7 +46,7 @@ class UserModel {
       'displayName': displayName,
       'photoUrl': photoUrl,
       'createdAt': Timestamp.fromDate(createdAt),
-      'pairId': pairId,
+      'isAdmin': isAdmin,
     };
   }
 
@@ -57,7 +57,7 @@ class UserModel {
       displayName: displayName,
       photoUrl: photoUrl,
       createdAt: createdAt,
-      pairId: pairId,
+      isAdmin: isAdmin,
     );
   }
 }

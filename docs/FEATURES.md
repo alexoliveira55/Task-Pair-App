@@ -104,7 +104,7 @@ Sistema para formação e gerenciamento de pares entre dois usuários. Um usuár
 ```
 Usuário A cria par com nome
     ↓
-Sistema salva par no Firestore (user1Id = A)
+Sistema salva par no Firestore (requesterId = A)
     ↓
 Usuário A convida Usuário B por email
     ↓
@@ -116,7 +116,7 @@ Usuário B aceita convite
     ↓
 Sistema atualiza convite para "accepted"
     ↓
-Sistema atualiza par com user2Id = B
+Sistema atualiza par com executorId = B
     ↓
 Par formado! Podem criar tarefas.
 ```
@@ -133,13 +133,17 @@ Par formado! Podem criar tarefas.
 
 | Provider                | Tipo                  | Função                            |
 | ----------------------- | --------------------- | --------------------------------- |
-| `currentPairProvider`   | StreamProvider        | Par ativo do usuário              |
+| `currentPairProvider`   | Provider              | Par selecionado (ou primeiro)     |
+| `myPairsProvider`       | StreamProvider        | Todos os pares do usuário         |
+| `pairsAsRequesterProvider`| Provider            | Pares onde usuário é solicitante   |
+| `pairsAsExecutorProvider` | Provider            | Pares onde usuário é executor      |
+| `selectedPairIdProvider`| StateProvider         | ID do par selecionado             |
 | `pendingInvitesProvider`| StreamProvider        | Convites pendentes recebidos      |
 | `pairNotifierProvider`  | StateNotifierProvider | Ações de criar par, aceitar, etc. |
 
 ### Entidades
 
-- **PairEntity**: `id`, `user1Id`, `user2Id`, `createdAt`, `name`, `scoreTarget`
+- **PairEntity**: `id`, `requesterId`, `executorId`, `createdAt`, `name`, `scoreTarget`
 - **PairInviteEntity**: `id`, `fromUserId`, `toEmail`, `pairId`, `status`, `createdAt`
 
 ---
@@ -171,10 +175,21 @@ Criação, edição e gerenciamento de tarefas dentro de um par. Cada tarefa pod
 | ------------- | -------- | ----------- | ---------------------------------- |
 | `title`       | String   | Sim         | Nome da tarefa                     |
 | `description` | String   | Não         | Descrição detalhada                |
-| `assignedTo`  | String   | Não         | ID do executor designado           |
+| `createdBy`   | String   | Sim         | ID do solicitante (usuário logado, automático) |
+| `assignedTo`  | String   | Sim         | ID do executor (outro membro do par, automático) |
 | `points`      | int      | Sim         | Pontos base da tarefa (padrão: 10) |
 | `isActive`    | bool     | Sim         | Se a tarefa está ativa             |
 | `recurrenceId`| String   | Não         | ID da recorrência vinculada        |
+
+### Auto-Assignment Rule
+
+Tasks enforce a **self-assignment prevention** rule:
+
+- `createdBy` is always the **current authenticated user** (the requester/solicitante)
+- `assignedTo` is automatically set to the **other member of the pair** (the executor)
+- There is **no UI field** for selecting `assignedTo` — it is computed automatically
+- Firestore security rules enforce: `assignedTo != request.auth.uid` and `createdBy == request.auth.uid`
+- This ensures the requester can never assign a task to themselves
 
 ### Fluxo de Criação
 
@@ -183,13 +198,15 @@ Selecionar par
     ↓
 Preencher nome e descrição
     ↓
-Selecionar executor (membro do par)
+(assignedTo é automaticamente o outro membro do par)
     ↓
 Definir pontuação
     ↓
 Definir recorrência (opcional)
     ↓
 Salvar tarefa
+    ↓
+Firestore rules validate: createdBy == auth.uid && assignedTo != auth.uid
     ↓
 Se recorrente: sistema gera ocorrências automaticamente
 ```
@@ -304,14 +321,33 @@ O executor de uma tarefa pode registrar a execução de uma ocorrência, incluin
 | Adicionar Notas    | Incluir observações sobre a execução          |
 | Anexar Foto        | Evidência fotográfica via câmera ou galeria   |
 
-### Tela
+### Telas
 
+- **MyTasksPage** (`/my-tasks`) — Lists executor's assigned task occurrences in 3 sections
 - **TaskExecutionPage** (`/execute/:occurrenceId`) — Formulário de execução
+
+### MyTasksPage (NEW)
+
+Dedicated page showing all tasks assigned to the current user (executor view):
+
+| Section                | Content                                           |
+| ---------------------- | ------------------------------------------------- |
+| **Pending**            | Occurrences awaiting execution, with Execute button |
+| **Executed**           | Occurrences executed but awaiting validation       |
+| **Validated**          | Occurrences already validated by the requester     |
+
+The executor taps "Execute" on a pending occurrence to navigate to `/execute/:occurrenceId`.
 
 ### Fluxo de Execução
 
 ```
-Executor abre ocorrência pendente
+Executor opens MyTasksPage (/my-tasks)
+    ↓
+Sees pending occurrences assigned to them
+    ↓
+Taps "Execute" on a pending occurrence
+    ↓
+Navigates to /execute/:occurrenceId
     ↓
 Preenche notas (opcional)
     ↓
@@ -323,7 +359,9 @@ Sistema cria TaskExecution
     ↓
 Status da ocorrência muda para "executed"
     ↓
-Tarefa vai para fila de validação
+Tarefa aparece na seção "Executed" do MyTasksPage
+    ↓
+Tarefa vai para fila de validação do solicitante
 ```
 
 ### Entidade TaskExecutionEntity
@@ -340,9 +378,13 @@ Tarefa vai para fila de validação
 
 ### Providers
 
-| Provider                    | Tipo                  | Função                 |
-| --------------------------- | --------------------- | ---------------------- |
-| `executionNotifierProvider` | StateNotifierProvider | Registrar execução     |
+| Provider                           | Tipo                  | Função                                         |
+| ---------------------------------- | --------------------- | ---------------------------------------------- |
+| `executionNotifierProvider`        | StateNotifierProvider | Registrar execução                             |
+| `myPendingOccurrencesProvider`     | StreamProvider        | Occurrences assigned to user, status=pending   |
+| `myExecutedOccurrencesProvider`    | StreamProvider        | Occurrences assigned to user, status=executed  |
+| `myValidatedOccurrencesProvider`   | StreamProvider        | Occurrences assigned to user, status=validated |
+| `executionByOccurrenceIdProvider`  | FutureProvider.family | Looks up execution record by occurrence ID     |
 
 ### Regras de Segurança
 
@@ -547,25 +589,39 @@ Progresso: 75% ████████████░░░░
 
 ### Descrição
 
-Tela principal do aplicativo que agrega informações do par ativo: termômetros de progresso, tarefas do dia e ações rápidas.
-
-### Funcionalidades
-
-| Funcionalidade             | Descrição                                  |
-| -------------------------- | ------------------------------------------ |
-| Termômetro do Par          | Progresso geral de pontuação do par        |
-| Tarefas de Hoje            | Lista de ocorrências pendentes para hoje   |
-| Ações Rápidas              | Navegação rápida para funcionalidades      |
-| Informações do Par         | Nome do par e membros                      |
-| Validações Pendentes       | Execuções aguardando validação             |
+Tela principal do aplicativo com **2 abas** que separam a visão de executor e solicitante. Redesenhada para refletir a regra de auto-assignment: quem cria a tarefa é o solicitante, quem executa é o outro membro do par.
 
 ### Tela
 
-- **DashboardPage** (`/dashboard`) — Tela principal após login
+- **DashboardPage** (`/dashboard`) — Tela principal após login, com 2 abas (TabBar)
+
+### Tab 1: "Tarefas que faço" (Tasks I Execute)
+
+Visão do **executor** — mostra tarefas atribuídas ao usuário corrente:
+
+| Componente                      | Descrição                                              |
+| ------------------------------- | ------------------------------------------------------ |
+| Thermometer (own progress)      | Termômetro de progresso do próprio usuário como executor |
+| Pending Occurrences             | Ocorrências pending assignadas a mim, com botão "Executar" |
+| Executed (awaiting validation)  | Ocorrências que executei, aguardando validação           |
+
+The thermometer is shown **only** in this tab (executor's own progress).
+
+### Tab 2: "Tarefas que solicito" (Tasks I Request)
+
+Visão do **solicitante** — mostra tarefas criadas pelo usuário corrente:
+
+| Componente                       | Descrição                                                |
+| -------------------------------- | -------------------------------------------------------- |
+| Quick Actions                    | Botões: Criar Tarefa, Recompensas, Relatórios, Meus Pares |
+| Occurrences Needing Validation   | Ocorrências executadas pelo parceiro, com botão "Validar" |
+| My Requested Tasks               | Lista de tarefas que criei, com opções de editar/deletar  |
+
+No thermometer is shown in this tab — it is a management/validation view.
 
 ### Widgets Customizados
 
-- **ThermometerWidget**: Widget de canvas customizado que renderiza um termômetro visual representando o progresso de pontuação do par
+- **ThermometerWidget**: Widget de canvas customizado que renderiza um termômetro visual representando o progresso de pontuação do executor
 
 ### Fluxo
 
@@ -576,28 +632,37 @@ Redireciona para /dashboard
     ↓
 Carrega dados do par ativo
     ↓
-Exibe:
-├── Termômetro de progresso
-├── Tarefas pendentes para hoje
-├── Validações pendentes
-└── Ações rápidas (criar tarefa, ver scores, etc.)
+Tab "Tarefas que faço" (padrão):
+├── Termômetro de progresso do executor
+├── Ocorrências pendentes (com botão Executar → /execute/:id)
+└── Ocorrências executadas aguardando validação
+
+Tab "Tarefas que solicito":
+├── Ações rápidas (criar tarefa, recompensas, relatórios, pares)
+├── Ocorrências aguardando validação (com botão Validar → /validate/:id)
+└── Tarefas que criei (com editar/deletar)
 ```
 
 ### Providers
 
-| Provider                | Tipo           | Função                             |
-| ----------------------- | -------------- | ---------------------------------- |
-| `dashboardDataProvider` | FutureProvider | Agrega dados para o dashboard      |
+| Provider                                | Tipo                  | Função                                          |
+| --------------------------------------- | --------------------- | ----------------------------------------------- |
+| `dashboardDataProvider`                 | FutureProvider        | Agrega dados para o dashboard                   |
+| `myAssignedTasksProvider`               | StreamProvider        | Tasks where current user is assignedTo (executor) |
+| `myRequestedTasksProvider`              | StreamProvider        | Tasks where current user is createdBy (requester) |
+| `pendingValidationOccurrencesProvider`  | StreamProvider        | Occurrences executed by partner, awaiting my validation |
+| `myPendingOccurrencesProvider`          | StreamProvider        | Occurrences assigned to me, status=pending       |
+| `myExecutedOccurrencesProvider`         | StreamProvider        | Occurrences I executed, awaiting validation      |
 
 ### Tipos de Termômetro
 
-O dashboard pode exibir diferentes perspectivas de progresso:
+O termômetro aparece **apenas na aba do executor** ("Tarefas que faço"):
 
-| Termômetro               | Descrição                                |
-| ------------------------ | ---------------------------------------- |
-| Termômetro do Par        | Progresso geral da pontuação do par      |
-| Termômetro Mensal        | Pontuação acumulada no mês               |
-| Termômetro de Recompensa | Progresso para a próxima recompensa      |
+| Termômetro               | Descrição                                | Tab         |
+| ------------------------ | ---------------------------------------- | ----------- |
+| Termômetro do Executor   | Progresso de pontuação do executor       | Executor    |
+| Termômetro Mensal        | Pontuação acumulada no mês               | Executor    |
+| Termômetro de Recompensa | Progresso para a próxima recompensa      | Executor    |
 
 ---
 
@@ -653,13 +718,13 @@ Visualização de estatísticas detalhadas sobre tarefas, execuções e pontuaç
 | -- | ------------------ | ----- | --------------------------------- | ------ |
 | 1  | Autenticação       | 3     | UserEntity                        | ✅     |
 | 2  | Pares              | 2     | PairEntity, PairInviteEntity      | ✅     |
-| 3  | Tarefas            | 2     | TaskEntity                        | ✅     |
+| 3  | Tarefas            | 2     | TaskEntity                        | ✅ (auto-assignment) |
 | 4  | Recorrência        | —     | TaskRecurrenceEntity, TaskOccurrenceEntity | ✅ |
-| 5  | Execução           | 1     | TaskExecutionEntity               | ✅     |
+| 5  | Execução           | 2     | TaskExecutionEntity               | ✅ (+ MyTasksPage) |
 | 6  | Validação          | 1     | TaskValidationEntity              | ✅     |
 | 7  | Pontuação          | 1     | ScoreEntity                       | ✅     |
 | 8  | Recompensas        | 1     | RewardEntity                      | ✅     |
-| 9  | Dashboard          | 1     | —                                 | ✅     |
+| 9  | Dashboard          | 1     | —                                 | ✅ (2 tabs) |
 | 10 | Relatórios         | 1     | —                                 | ✅     |
 | 11 | Internacionalização| 1     | —                                 | ⬜     |
 

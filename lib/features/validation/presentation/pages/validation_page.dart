@@ -23,6 +23,7 @@ class ValidationPage extends ConsumerStatefulWidget {
 
 class _ValidationPageState extends ConsumerState<ValidationPage> {
   final _feedbackController = TextEditingController();
+  int _percentage = 100;
 
   @override
   void dispose() {
@@ -31,21 +32,20 @@ class _ValidationPageState extends ConsumerState<ValidationPage> {
   }
 
   Future<void> _submitValidation({
-    required bool isApproved,
     required String occurrenceId,
     required String executedBy,
     required String pairId,
-    required int points,
+    required int taskPoints,
   }) async {
     await ref.read(validationNotifierProvider.notifier).validate(
           executionId: widget.executionId,
           occurrenceId: occurrenceId,
-          isApproved: isApproved,
+          percentage: _percentage,
           feedback: _feedbackController.text.trim().isEmpty
               ? null
               : _feedbackController.text.trim(),
           pairId: pairId,
-          points: points,
+          taskPoints: taskPoints,
           executedBy: executedBy,
         );
   }
@@ -56,7 +56,7 @@ class _ValidationPageState extends ConsumerState<ValidationPage> {
     final validationState = ref.watch(validationNotifierProvider);
     // Watch the stream of executions to find this execution's data
     final executionAsync = ref.watch(executionByIdProvider(widget.executionId));
-    final pairAsync = ref.watch(currentPairProvider);
+    final pair = ref.watch(currentPairProvider);
 
     ref.listen(validationNotifierProvider, (_, next) {
       if (next.hasValue && !next.isLoading) {
@@ -79,93 +79,128 @@ class _ValidationPageState extends ConsumerState<ValidationPage> {
           if (execution == null) {
             return Center(child: Text(l10n.noData));
           }
-          return pairAsync.when(
-            data: (pair) {
-              if (pair == null) {
-                return Center(child: Text(l10n.noPairs));
-              }
-              // Look up the task to get its points value
-              final tasksAsync = ref.watch(tasksProvider);
-              final task = tasksAsync.value
-                  ?.where((t) => t.id == execution.taskId)
-                  .firstOrNull;
+          if (pair == null) {
+            return Center(child: Text(l10n.noPairs));
+          }
+          return Builder(builder: (context) {
+            // Look up the task to get its points value
+            final tasksAsync = ref.watch(tasksProvider);
+            final task = tasksAsync.value
+                ?.where((t) => t.id == execution.taskId)
+                .firstOrNull;
 
-              return SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              l10n.reviewExecution,
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
-                            const SizedBox(height: 8),
-                            if (task != null) ...[
-                              Text(l10n.taskLabel(task.title)),
-                              Text(l10n.pointsLabel(task.points)),
-                            ],
-                            Text(l10n.executedAtDate(execution.executedAt
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            l10n.reviewExecution,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          const SizedBox(height: 8),
+                          if (task != null) ...[
+                            Text(l10n.taskLabel(task.title)),
+                            Text(l10n.pointsLabel(task.points)),
+                          ],
+                          Text(l10n.executedAtDate(
+                              execution.startedAt.toString().split('.').first)),
+                          if (execution.finishedAt != null)
+                            Text(l10n.finishedAtDate(execution.finishedAt!
                                 .toString()
                                 .split('.')
                                 .first)),
-                            if (execution.notes != null &&
-                                execution.notes!.isNotEmpty) ...[
-                              const SizedBox(height: 8),
-                              Text(l10n.notesLabel(execution.notes!)),
-                            ],
+                          if (execution.notes != null &&
+                              execution.notes!.isNotEmpty) ...[
+                            const SizedBox(height: 8),
+                            Text(l10n.notesLabel(execution.notes!)),
                           ],
-                        ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    AppTextField(
-                      label: l10n.feedbackOptional,
-                      controller: _feedbackController,
-                      maxLines: 4,
-                      hint: l10n.feedbackHint,
-                    ),
-                    const SizedBox(height: 24),
-                    AppButton(
-                      label: l10n.approve,
-                      icon: Icons.check_circle,
-                      color: Colors.green,
-                      isLoading: validationState.isLoading,
-                      onPressed: () => _submitValidation(
-                        isApproved: true,
-                        occurrenceId: execution.occurrenceId,
-                        executedBy: execution.executedBy,
-                        pairId: pair.id,
-                        points: task?.points ?? AppConstants.defaultTaskPoints,
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Percentage selector
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            l10n.percentage,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          const SizedBox(height: 12),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: [
+                              for (final pct in [
+                                100,
+                                90,
+                                80,
+                                70,
+                                60,
+                                50,
+                                40,
+                                30,
+                                20,
+                                10
+                              ])
+                                ChoiceChip(
+                                  label: Text('$pct%'),
+                                  selected: _percentage == pct,
+                                  onSelected: (_) =>
+                                      setState(() => _percentage = pct),
+                                  selectedColor: Colors.green.shade200,
+                                ),
+                              ChoiceChip(
+                                label: Text(l10n.notCompleted),
+                                selected: _percentage == 0,
+                                onSelected: (_) =>
+                                    setState(() => _percentage = 0),
+                                selectedColor: Colors.red.shade200,
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 12),
-                    AppButton(
-                      label: l10n.reject,
-                      icon: Icons.cancel,
-                      color: Colors.red,
-                      isOutlined: true,
-                      isLoading: validationState.isLoading,
-                      onPressed: () => _submitValidation(
-                        isApproved: false,
-                        occurrenceId: execution.occurrenceId,
-                        executedBy: execution.executedBy,
-                        pairId: pair.id,
-                        points: 0,
-                      ),
+                  ),
+
+                  const SizedBox(height: 16),
+                  AppTextField(
+                    label: l10n.feedbackOptional,
+                    controller: _feedbackController,
+                    maxLines: 4,
+                    hint: l10n.feedbackHint,
+                  ),
+                  const SizedBox(height: 24),
+                  AppButton(
+                    label: l10n.validate,
+                    icon: Icons.check_circle,
+                    color: _percentage > 0 ? Colors.green : Colors.red,
+                    isLoading: validationState.isLoading,
+                    onPressed: () => _submitValidation(
+                      occurrenceId: execution.occurrenceId,
+                      executedBy: execution.executedBy,
+                      pairId: pair.id,
+                      taskPoints:
+                          task?.points ?? AppConstants.defaultTaskPoints,
                     ),
-                  ],
-                ),
-              );
-            },
-            loading: () => const LoadingWidget(),
-            error: (e, _) => AppErrorWidget(message: e.toString()),
-          );
+                  ),
+                ],
+              ),
+            );
+          });
         },
         loading: () => const LoadingWidget(),
         error: (e, _) => AppErrorWidget(message: e.toString()),

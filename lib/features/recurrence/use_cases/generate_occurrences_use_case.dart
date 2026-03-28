@@ -12,11 +12,14 @@ class GenerateOccurrencesUseCase {
     required TaskRecurrenceEntity recurrence,
     required String pairId,
     required String assignedTo,
+    String? scheduledStartTime,
+    int? expectedDuration,
     DateTime? from,
     DateTime? to,
   }) async {
     final start = from ?? recurrence.startDate;
-    final end = to ?? (recurrence.endDate ?? start.add(const Duration(days: 30)));
+    final end =
+        to ?? (recurrence.endDate ?? start.add(const Duration(days: 30)));
 
     final List<DateTime> dueDates = [];
 
@@ -46,6 +49,14 @@ class GenerateOccurrencesUseCase {
           current = DateTime(current.year, current.month + 1, dayOfMonth);
         }
         break;
+      case AppConstants.intervalRecurrence:
+        final intervalDays = recurrence.intervalDays ?? 1;
+        var current = start;
+        while (!current.isAfter(end)) {
+          dueDates.add(current);
+          current = current.add(Duration(days: intervalDays));
+        }
+        break;
       case AppConstants.onceRecurrence:
         dueDates.add(start);
         break;
@@ -59,6 +70,8 @@ class GenerateOccurrencesUseCase {
           taskId: recurrence.taskId,
           pairId: pairId,
           dueDate: dueDate,
+          scheduledStartTime: scheduledStartTime,
+          expectedDuration: expectedDuration,
           status: AppConstants.pendingStatus,
           assignedTo: assignedTo,
         ),

@@ -1,3 +1,72 @@
 {
-  "@@locale": "pt"
+  "@@locale": "pt",
+
+  "adminUserManagement": "Gerenciar Usuários",
+  "admin": "Admin",
+  "makeAdmin": "Tornar Admin",
+  "removeAdmin": "Remover Admin",
+  "confirmMakeAdmin": "Tornar {name} administrador?",
+  "@confirmMakeAdmin": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "confirmRemoveAdmin": "Remover privilégios de administrador de {name}?",
+  "@confirmRemoveAdmin": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "createUser": "Criar Usuário",
+  "userCreated": "Usuário criado com sucesso",
+  "adminPassword": "Sua senha",
+  "adminPasswordRequired": "Informe sua senha para reautenticar após criar o usuário.",
+  "userNotRegistered": "Usuário não cadastrado",
+
+  "userDisabled": "Esta conta foi desativada",
+  "tooManyRequests": "Muitas tentativas de login. Tente novamente mais tarde",
+  "invalidCredentials": "E-mail ou senha inválidos",
+  "networkError": "Erro de rede. Verifique sua conexão e tente novamente",
+  "unknownAuthError": "Ocorreu um erro inesperado. Tente novamente",
+
+  "selectUser": "Selecione um usuário",
+  "noAvailableUsers": "Nenhum usuário disponível",
+  "searchUser": "Buscar usuário...",
+
+  "sentInvites": "Convites Enviados",
+  "receivedInvites": "Convites Recebidos",
+  "noSentInvites": "Nenhum convite enviado",
+  "noReceivedInvites": "Nenhum convite recebido",
+  "inviteTo": "Convite para {name}",
+  "statusAccepted": "Aceito",
+  "statusDeclined": "Recusado",
+  "adminInvites": "Todos os Convites (Admin)",
+  "acceptOnBehalf": "Aceitar pelo usuário",
+  "myThermometer": "Meu Termômetro",
+  "allThermometers": "Todos os Termômetros",
+  "userThermometer": "Termômetro de {name}",
+
+  "tasksIExecute": "Tarefas que faço",
+  "tasksIRequest": "Tarefas que solicito",
+  "needsValidation": "Necessita validação",
+  "myRequestedTasks": "Tarefas que solicitei",
+  "noAssignedTasks": "Nenhuma tarefa atribuída a você",
+  "myTasks": "Minhas Tarefas",
+  "awaitingValidation": "Aguardando validação",
+  "noPendingOccurrences": "Nenhuma tarefa pendente atribuída a você",
+
+  "interval": "A cada X dias",
+  "intervalDays": "Intervalo (dias)",
+  "scheduledTime": "Horário agendado",
+  "expectedDurationMin": "Duração prevista (min)",
+  "selectEndDate": "Selecionar data final",
+  "percentage": "Percentual",
+  "notCompleted": "Não cumprida",
+  "validationPercentage": "Cumprimento: {percent}%",
+  "statusInProgress": "Em andamento",
+  "statusExpired": "Expirada",
+  "taskInProgress": "Tarefa em andamento",
+  "startedAtDate": "Iniciada em: {date}",
+  "finishedAtDate": "Finalizada em: {date}",
+  "inProgressTasks": "Em andamento"
 }

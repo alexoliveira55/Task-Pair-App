@@ -10,5 +10,6 @@ abstract class TaskOccurrenceRepository {
   Future<TaskOccurrenceEntity> createOccurrence(
       TaskOccurrenceEntity occurrence);
   Future<void> updateOccurrenceStatus(String id, String status);
+  Future<void> updateOccurrenceExecutionId(String id, String executionId);
   Stream<List<TaskOccurrenceEntity>> watchOccurrencesByPairId(String pairId);
 }

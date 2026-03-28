@@ -6,16 +6,16 @@ void main() {
 
   PairEntity createPair({
     String id = 'pair-1',
-    String user1Id = 'user-1',
-    String user2Id = 'user-2',
+    String requesterId = 'user-1',
+    String executorId = 'user-2',
     DateTime? createdAt,
     String name = 'Test Pair',
     int scoreTarget = 100,
   }) {
     return PairEntity(
       id: id,
-      user1Id: user1Id,
-      user2Id: user2Id,
+      requesterId: requesterId,
+      executorId: executorId,
       createdAt: createdAt ?? now,
       name: name,
       scoreTarget: scoreTarget,
@@ -27,8 +27,8 @@ void main() {
       final pair = createPair();
 
       expect(pair.id, 'pair-1');
-      expect(pair.user1Id, 'user-1');
-      expect(pair.user2Id, 'user-2');
+      expect(pair.requesterId, 'user-1');
+      expect(pair.executorId, 'user-2');
       expect(pair.createdAt, now);
       expect(pair.name, 'Test Pair');
       expect(pair.scoreTarget, 100);
@@ -57,12 +57,12 @@ void main() {
         expect(copy.scoreTarget, 200);
       });
 
-      test('should copy with changed user2Id', () {
+      test('should copy with changed executorId', () {
         final pair = createPair();
-        final copy = pair.copyWith(user2Id: 'user-3');
+        final copy = pair.copyWith(executorId: 'user-3');
 
-        expect(copy.user2Id, 'user-3');
-        expect(copy.user1Id, 'user-1');
+        expect(copy.executorId, 'user-3');
+        expect(copy.requesterId, 'user-1');
       });
     });
 

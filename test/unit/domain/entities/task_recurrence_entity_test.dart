@@ -168,6 +168,7 @@ void main() {
         'daily',
         [1, 3],
         10,
+        null,
         startDate,
         endDate,
         true,

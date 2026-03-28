@@ -9,12 +9,11 @@ class ExecuteTaskUseCase {
 
   ExecuteTaskUseCase(this._executionRepository, this._occurrenceRepository);
 
-  Future<TaskExecutionEntity> execute({
+  /// Step 1: Start execution — creates execution record with startedAt, sets occurrence to in_progress.
+  Future<TaskExecutionEntity> startExecution({
     required String occurrenceId,
     required String taskId,
     required String executedBy,
-    String? notes,
-    String? photoUrl,
   }) async {
     final execution = await _executionRepository.createExecution(
       TaskExecutionEntity(
@@ -22,15 +21,35 @@ class ExecuteTaskUseCase {
         occurrenceId: occurrenceId,
         taskId: taskId,
         executedBy: executedBy,
-        executedAt: DateTime.now(),
-        notes: notes,
-        photoUrl: photoUrl,
+        startedAt: DateTime.now(),
       ),
     );
 
     await _occurrenceRepository.updateOccurrenceStatus(
-        occurrenceId, AppConstants.executedStatus);
+        occurrenceId, AppConstants.inProgressStatus);
+    await _occurrenceRepository.updateOccurrenceExecutionId(
+        occurrenceId, execution.id);
 
     return execution;
+  }
+
+  /// Step 2: Finish execution — updates execution with finishedAt and notes, sets occurrence to executed.
+  Future<TaskExecutionEntity> finishExecution({
+    required String executionId,
+    required TaskExecutionEntity execution,
+    String? notes,
+    String? photoUrl,
+  }) async {
+    final updated = execution.copyWith(
+      finishedAt: DateTime.now(),
+      notes: notes,
+      photoUrl: photoUrl,
+    );
+
+    await _executionRepository.updateExecution(updated);
+    await _occurrenceRepository.updateOccurrenceStatus(
+        execution.occurrenceId, AppConstants.executedStatus);
+
+    return updated;
   }
 }

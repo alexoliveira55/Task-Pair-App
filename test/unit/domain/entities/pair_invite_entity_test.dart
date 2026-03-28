@@ -98,6 +98,8 @@ void main() {
         'pair-1',
         'pending',
         now,
+        '',
+        100,
       ]);
     });
   });

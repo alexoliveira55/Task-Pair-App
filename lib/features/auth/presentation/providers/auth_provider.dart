@@ -36,12 +36,33 @@ final currentUserEntityProvider = StreamProvider<UserEntity?>((ref) {
   return authState.when(
     data: (user) {
       if (user == null) return Stream.value(null);
-      return ref.watch(userRepositoryProvider).watchUser(user.uid);
+      final userRepo = ref.watch(userRepositoryProvider);
+      // Ensure user document exists in Firestore on every auth session.
+      // Handles cases where registration succeeded in Firebase Auth but
+      // the Firestore doc was never created (e.g. platform channel errors).
+      _ensureUserDoc(user, userRepo);
+      return userRepo.watchUser(user.uid);
     },
     loading: () => Stream.value(null),
     error: (_, __) => Stream.value(null),
   );
 });
+
+Future<void> _ensureUserDoc(User user, UserRepositoryImpl userRepo) async {
+  try {
+    final existing = await userRepo.getUserById(user.uid);
+    if (existing == null) {
+      await userRepo.createUser(UserEntity(
+        id: user.uid,
+        email: user.email ?? '',
+        displayName: user.displayName,
+        createdAt: DateTime.now(),
+      ));
+    }
+  } catch (_) {
+    // Best-effort — don't block the stream
+  }
+}
 
 class AuthNotifier extends StateNotifier<AsyncValue<void>> {
   final FirebaseAuthService _authService;
@@ -62,6 +83,12 @@ class AuthNotifier extends StateNotifier<AsyncValue<void>> {
       );
       state = const AsyncValue.data(null);
     } catch (e, st) {
+      // Defensive: if sign-in throws but the user IS signed in
+      // (e.g. platform channel issues on desktop), treat as success.
+      if (_authService.currentUser != null) {
+        state = const AsyncValue.data(null);
+        return;
+      }
       state = AsyncValue.error(e, st);
     }
   }
@@ -88,6 +115,25 @@ class AuthNotifier extends StateNotifier<AsyncValue<void>> {
       await _userRepository.createUser(entity);
       state = const AsyncValue.data(null);
     } catch (e, st) {
+      // Defensive: if registration throws but the user IS created,
+      // ensure their Firestore document exists.
+      final currentUser = _authService.currentUser;
+      if (currentUser != null) {
+        try {
+          await _authService.updateDisplayName(displayName);
+          final entity = UserEntity(
+            id: currentUser.uid,
+            email: email,
+            displayName: displayName,
+            createdAt: DateTime.now(),
+          );
+          await _userRepository.createUser(entity);
+        } catch (_) {
+          // User doc may already exist from a partial success
+        }
+        state = const AsyncValue.data(null);
+        return;
+      }
       state = AsyncValue.error(e, st);
     }
   }

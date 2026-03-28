@@ -116,8 +116,11 @@ void main() {
         'task-1',
         'pair-1',
         dueDate,
+        null,
+        null,
         'pending',
         'user-1',
+        null,
       ]);
     });
   });

@@ -6,6 +6,7 @@ import '../../domain/entities/pair_invite_entity.dart';
 import '../../domain/repositories/pair_repository.dart';
 import '../models/pair_model.dart';
 import '../models/pair_invite_model.dart';
+import 'package:rxdart/rxdart.dart';
 
 class PairRepositoryImpl implements PairRepository {
   final FirebaseFirestore _firestore;
@@ -55,6 +56,16 @@ class PairRepositoryImpl implements PairRepository {
   }
 
   @override
+  Future<void> setExecutorId(String pairId, String userId) async {
+    try {
+      await _pairsCollection.doc(pairId).update({'executorId': userId});
+    } on FirebaseException catch (e) {
+      throw FirestoreException(
+          message: e.message ?? 'Failed to set executorId', code: e.code);
+    }
+  }
+
+  @override
   Future<void> deletePair(String id) async {
     try {
       await _pairsCollection.doc(id).delete();
@@ -70,6 +81,34 @@ class PairRepositoryImpl implements PairRepository {
       if (!doc.exists || doc.data() == null) return null;
       return PairModel.fromMap(doc.data()!, doc.id).toEntity();
     });
+  }
+
+  @override
+  Stream<List<PairEntity>> watchPairsByUserId(String userId) {
+    final asRequester = _pairsCollection
+        .where('requesterId', isEqualTo: userId)
+        .snapshots()
+        .map((s) => s.docs
+            .map((d) => PairModel.fromMap(d.data(), d.id).toEntity())
+            .toList());
+    final asExecutor = _pairsCollection
+        .where('executorId', isEqualTo: userId)
+        .snapshots()
+        .map((s) => s.docs
+            .map((d) => PairModel.fromMap(d.data(), d.id).toEntity())
+            .toList());
+    return Rx.combineLatest2<List<PairEntity>, List<PairEntity>,
+        List<PairEntity>>(
+      asRequester,
+      asExecutor,
+      (a, b) {
+        final merged = <String, PairEntity>{};
+        for (final p in [...a, ...b]) {
+          merged[p.id] = p;
+        }
+        return merged.values.toList();
+      },
+    );
   }
 
   @override
@@ -117,5 +156,23 @@ class PairRepositoryImpl implements PairRepository {
             .map(
                 (doc) => PairInviteModel.fromMap(doc.data(), doc.id).toEntity())
             .toList());
+  }
+
+  @override
+  Stream<List<PairInviteEntity>> watchInvitesByFromUserId(String userId) {
+    return _invitesCollection
+        .where('fromUserId', isEqualTo: userId)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map(
+                (doc) => PairInviteModel.fromMap(doc.data(), doc.id).toEntity())
+            .toList());
+  }
+
+  @override
+  Stream<List<PairInviteEntity>> watchAllInvites() {
+    return _invitesCollection.snapshots().map((snapshot) => snapshot.docs
+        .map((doc) => PairInviteModel.fromMap(doc.data(), doc.id).toEntity())
+        .toList());
   }
 }

@@ -8,6 +8,8 @@ class PairInviteModel {
   final String pairId;
   final String status;
   final DateTime createdAt;
+  final String pairName;
+  final int scoreTarget;
 
   const PairInviteModel({
     required this.id,
@@ -16,6 +18,8 @@ class PairInviteModel {
     required this.pairId,
     required this.status,
     required this.createdAt,
+    this.pairName = '',
+    this.scoreTarget = 100,
   });
 
   factory PairInviteModel.fromMap(Map<String, dynamic> map, String id) {
@@ -23,9 +27,11 @@ class PairInviteModel {
       id: id,
       fromUserId: map['fromUserId'] as String,
       toEmail: map['toEmail'] as String,
-      pairId: map['pairId'] as String,
+      pairId: map['pairId'] as String? ?? '',
       status: map['status'] as String,
       createdAt: (map['createdAt'] as Timestamp).toDate(),
+      pairName: map['pairName'] as String? ?? '',
+      scoreTarget: (map['scoreTarget'] as num?)?.toInt() ?? 100,
     );
   }
 
@@ -37,6 +43,8 @@ class PairInviteModel {
       pairId: entity.pairId,
       status: entity.status,
       createdAt: entity.createdAt,
+      pairName: entity.pairName,
+      scoreTarget: entity.scoreTarget,
     );
   }
 
@@ -47,6 +55,8 @@ class PairInviteModel {
       'pairId': pairId,
       'status': status,
       'createdAt': Timestamp.fromDate(createdAt),
+      'pairName': pairName,
+      'scoreTarget': scoreTarget,
     };
   }
 
@@ -58,6 +68,8 @@ class PairInviteModel {
       pairId: pairId,
       status: status,
       createdAt: createdAt,
+      pairName: pairName,
+      scoreTarget: scoreTarget,
     );
   }
 }

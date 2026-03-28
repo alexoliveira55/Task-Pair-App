@@ -1,0 +1,37 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // === AVATARES DE USUÁRIO ===
+    // Caminho: users/{userId}/avatar.jpg
+    match /users/{userId}/{fileName} {
+      // Qualquer usuário autenticado pode ver avatares
+      allow read: if request.auth != null;
+
+      // Apenas o próprio usuário pode fazer upload do seu avatar
+      allow write: if request.auth != null
+                   && request.auth.uid == userId
+                   && request.resource.size < 5 * 1024 * 1024      // máximo 5 MB
+                   && request.resource.contentType.matches('image/.*'); // apenas imagens
+    }
+
+    // === FOTOS DE EXECUÇÃO DE TAREFAS ===
+    // Caminho: task_executions/{executionId}/photo.jpg
+    match /task_executions/{executionId}/{fileName} {
+      // Qualquer usuário autenticado pode ver fotos de execução
+      allow read: if request.auth != null;
+
+      // Qualquer usuário autenticado pode fazer upload
+      // (validação de pertencer ao par é feita no app + Firestore rules)
+      allow write: if request.auth != null
+                   && request.resource.size < 10 * 1024 * 1024     // máximo 10 MB
+                   && request.resource.contentType.matches('image/.*'); // apenas imagens
+    }
+
+    // Bloquear tudo que não seja nos caminhos acima
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
