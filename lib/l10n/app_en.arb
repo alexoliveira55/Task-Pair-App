@@ -267,5 +267,6 @@
   "@startedAtDate": { "placeholders": { "date": {} } },
   "finishedAtDate": "Finished at: {date}",
   "@finishedAtDate": { "placeholders": { "date": {} } },
-  "inProgressTasks": "In progress"
+  "inProgressTasks": "In progress",
+  "selectExecutor": "Select executor"
 }

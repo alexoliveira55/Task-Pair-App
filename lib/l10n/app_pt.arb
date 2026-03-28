@@ -68,5 +68,6 @@
   "taskInProgress": "Tarefa em andamento",
   "startedAtDate": "Iniciada em: {date}",
   "finishedAtDate": "Finalizada em: {date}",
-  "inProgressTasks": "Em andamento"
+  "inProgressTasks": "Em andamento",
+  "selectExecutor": "Selecionar executor"
 }

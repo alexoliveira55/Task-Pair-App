@@ -7,6 +7,9 @@ import '../providers/task_provider.dart';
 import '../../../../shared/widgets/app_button.dart';
 import '../../../../shared/widgets/app_text_field.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../domain/entities/pair_entity.dart';
+import '../../../pairs/presentation/providers/pair_provider.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 
 class TaskFormPage extends ConsumerStatefulWidget {
   final String? taskId;
@@ -29,6 +32,7 @@ class _TaskFormPageState extends ConsumerState<TaskFormPage> {
   String? _scheduledStartTime;
   DateTime? _endDate;
   bool _didLoadTask = false;
+  PairEntity? _selectedPair;
 
   bool get isEditing => widget.taskId != null;
 
@@ -101,6 +105,15 @@ class _TaskFormPageState extends ConsumerState<TaskFormPage> {
       }
     });
 
+    // Pairs where current user is requester (can assign tasks)
+    final pairsAsRequester = ref.watch(pairsAsRequesterProvider);
+    final showPairSelector = !isEditing && pairsAsRequester.length > 1;
+
+    // Auto-select single pair
+    if (!isEditing && pairsAsRequester.length == 1 && _selectedPair == null) {
+      _selectedPair = pairsAsRequester.first;
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(isEditing ? l10n.editTask : l10n.newTask),
@@ -112,6 +125,44 @@ class _TaskFormPageState extends ConsumerState<TaskFormPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              if (showPairSelector) ...[
+                Text(l10n.selectExecutor,
+                    style: Theme.of(context).textTheme.titleMedium),
+                const SizedBox(height: 8),
+                DropdownButtonFormField<String>(
+                  value: _selectedPair?.id,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  ),
+                  validator: (v) => v == null ? l10n.requiredField : null,
+                  items: pairsAsRequester.map((pair) {
+                    final executorAsync =
+                        ref.watch(userByIdProvider(pair.executorId));
+                    final executorName = executorAsync.when(
+                      data: (user) => user?.displayName?.isNotEmpty == true
+                          ? user!.displayName!
+                          : user?.email ?? pair.executorId,
+                      loading: () => '...',
+                      error: (_, __) => pair.executorId,
+                    );
+                    return DropdownMenuItem(
+                      value: pair.id,
+                      child: Text('${pair.name} ($executorName)'),
+                    );
+                  }).toList(),
+                  onChanged: (v) {
+                    if (v != null) {
+                      setState(() {
+                        _selectedPair =
+                            pairsAsRequester.firstWhere((p) => p.id == v);
+                      });
+                    }
+                  },
+                ),
+                const SizedBox(height: 16),
+              ],
               AppTextField(
                 label: l10n.taskTitle,
                 controller: _titleController,
@@ -294,6 +345,7 @@ class _TaskFormPageState extends ConsumerState<TaskFormPage> {
                                   ? int.tryParse(_intervalDaysController.text)
                                   : null,
                           endDate: _endDate,
+                          selectedPair: _selectedPair,
                         );
                   }
                 },

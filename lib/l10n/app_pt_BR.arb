@@ -682,5 +682,7 @@
   "finishedAtDate": "Finalizada em: {date}",
   "@finishedAtDate": { "placeholders": { "date": {} }, "description": "Data de finalização da execução" },
   "inProgressTasks": "Em andamento",
-  "@inProgressTasks": { "description": "Seção de tarefas em andamento" }
+  "@inProgressTasks": { "description": "Seção de tarefas em andamento" },
+  "selectExecutor": "Selecionar executor",
+  "@selectExecutor": { "description": "Rótulo para selecionar o executor da tarefa" }
 }

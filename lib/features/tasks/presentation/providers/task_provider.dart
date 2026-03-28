@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:task_pair_app/core/constants/app_constants.dart';
 import 'package:task_pair_app/data/repositories/task_recurrence_repository_impl.dart';
 import 'package:task_pair_app/data/repositories/task_repository_impl.dart';
+import 'package:task_pair_app/domain/entities/pair_entity.dart';
 import 'package:task_pair_app/domain/entities/task_entity.dart';
 import 'package:task_pair_app/domain/entities/task_recurrence_entity.dart';
 import 'package:task_pair_app/features/auth/presentation/providers/auth_provider.dart';
@@ -56,21 +57,22 @@ class TaskNotifier extends StateNotifier<AsyncValue<void>> {
     int? dayOfMonth,
     int? intervalDays,
     DateTime? endDate,
+    PairEntity? selectedPair,
   }) async {
     state = const AsyncValue.loading();
     try {
       final currentUser = _ref.read(currentUserEntityProvider).value;
-      final currentPair = _ref.read(currentPairProvider);
+      final pair = selectedPair ?? _ref.read(currentPairProvider);
       if (currentUser == null) throw Exception('Not authenticated');
-      if (currentPair == null) throw Exception('No pair found');
+      if (pair == null) throw Exception('No pair found');
 
-      // Requester creates task, auto-assigns to executor of the pair
+      // Requester creates task, assigns to executor of the selected pair
       final task = await _taskRepository.createTask(TaskEntity(
         id: '',
-        pairId: currentPair.id,
+        pairId: pair.id,
         title: title,
         description: description,
-        assignedTo: currentPair.executorId,
+        assignedTo: pair.executorId,
         points: points,
         isActive: true,
         scheduledStartTime: scheduledStartTime,
@@ -99,8 +101,8 @@ class TaskNotifier extends StateNotifier<AsyncValue<void>> {
         // Generate occurrences for the recurrence
         await _generateOccurrencesUseCase.execute(
           recurrence: recurrence,
-          pairId: currentPair.id,
-          assignedTo: currentPair.executorId,
+          pairId: pair.id,
+          assignedTo: pair.executorId,
           scheduledStartTime: scheduledStartTime,
           expectedDuration: expectedDuration,
         );
@@ -114,8 +116,8 @@ class TaskNotifier extends StateNotifier<AsyncValue<void>> {
             startDate: DateTime.now(),
             isActive: true,
           ),
-          pairId: currentPair.id,
-          assignedTo: currentPair.executorId,
+          pairId: pair.id,
+          assignedTo: pair.executorId,
           scheduledStartTime: scheduledStartTime,
           expectedDuration: expectedDuration,
         );

@@ -27,6 +27,12 @@ final storageServiceProvider = Provider<StorageService>((ref) {
   return StorageService(FirebaseStorage.instance);
 });
 
+/// Resolves a UserEntity by user ID (cached per ID).
+final userByIdProvider =
+    FutureProvider.family<UserEntity?, String>((ref, userId) async {
+  return ref.watch(userRepositoryProvider).getUserById(userId);
+});
+
 final authStateProvider = StreamProvider<User?>((ref) {
   return ref.watch(firebaseAuthServiceProvider).authStateChanges;
 });
